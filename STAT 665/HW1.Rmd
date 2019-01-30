@@ -206,15 +206,73 @@ When $k=3$, $\mu=0$, $\sigma^2 = 2$, and $\rho = 1/2$, find the probability that
 (*Hint:* Recall that if $x = (X_1,\dots,X_k)'$ has a continuous symmetric distribution, then all possible permutations of $X_1,\dots,X_k$ are equally likely, each having probability $P(X_{i1} < \dots < X_{ik})=1/k!$ for any permutation $(i1,\dots,i_k)$ for the first *k* positive integers.
   
 ## Problem 5.8
-Let $x \sim N_k(0,\Sigma)$ with pdf $f(x)$ where $\Sigma = \{\Sigma_{ij}\}$. The entropy $h(x)$ is defined as
+Let $\mathbf{x} \sim N_k(0,\Sigma)$ with pdf $f(x)$ where $\Sigma = \{\Sigma_{ij}\}$. The entropy $h(x)$ is defined as
 \[
 h(x) = - \int f(x) lnf(x)
 \]
   
-(a) Show that $h(x) = \frac{1}{2}ln(2\pi e)^k |\Sigma|$.
+(a) Show that $h(x) = \frac{1}{2}ln\big[(2\pi e)^k |\Sigma|\big]$.
+  
+---
+  
+We need to show that
+\[
+\frac{1}{2}\ln(2\pi)^k|\Sigma|=-\int f(x)\ln(f(x)) 
+\]
+  
+But we know $\mathbf{x}$ has a multivariate normal distribution $N_k(0,\Sigma)$:
+\[
+f(\mathbf{x}) = \frac{1}{(2\pi)^{k/2}|\Sigma|^{1/2}}\exp\bigg\{-\frac{1}{2}(\mathbf{x} - \mu)'\Sigma^{-1}(\mathbf{x} - \mu)\bigg\},\ \mathbf{x} \in R^k
+\]
+  
+Inserting into the definition of entropy, we have
+\[
+\begin{aligned}
+-\int&\frac{1}{(2\pi)^{k/2}|\Sigma|^{1/2}}\exp\bigg\{-\frac{1}{2}(\mathbf{x} - \mu)'\Sigma^{-1}(\mathbf{x} - \mu)\bigg\}\ln\bigg(\frac{1}{(2\pi)^{k/2}|\Sigma|^{1/2}}\exp\bigg\{-\frac{1}{2}(\mathbf{x} - \mu)'\Sigma^{-1}(\mathbf{x} - \mu)\bigg\}\bigg)\\
+&=-\int\frac{1}{(2\pi)^{k/2}|\Sigma|^{1/2}}\exp\bigg\{-\frac{1}{2}(\mathbf{x}'\Sigma^{-1}\mathbf{x} + \mathbf{x}'\mathbf{\mu})\bigg\}\ln\bigg(\frac{1}{(2\pi)^{k/2}|\Sigma|^{1/2}}\exp\bigg\{-\frac{1}{2}(\mathbf{x}'\Sigma^{-1}\mathbf{x} + \mathbf{x}'\mathbf{\mu})\bigg\}\bigg)\\
+&=-\int\frac{1}{(2\pi)^{k/2}|\Sigma|^{1/2}}\exp\bigg\{-\frac{1}{2}(\mathbf{x}'\Sigma^{-1}\mathbf{x})\bigg\}\ln\bigg(\frac{1}{(2\pi)^{k/2}|\Sigma|^{1/2}}\exp\bigg\{-\frac{1}{2}(\mathbf{x}'\Sigma^{-1}\mathbf{x})\bigg\}\bigg)\\
+\end{aligned}
+\]
+  
+since we were given that $\mathbf{\mu} = \mathbf{0}$. Applying log rules, we can expand the last term and continue:
+\[
+\begin{aligned}
+=&-\int\frac{1}{(2\pi)^{k/2}|\Sigma|^{1/2}}\exp\bigg\{-\frac{1}{2}(\mathbf{x}'\Sigma^{-1}\mathbf{x})\bigg\}\bigg(-\frac{1}{2}(\mathbf{x}'\Sigma^{-1}\mathbf{x}) - \frac{k}{2}\ln(2\pi) - \frac{1}{2}\ln(|\Sigma|)\big)\bigg)\\
+=&\int\frac{1}{(2\pi)^{k/2}|\Sigma|^{1/2}}\exp\bigg\{-\frac{1}{2}(\mathbf{x}'\Sigma^{-1}\mathbf{x})\bigg\}\bigg(\frac{1}{2}(\mathbf{x}'\Sigma^{-1}\mathbf{x}) + \frac{k}{2}\ln(2\pi) + \frac{1}{2}\ln(|\Sigma|)\bigg)\\
+=&\frac{1}{2}\int\frac{1}{(2\pi)^{k/2}|\Sigma|^{1/2}}\exp\bigg\{-\frac{1}{2}(\mathbf{x}'\Sigma^{-1}\mathbf{x})\bigg\}\bigg((\mathbf{x}'\Sigma^{-1}\mathbf{x}) + k\ln(2\pi) + \ln(|\Sigma|)\bigg)\\
+=&\frac{1}{2}\bigg[\frac{1}{(2\pi)^{k/2}|\Sigma|^{1/2}}\int(\mathbf{x}'\Sigma^{-1}\mathbf{x})\exp\bigg\{-\frac{1}{2}(\mathbf{x}'\Sigma^{-1}\mathbf{x})\bigg\}\\
+&+ k\ln(2\pi)\int\frac{1}{(2\pi)^{k/2}|\Sigma|^{1/2}}\exp\bigg\{-\frac{1}{2}(\mathbf{x}'\Sigma^{-1}\mathbf{x})\bigg\}\\
+&+ \ln(|\Sigma|)\int\frac{1}{(2\pi)^{k/2}|\Sigma|^{1/2}}\exp\bigg\{-\frac{1}{2}(\mathbf{x}'\Sigma^{-1}\mathbf{x})\bigg\}\bigg)\bigg]\\
+\end{aligned}
+\]
+  
+The integrals in the last two terms simply equal the constants pulled out front as we are integrating the multinomial normal distribution across all values of $\mathbf{x}$. The first term can be evaluated per Result 5.1.3:
+\[
+\begin{aligned}
+&\frac{1}{2}\bigg[\frac{1}{(2\pi)^{k/2}|\Sigma|^{1/2}}(2\pi)^{k/2}|\Sigma^{-1}|^{-1/2}tr(\Sigma^{-1}\Sigma)+ k\ln(2\pi)+ \ln(|\Sigma|)\bigg]\\
+&=\frac{1}{2}\bigg[\frac{1}{|\Sigma|^{1/2}}|\Sigma|^{1/2}tr(I_k) + k\ln(2\pi)+ \ln(|\Sigma|)\bigg]\\
+&=\frac{1}{2}\bigg[k + k\ln(2\pi)+ \ln(|\Sigma|)\bigg]\\
+&=\frac{1}{2}\bigg[k + \ln\big[(2\pi)^k|\Sigma|\big]\bigg]\\
+&=\frac{1}{2}\bigg[\ln(e^k) + \ln\big[(2\pi)^k|\Sigma|\big]\bigg]\\
+&=\frac{1}{2}\ln\big[(2\pi e)^k|\Sigma|\big]
+\end{aligned}
+\]
   
 (b) Hence, or otherwise, show that $|\Sigma| \le \prod_{i=1}^k \Sigma_{ii}$, with equality holding if and only if $\Sigma_{ij} = 0$, for $i \ne j$ [Hadamard's inequality].
-
+  
+From part (a) we know that $-\int f(x)\ln(f(x)) = \frac{1}{2}\ln\big[(2\pi e)^k|\Sigma|\big]$.
+  
+Let's look at the determinant of $\Sigma$. Consider that we hold $i$ fixed at one; then
+  
+\[
+\begin{aligned}
+& -\int f(x) \ln(f(x)) = \frac{1}{2}\ln((2\pi e)^k|\Sigma|)\\
+& \implies -2\int f(x) \ln(f(x)) = \ln((2\pi e)^k|\Sigma|)\\
+& \implies -2\int f(x) \ln(f(x)) = \ln((2\pi e)^k) + \ln(|\Sigma|)\\
+& \implies -2\int f(x) \ln(f(x)) - \ln((2\pi e)^k)= \ln(|\Sigma|)\\
+& \implies \exp\bigg\{-2\int f(x) \ln(f(x)) - \ln((2\pi e)^k)\bigg\}= |\Sigma|\\
+\end{aligned}
+\]
 
 
 
