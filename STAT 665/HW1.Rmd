@@ -70,66 +70,98 @@ where $Q = 2x_1^2 - x_1x_2 + 4x_2^2 - 11x_1 - 5x_2 + 19$, and *k* is a constant.
   
 ---
   
-The above bivariate normal distribution can be rewritten as
-\[
-f(\mathbf{x}) = \frac{1}{k}\exp\bigg\{-\frac{1}{2}(\mathbf{x}'\mathbf{\Sigma}^{-1}\mathbf{x} + \mathbf{x}'\mathbf{\mu} + b_0)\bigg\}
-\]
-  
-where
+Since we know the distribution of the vector $\mathbf{x}$ is normal, $Q = (\mathbf{x} - \mathbf{\mu})'\Sigma^{-1}(\mathbf{x} - \mathbf{\mu})$. We can solve for $\Sigma$ as
 \[
 \begin{aligned}
-\mathbf{x}'\mathbf{\Sigma}^{-1}\mathbf{x} &=
+Q =&
 \begin{bmatrix}
-x_1 & x_2
+x_1 - \mu_1&x_2-\mu_2
 \end{bmatrix}
 \begin{bmatrix}
-\sigma^2_{11} & \sigma^2_{12}\\
-\sigma^2_{21} & \sigma^2_{22}
+\sigma_1 & \sigma_{12}\\
+\sigma_{12} & \sigma_2
+\end{bmatrix}^{-1}
+\begin{bmatrix}
+x_1 - \mu_1&x_2-\mu_2
+\end{bmatrix}\\
+=& \begin{bmatrix}
+x_1 - \mu_1&x_2-\mu_2
+\end{bmatrix}
+\frac{1}{|\Sigma|}
+\begin{bmatrix}
+\sigma_2 & -\sigma_{12}\\
+-\sigma_{12} & \sigma_1
 \end{bmatrix}
 \begin{bmatrix}
-x_1\\x_2
+x_1 - \mu_1&x_2-\mu_2
 \end{bmatrix}\\
-&=\begin{bmatrix}
-\sigma^2_{1}x_1 + \sigma^2_{212}x_2 & \sigma^2_{12}x_1 + \sigma^2_{2}x_2
+=& \begin{bmatrix}
+x_1 - \mu_1&x_2-\mu_2
 \end{bmatrix}
 \begin{bmatrix}
-x_1\\x_2
-\end{bmatrix}\\
-&=\sigma^2_{1}x_1^2 + \sigma^2_{12}x_1x_2 + \sigma^2_{12}x_1x_2 + \sigma^2_{2}x_2^2\\
-&=(2)x_1^2 + (-1/2)x_1x_2 + (-1/2)x_1x_2 + (4)x_2^2\\
-&\implies \mathbf{\Sigma}^{-1} =
+\frac{\sigma_2}{|\Sigma|} & -\frac{\sigma_{12}}{|\Sigma|}\\
+-\frac{\sigma_{12}}{|\Sigma|} & \frac{\sigma_1}{|\Sigma|}
+\end{bmatrix}
 \begin{bmatrix}
-2 & -1/2\\
--1/2 & 4
+x_1 - \mu_1&x_2-\mu_2
 \end{bmatrix}\\
-&\implies \mathbf{\Sigma} =
+=&
 \begin{bmatrix}
-1/2 & -2\\
--2 & 1/4
+(x_1-\mu_1)\frac{\sigma_2}{|\Sigma|} - (x_2 - \mu_2)\frac{\sigma_{12}}{|\Sigma|} & -(x_1 - \mu_1)\frac{\sigma_{12}}{|\Sigma|} + (x_2 - \mu_2)\frac{\sigma_1}{|\Sigma|}
+\end{bmatrix}
+\begin{bmatrix}
+x_1 - \mu_1&x_2-\mu_2
+\end{bmatrix}\\
+=&
+(x_1-\mu_1)^2\frac{\sigma_2}{|\Sigma|} - (x_2 - \mu_2)\frac{\sigma_{12}}{|\Sigma|}(x_1-\mu_1) - (x_1 - \mu_1)\frac{\sigma_{12}}{|\Sigma|}(x_2-\mu_2) + (x_2 - \mu_2)^2\frac{\sigma_1}{|\Sigma|}\\
+=&\frac{\sigma_2}{|\Sigma|}(x_1-\mu_2)^2 + \frac{\sigma_{1}}{|\Sigma|}(x_2-\mu_2)^2 - 2\frac{\sigma_{12}}{|\Sigma|}(x_1 - \mu_1)(x_2 - \mu_2)\\
+=& \frac{\sigma_2}{|\Sigma|}(x_1^2 + \mu_1^2 - 2x_1\mu_1) + \frac{\sigma_{1}}{|\Sigma|}(x_2^2 + \mu_2^2 - 2x_2\mu_2) - 2\frac{\sigma_{12}}{|\Sigma|}(x_1x_2 - x_1\mu_2 - x_2\mu_1 + \mu_1\mu_2)\\
+=&\frac{\sigma_2}{|\Sigma|}x_1^2 + \frac{\sigma_{1}}{|\Sigma|}x_2^2 - 2\frac{\sigma_{12}}{|\Sigma|}x_1x_2 + \frac{\sigma_2}{|\Sigma|}\mu_1^2 - 2\frac{\sigma_2}{|\Sigma|}x_1\mu_1 + \frac{\sigma_{1}}{|\Sigma|}\mu_2^2 - 2\frac{\sigma_{1}}{|\Sigma|}x_2\mu_2 + 2\frac{\sigma_{12}}{|\Sigma|}x_1\mu_2 + 2\frac{\sigma_{12}}{|\Sigma|}x_2\mu_1 - 2\frac{\sigma_{12}}{|\Sigma|}\mu_1\mu_2\\
+=&\frac{\sigma_2}{|\Sigma|}x_1^2 + \frac{\sigma_{1}}{|\Sigma|}x_2^2 - 2\frac{\sigma_{12}}{|\Sigma|}x_1x_2 +
+x_1\bigg(- 2\frac{\sigma_2}{|\Sigma|}\mu_1+ 2\frac{\sigma_{12}}{|\Sigma|}\mu_2\bigg) + x_2\bigg(- 2\frac{\sigma_{1}}{|\Sigma|}\mu_2+ 2\frac{\sigma_{12}}{|\Sigma|}\mu_1\bigg)  + \frac{\sigma_2}{|\Sigma|}\mu_1^2  + \frac{\sigma_{1}}{|\Sigma|}\mu_2^2 - 2\frac{\sigma_{12}}{|\Sigma|}\mu_1\mu_2\\
+=&(2)x_1^2 + (4)x_2^2 - 2(1/2)x_1x_2 +
+x_1\bigg(- 2(2)\mu_1+ 2(1/2)\mu_2\bigg) + x_2\bigg(- 2(4)\mu_2+ 2(1/2)\mu_1\bigg)  + (2)\mu_1^2  + (4)\mu_2^2 - 2(1/2)\mu_1\mu_2\\
+\end{aligned}
+\]
+  
+Now we know that
+\[
+\begin{aligned}
+-11 &= - 2(2)\mu_1+ 2(1/2)\mu_2\text{ and}\\
+-5 &= - 2(4)\mu_2+ 2(1/2)\mu_1\\
+\end{aligned}
+\]
+  
+giving us that $\mu_1 = 3$ and $\mu_2=1$. Note that
+\[
+\begin{aligned}
+&(2)\mu_1^2  + (4)\mu_2^2 - 2(1/2)\mu_1\mu_2\\
+&=(2)(3)^2  + (4)(1)^2 - (3)(1)\\
+&=18  + 4 - 3\\
+&=19
+\end{aligned}
+\]
+  
+We now know what $\Sigma$ is too:
+\[
+\begin{aligned}
+\Sigma &= \frac{4}{31}
+\begin{bmatrix}
+4 & -1/2\\
+-1/2 & 2
 \end{bmatrix}\\
 \end{aligned}
 \]
   
-and we know the variances of the two normal random variables are $\sigma_1^2 = 1/2$ and $\sigma_2^2 = 1/4$. The means of the random variabes are $\mu_1 = -11$ and $\mu_2 = -5$.
-
-We need to find the pdf of a new random variable $Y_1 = 3X_1 - X_2$. We know that the sum of two normal random variables is normal, so let's find the expected value and variance of the bivariate distribution.
+Now we can look at the random variable $Y = 3X_1 - X_2$, which has expected value $EY = 3EX_1 - EX_2 = 3(3) - 1 = 8$. Its variance is
 \[
 \begin{aligned}
-E[3X_1 - X_2] &= E[3X_1] - E[X_2]\\
-&= 3E[X_1] - E[X_2]\\
-&= 3(-11) - (-5)\\
-&= -33 + 5\\
-&= -28\\
+Var(Y) &= Var(3X_1 - X_2)\\
+&=9Var(X_1) + Var(X_2) - 2(3)Cov(X_1,X_2)\\
+&=9\frac{16^2}{31^2} + \frac{8^2}{31^2} - 6\frac{2^2}{31^2}\\
+&=2.439126
 \end{aligned}
 \]
-  
-and the variance is
-\[
-\begin{aligned}
-Var(3X_1 - X_2) &= Var(3X_1) + Var(X_2) + 2Cov(3X_1,-X_2)
-\end{aligned}
-\]
-
   
 ## Problem 5.5
 (a) Show that $(X_1,X_2)$ has a bivariate normal distribution with means $\mu_1,\mu_2$, variances $\sigma_1^2,\sigma_2^2$, and a correlation coefficient $\rho$ if and only if every linear combination $c_1X_1 + c_2X_2$ has a univariate normal distribution with mean $c_1\mu_1 + c_2\mu_2$, and variance $c_1^2\sigma_1^2 + c_2^2\sigma_2^2 + 2c_1c_2\rho\sigma_{1,2}$, where $c_1$ and $c_2$ are real constants, not both equal to zero.
@@ -167,6 +199,49 @@ r(2\pi)^{-1}(1-\rho^2)^{-1/2}exp\bigg[-\frac{1}{2(1-\rho^2)}r^2(1 - \rho sin 2\t
 $0 \le r < \infty$, and $0 \le \theta \le 2\pi$, and that the marginal pdf of $\Theta$ is
 \[
 (2\pi)^{-1}(1-\rho^2)^{1/2}(1-\rho sin 2\theta)^{-1},\ 0 \le \theta \le 2\pi.
+\]
+  
+---
+  
+To complete the transformation, we need to find the Jacobian:
+\[
+\begin{aligned}
+J &=
+\begin{bmatrix}
+\cos\theta &-r\sin\theta\\
+\sin\theta & r\cos\theta
+\end{bmatrix}
+=\cos\theta r\cos\theta - (-r\sin\theta \sin\theta)\\
+&=r\cos^2\theta + r\sin^2\theta\\
+&=r(\cos^2\theta + \sin^2\theta)\\
+&=r
+\end{aligned}
+\]
+  
+The bivariate normal distribution is
+\[
+\begin{aligned}
+f(x_1,x_2) &= \frac{1}{2\pi|\Sigma|^{1/2}}\exp\bigg\{-\frac{1}{2}\frac{1}{1-\rho^2}\bigg(\frac{x_1^2}{\sigma_1^2}+\frac{x_2^2}{\sigma_2^2} - 2\rho\frac{x_1x_2}{\sigma_1\sigma_2}\bigg)\bigg\}\\
+&=\frac{1}{2\pi\sqrt{\sigma_1^2\sigma_2^2(1-\rho^2)}}\exp\bigg\{-\frac{1}{2}\frac{1}{1-\rho^2}\bigg(\frac{x_1^2}{\sigma_1^2}+\frac{x_2^2}{\sigma_2^2} - 2\rho\frac{x_1x_2}{\sigma_1\sigma_2}\bigg)\bigg\}
+\end{aligned}
+\]
+  
+Now we can find the distribution of the transformed variables:
+\[
+\begin{aligned}
+f(r,\theta) &= \frac{1}{2\pi\sqrt{\sigma_1^2\sigma_2^2(1-\rho^2)}}\exp\bigg\{-\frac{1}{2}\frac{1}{1-\rho^2}\bigg(\frac{x_1^2}{\sigma_1^2}+\frac{x_2^2}{\sigma_2^2} - 2\rho\frac{x_1x_2}{\sigma_1\sigma_2}\bigg)\bigg\}|r|\\
+&= \frac{1}{2\pi\sqrt{\sigma_1^2\sigma_2^2(1-\rho^2)}}\exp\bigg\{-\frac{1}{2}\frac{1}{1-\rho^2}\bigg(\frac{r^2\cos^2\theta}{\sigma_1^2}+\frac{r^2\sin^2\theta}{\sigma_2^2} - 2\rho\frac{r\cos\theta r\sin\theta}{\sigma_1\sigma_2}\bigg)\bigg\}|r|\\
+&= \frac{|r|}{2\pi\sqrt{\sigma_1^2\sigma_2^2(1-\rho^2)}}\exp\bigg\{-\frac{1}{2}\frac{r^2}{1-\rho^2}\bigg(\frac{\cos^2\theta\sigma_2^2}{\sigma_1^2\sigma_2^2}+\frac{\sin^2\theta\sigma_1^2}{\sigma_1^2\sigma_2^2} - 2\rho\frac{\cos\theta \sin\theta}{\sigma_1\sigma_2}\bigg)\bigg\}\\
+&= \frac{|r|}{2\pi\sqrt{\sigma_1^2\sigma_2^2(1-\rho^2)}}\exp\bigg\{-\frac{1}{2}\frac{r^2}{1-\rho^2}\bigg(\frac{\cos^2\theta\sigma_2^2 + \sin^2\theta\sigma_1^2 - \rho \sin2\theta}{\sigma_1\sigma_2}\bigg)\bigg\}\\
+\end{aligned}
+\]
+  
+The only way for this to work is if we assume $\sigma_1=\sigma_2=1$. Then we have shown equality:
+\[
+\begin{aligned}
+&= \frac{|r|}{2\pi\sqrt{(1-\rho^2)}}\exp\bigg\{-\frac{1}{2}\frac{r^2}{1-\rho^2}\bigg(\cos^2\theta\ + \sin^2\theta - \rho \sin2\theta\bigg)\bigg\}\\
+&= \frac{|r|}{2\pi\sqrt{(1-\rho^2)}}\exp\bigg\{-\frac{1}{2}\frac{r^2}{1-\rho^2}\bigg(1 - \rho \sin2\theta\bigg)\bigg\},\text{ for }r \ge 0,0 \le \theta \le 2\pi\\
+\end{aligned}
 \]
   
 (b) Suppose $(X_1,X_2)$ has a bivariate normal distribution $N_2(0,0,\sigma_1^2,\sigma_2^2,\rho$, $|\rho| \ne 1$. Show that

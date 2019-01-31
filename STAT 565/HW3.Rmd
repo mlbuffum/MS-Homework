@@ -1,0 +1,156 @@
+---
+title: "STAT 565 HW 3"
+author: "Maggie Buffum"
+date: "January 31, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Problem 5.22
+Let *X* and *Y* be iid $N(0,1)$ random variables, and define $Z = \min(X,Y)$. Prove that $Z^2 \sim \chi^2_1$.
+  
+---
+  
+We know that the square of a standard normal random variable has a chi-squared distribution with one degree of freedom. Therefore, we just need to prove that $Z \sim N(0,1)$.
+  
+Let's look at the cdf of $Z^2$:
+\[
+\begin{aligned}
+F_Z^2(z) &= P(\min(X,Y) \le z)\\
+&=P(-\sqrt{z} \le \min(X,Y) \le \sqrt{z})\\
+&=P(-\sqrt{z} \le X \le \sqrt{z},X\le Y) + P(-\sqrt{z} \le Y \le \sqrt{z},Y\le X)\\
+&=P(-\sqrt{z} \le X \le \sqrt{z}|X\le Y)P(X\le Y) + P(-\sqrt{z} \le Y \le \sqrt{z},Y\le X)P(Y \le X)\\
+\end{aligned}
+\]
+  
+Because $X$ and $Y$ are independent, when know that the probability that $X$ or $Y$ is less than $|\sqrt{z}|$ is the same with or without the conditional. Also, $X$ and $Y$ are identically distributed, so the chances of one being bigger than the other are identifical, that is, 50/50. Therefore, we have
+  
+\[
+F_Z^2(z)= \frac{1}{2}P(-\sqrt{z} \le X \le \sqrt{z}) + \frac{1}{2}P(-\sqrt{z} \le Y \le \sqrt{z})
+\]
+  
+But additionally, because the distributions are identical, we know that
+\[
+P(Z^2 < z) = P(-\sqrt{z} < X < \sqrt{z})
+\]
+  
+We know that the cdf of a normal distribution does not have a closed form. Let's immediately take the derivative of the cdf to find the pdf:
+\[
+\begin{aligned}
+f_{Z^2}(z) &= \frac{d}{dz}P(-\sqrt{z} < X < \sqrt{z})\\
+&= \frac{1}{\sqrt{2\pi}}\big(e^{-z/2}\frac{1}{2}z^{-1/2} + e^{-z/2}\frac{1}{2}z^{-1/2})\\
+&=\frac{1}{\sqrt{2\pi}}z^{-1/2}e^{-z/2}
+\end{aligned}
+\]
+  
+which is the pdf of a chi-square random variable with one degree of freedom.
+
+## Problem 5.24
+Let $X_1,\dots,X_n$ be a random sample from a population with pdf
+\[
+f_X(x) =
+\begin{cases}
+1/\theta & \text{if }0 < x < \theta\\
+0 & \text{otherwise.}
+\end{cases}
+\]
+  
+Let $X_{(1)}< \dots < X_{(n)}$ be the order statistics. Show that $X_{(1)}/X_{(n)}$ and $X_{(n)}$ are independent random variables.
+  
+---
+  
+The random variables $X_1,\dots,X_n$ each have a uniform distribution on the bound $0$ to $\theta$. From Example 5.4.7 we know that their joint distribution is
+\[
+\begin{aligned}
+f_{X_{(1)},X_{(n)}}(x_1,x_n) &= \frac{n(n-1)(x_n - x_1)^{n-2}}{\theta^n},\ 0 < x_1 < x_n < \theta
+\end{aligned}
+\]
+  
+Now we need to find the joint distribution of $X_{(1)}/X_{(n)}$. Let $W=X_{(1)}/X_{(n)}$ and $Z=X_{(n)}$. Then, $x_n = z$ and $x_1 = wz$. The Jacobian is
+\[
+J = 
+\begin{bmatrix}
+z & w\\
+0 & 1
+\end{bmatrix}
+= z
+\]
+  
+The joint distribution of $W$ and $Z$ is now
+\[
+\begin{aligned}
+f_{W,Z}(w,z) &= f_{X_{(1)},X_{(n)}}(x_1,x_n)|J|\\
+&=\frac{n(n-1)(z - wz)^{n-2}}{\theta^n}z\\
+&=\frac{n(n-1)z^{n-2}(1-w)^{n-2}}{\theta^n}z\\
+&=\frac{n(n-1)z^{n-1}(1-w)^{n-2}}{\theta^n},\ 0<w<1,0<z<\theta\\
+\end{aligned}
+\]
+  
+By factorization, $W$ and $Z$, and thus $X_{(1)}/X_{(n)}$ and $X_{(n)}$ are independent.
+    
+## Problem 5.25
+As a generalization of the previous exercise, let $X_1,\dots,X_n$ be iid with pdf
+\[
+f_X(x) =
+\begin{cases}
+\frac{a}{\theta^a}x^{a-1} & \text{if }0 < x < \theta\\
+0 & \text{otherwise}.
+\end{cases}
+\]
+  
+Let $X_{(1)},\dots,X_{(n)}$ be the order statistics. Show that $X_{(1)}/X_{(2)},X_{(2)}/X_{(3)},\dots,X_{(n-1)}/X_{(n)},$ and $X_{(n)}$ are mutually independent random variables. Find the distribution of each of them.
+  
+---
+  
+We are looking to show that $X_{(1)}/X_{(2)},X_{(2)}/X_{(3)},\dots,X_{(n-1)}/X_{(n)}$, and $X_{(n)}$ are all mutually independent from each. Similarly to the last problem, we can prove this through the factorization theorem.
+  
+Let's find the joint distribution of $X_{(1)},\dots,X_{(n)}$:
+\[
+\begin{aligned}
+f_{X_{(1)},\dots,X_{(n)}}(x_1,\dots,x_n) &= n!f_X(x_1)\times\dots\times f_X(x_n)\\
+&=n!\frac{a}{\theta^a}x_1^{a-1}\times\dots\times \frac{a}{\theta^a}x_n^{a-1}\\
+&=n!\frac{a^n}{\theta^{na}}x_1^{a-1}\times\dots\times x_n^{a-1},\ \ 0 < x_1 < \dots < x_n < \theta\\
+\end{aligned}
+\]
+  
+Now we need to make the transformation $Y_1 = X_{(1)}/X_{(2)},\dots,Y_{n-1} = X_{(n-1)}/X_{(n)},Y_n=X_{(n)}$. We know from the last problem that the Jacobian was $z$ when $Z=X_{(n)}$, and now the Jacobian is $y_2y_3^2\times\dots\times y_n^{n-1}$ and the pdf of $Y_1,\dots,Y_n$ is
+\[
+\begin{aligned}
+f_{Y_1,\dots,Y_n}(y_1,\dots,y_n) &= \frac{n!a^n}{\theta^{na}}(y_1\times\dots\times y_n)^{a-1}(y_2\times\dots\times y_n)^{a-1}\dots(y_n)^{a-1}(y_2y_3^2\times\dots\times y_n^{n-1})\\
+&=\frac{n!a^n}{\theta^{na}}y_1^{a-1}y_2^{2a-1}\times\dots\times y_n^{na-1},\ \ 0 < y_i < 1,0 < y_n < \theta 
+\end{aligned}
+\]
+  
+By factorization, we know that $Y_1,\dots,Y_n = X_{(1)}/X_{(2)},\dots,X_{(n-1)}/X_{(n)},X_{(n)}$ are mutually independent.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
