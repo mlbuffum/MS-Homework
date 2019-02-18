@@ -21,17 +21,19 @@ where $Z$ is a standard normal random variable.
   
 ---
   
-Let's first recall Stirling's Formula:
+Suppose we have $X_i \sim$ exponential$(1),i=1,2,\dots$, all independent. We know that $\mu = 1$ and $\sigma^2 = 1$.
+  
+The *Central Limit Theorem* tells that
 \[
-n! \approx \sqrt{2\pi}n^{n+(1/2)}e^{-n}
+\frac{(\bar X_n - \mu)}{\sigma/\sqrt{n}} = \frac{(\bar X_n - 1)}{1/\sqrt{n}}
 \]
   
-The *Central Limit Theorem* states that if we have a sequence of iid random variables $X_1,X_2,\dots$ with $EX_i = \mu$ and $VarX_i = \sigma^2 < \infty$, and define $\bar X_n = (1/n)\sum_{i=1}^n X_i$. Then,
+has (approximately) a standard normal distribution. Therefore, it directly follows that
 \[
-lim_{n\rightarrow \infty} \sqrt{n}(\bar X_n - \mu)/\sigma = \int_{-\infty}^x \frac{1}{\sqrt{2\pi}}e^{-y^2/2}dy
+P\bigg(\frac{\bar X_n - 1}{1/\sqrt{n}} \le x\bigg) \rightarrow P(Z \le x)
 \]
   
-Suppose we have $X_i \sim$ exponential$(1),i=1,2,\dots$, all independent. We know that $\bar X_n = \frac{1}{n}\sum_{i=1}^n X_i$, and the cdf of the exponential distribution with parameter 1 is $1 - e^{-x}$.
+where $Z \sim n(0,1)$.
   
 (b) Show that differentiating both sides of the approximation in part (a) suggests
 \[
@@ -41,6 +43,31 @@ Suppose we have $X_i \sim$ exponential$(1),i=1,2,\dots$, all independent. We kno
 and that $x=0$ gives Stirling's Formula.
   
 ---
+  
+Let's start with the right side of of the equation:
+\[
+\frac{d}{dx}P(Z \le x) = \frac{d}{dx}F_Z(x) = f_Z(x) = \frac{1}{\sqrt{2\pi}}e^{-x^2/2}
+\]
+  
+Now the left side of the equation,
+\[
+\begin{aligned}
+\frac{d}{dx}P\bigg(\frac{\bar X_n - 1}{1/\sqrt{n}} \le x\bigg) &= \frac{d}{dx}\bigg(\frac{\big(\frac{1}{n}\sum_{i=1}^n X_i\big) - 1}{1/\sqrt{n}} \le x\bigg)\\
+&= \frac{d}{dx}\bigg(\frac{\sqrt{n}}{n}\sum_{i=1}^n X_i \le x + \sqrt{n}\bigg)\\
+&= \frac{d}{dx}\bigg(\sum_{i=1}^n X_i \le \big(x + \sqrt{n}\big)\frac{n}{\sqrt{n}}\bigg)\\
+&= \frac{d}{dx}\bigg(\sum_{i=1}^n X_i \le x\sqrt{n} + n\bigg)\\
+&\text{Recall that }\sum_{i=1}^n X_i \sim gamma(n,1):\\
+&=\frac{d}{dx}F_{\sum X_i}(x\sqrt{n} + n)\\
+&=f_{\sum X_i}(x\sqrt{n} + n)\sqrt{n}\\
+&=\frac{1}{\Gamma(n)}(x\sqrt{n}+n)^{n-1}e^{-(x\sqrt{n} + n)}\sqrt{n}\\
+&\approx \frac{1}{\sqrt{2\pi}}e^{-x^2/2}\text{ as }n\rightarrow\infty ,
+\end{aligned}
+\]
+  
+because of the approximation determined in part (a) and substituting the derivative of the right hand side. Now, for $x=0$ we see that
+\[
+n! \approx \sqrt{2\pi}n^{n+(1/2)}e^{-n}
+\]
   
 ## Problem 5.39
 This exercise, and the two following, will look at some of the mathematical details of convergence.
@@ -80,14 +107,14 @@ In Example 5.5.8, the sample space $S$ is the closed interval [0,1], and $X_1,\d
 \end{aligned}
 \]
   
-As the example shows, the sequence of all $X_is$ converges in probability but not pointwise. However, consider the following subsequence of $X_is$:
+As the example shows, the sequence of all $X_is$ converges in probability but not pointwise. This will always be the case, as the example shows, depending on the value of $s$. So let's define our subsequence using $s$:
 \[
-\begin{aligned}
-& X_7(s) = s + I_{[\frac{5}{4},\frac{3}{2}]}(s) & X_8(s) = s + I_{[\frac{3}{2},2]}(s)
-\end{aligned}
+X_i(s) \rightarrow
+\begin{cases}
+s & \text{if }s>0\\
+s+1 & \text{if }s=0\\
+\end{cases}
 \]
-  
-The indicator function will always be zero because no $s \in S$ satisfies the range specified for the indicator functions to be one. Therefore, $X_7,X_8$ converge pointwise to $X$.
   
 ## Problem 5.41
 Prove Theorem 5.5.13; that is, show that
