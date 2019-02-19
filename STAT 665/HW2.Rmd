@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ### Problem 5.12.
-Let $\mathbf{x} \sim N(\mathbf{\mu}, \mathbf{\Sigma})$.  Suppose that $\mathbf{x} = (\mathbf{x_1'}, \mathbf{x_2'}, \mathbf{x_3'})'$, where $\mathbf{x}$ is a $k_i$-dimensional vector, and $\sum_{i = 1}^{3} k_i = k$.  Assume that $\mathbf{\mu}$ and $\mathbf{\Sigma}$ are partitioned conformably.  Derive the conditional density of $\mathbf{x}_3$ given $\mathbf{x}_1 = \mathbf{c}_1$ and $\mathbf{x}_2 = \mathbf{c}_2$.  
+Let $\mathbf{x} \sim N(\mathbf{\mu}, \mathbf{\Sigma})$.  Suppose that $\mathbf{x} = (\mathbf{x_1'}, \mathbf{x_2'}, \mathbf{x_3'})'$, where $\mathbf{x}$ is a $k_i$-dimensional vector, and $\sum_{i = 1}^{3} k_i = k$. Assume that $\mathbf{\mu}$ and $\mathbf{\Sigma}$ are partitioned conformably.  Derive the conditional density of $\mathbf{x}_3$ given $\mathbf{x}_1 = \mathbf{c}_1$ and $\mathbf{x}_2 = \mathbf{c}_2$.  
   
 -------
   
@@ -32,10 +32,10 @@ c_2 - \mu_2\\
 x_3 - \mu_3
 \end{bmatrix}
 \bigg\}}{(2\pi)^{-(k-k_3)/2}
-\begin{bmatrix}
+\left|\begin{array}{cc}
 \Sigma_{11} & \Sigma_{12}\\
 \Sigma_{21} & \Sigma_{22}
-\end{bmatrix}^{-1/2}\exp\bigg\{-\frac{1}{2}
+\end{array}\right|^{-1/2}\exp\bigg\{-\frac{1}{2}
 \begin{bmatrix}
 c_1 - \mu_1\\
 c_2 - \mu_2
@@ -63,10 +63,46 @@ c_2 - \mu_2\\
 x_3 - \mu_3
 \end{bmatrix}
 \bigg\}}{
+\left|
+\begin{array}{cc}
+\Sigma_{11} & \Sigma_{12}\\
+\Sigma_{21} & \Sigma_{22}
+\end{array}
+\right|^{-1/2}
+\exp\bigg\{-\frac{1}{2}
+\begin{bmatrix}
+c_1 - \mu_1\\
+c_2 - \mu_2
+\end{bmatrix}'
 \begin{bmatrix}
 \Sigma_{11} & \Sigma_{12}\\
 \Sigma_{21} & \Sigma_{22}
-\end{bmatrix}^{-1/2}\exp\bigg\{-\frac{1}{2}
+\end{bmatrix}
+\begin{bmatrix}
+c_1 - \mu_1\\
+c_2 - \mu_2
+\end{bmatrix}
+\bigg\}}\\
+&=(2\pi)^{-k_3/2}\left(\frac{|\Sigma|}{\left|
+\begin{array}{cc}
+\Sigma_{11} & \Sigma_{12}\\
+\Sigma_{21} & \Sigma_{22}
+\end{array}
+\right|}\right)^{-1/2}
+\frac{\exp\bigg\{-\frac{1}{2}
+\begin{bmatrix}
+c_1 - \mu_1\\
+c_2 - \mu_2\\
+x_3 - \mu_3
+\end{bmatrix}'
+\Sigma^{-1}
+\begin{bmatrix}
+c_1 - \mu_1\\
+c_2 - \mu_2\\
+x_3 - \mu_3
+\end{bmatrix}
+\bigg\}}{
+\exp\bigg\{-\frac{1}{2}
 \begin{bmatrix}
 c_1 - \mu_1\\
 c_2 - \mu_2
@@ -83,41 +119,59 @@ c_2 - \mu_2
 \end{aligned}
 \]
   
-We rewrite $\Sigma^{-1}$ as
+The derminant of $\Sigma$ is
 \[
-\left(
-\begin{array}{cc|c}
-\Sigma_{11} & \Sigma_{12} & \Sigma_{13}\\
-\Sigma_{21} & \Sigma_{22} & \Sigma_{23}\\
-\hline
-\Sigma_{31} & \Sigma_{32} & \Sigma_{33}
-\end{array}\right)^{-1}
+\begin{aligned}
+|\Sigma| &=
+\left|
+\begin{array}{cc}
+\Sigma_{11} & \Sigma_{12}\\
+\Sigma_{21} & \Sigma_{22}
+\end{array}
+\right|
+\left|
+\Sigma_{33} - 
+\begin{bmatrix}
+\Sigma_{31} & \Sigma_{32}
+\end{bmatrix}
+\begin{bmatrix}
+\Sigma_{11} & \Sigma_{12}\\
+\Sigma_{21} & \Sigma_{22}
+\end{bmatrix}^{-1}
+\begin{bmatrix}
+\Sigma_{13} \\ 
+\Sigma_{23}
+\end{bmatrix}
+\right|
+\end{aligned}
 \]
   
-such that, by Result 2.1.3, we have
+such that
 \[
-\left(
-\begin{array}{cc|c}
-\Sigma_{11} & \Sigma_{12} & \Sigma_{13}\\
-\Sigma_{21} & \Sigma_{22} & \Sigma_{23}\\
-\hline
-\Sigma_{31} & \Sigma_{32} & \Sigma_{33}
-\end{array}\right)^{-1} =
-\left(
-\begin{array}{}
-M_{11} & M_{12}\\
-M_{21} & M_{22}
+\begin{aligned}
+\frac{|\Sigma|}{
+\left|
+\begin{array}{cc}
+\Sigma_{11} & \Sigma_{12}\\
+\Sigma_{21} & \Sigma_{22}
 \end{array}
-\right)^{-1} =
-\left(
-\begin{array}{}
-\Sigma_{11.2}^{-1} & -\Sigma_{11.2}^{-1}\Sigma_{12}\Sigma_{22}^{-1}\\
--\Sigma_{22}^{-1}\Sigma_{21}\Sigma_{11.2}^{-1} & \Sigma_{22.1}^{-1}
-\end{array}
-\right)
+\right|}
+&=
+\left|
+\Sigma_{33} - \begin{bmatrix}
+\Sigma_{31} & \Sigma_{32}
+\end{bmatrix}
+\begin{bmatrix}
+\Sigma_{11} & \Sigma_{12}\\
+\Sigma_{21} & \Sigma_{22}
+\end{bmatrix}^{-1}
+\begin{bmatrix}
+\Sigma_{13} \\ 
+\Sigma_{23}
+\end{bmatrix}
+\right|
+\end{aligned}
 \]
-  
-where.....
   
 ### Problem 5.14.  
 Let
@@ -132,11 +186,240 @@ where
   
 (a) Show that $Corr[X_1^2, X_2^2] = \rho^2$.
   
+We know that
+\[
+Corr[X_1^2,X_2^2] = \frac{Cov[X_1^2,X_2^2]}{\sigma^1\sigma^2}
+\]
+  
+From Theorem D12, Corollary 1 we know that if $\mathbf{x}$ has a multivariate normal distribution, and A and H are symmetric matrices of constants, then
+\[
+cov(x'Ax,x'Hx) = 2tr(A\Sigma H\Sigma) + 4\mu'A\Sigma H\mu
+\]
+  
+Consider that
+\[
+X_1^2 = x'
+\begin{bmatrix}
+1&0&0\\
+0&0&0\\
+0&0&0
+\end{bmatrix}x=
+x'Ax
+\]
+  
+and
+  
+\[
+X_2^2 = x'
+\begin{bmatrix}
+0&0&0\\
+0&1&0\\
+0&0&0
+\end{bmatrix}x=
+x'Hx,
+\]
+  
+giving us that
+\[
+\begin{aligned}
+cov(X_1^2,X_2^2) &= 2tr(A\Sigma H\Sigma)\\
+&= 2tr\left(A
+\begin{bmatrix}
+1 & \rho & \rho \\
+\rho & 1 & \rho \\
+\rho & \rho & 1
+\end{bmatrix}H
+\begin{bmatrix}
+1 & \rho & \rho \\
+\rho & 1 & \rho \\
+\rho & \rho & 1
+\end{bmatrix}\right)\\
+&= 2tr\left(
+\begin{bmatrix}
+1&0&0\\
+0&0&0\\
+0&0&0
+\end{bmatrix}
+\begin{bmatrix}
+1 & \rho & \rho \\
+\rho & 1 & \rho \\
+\rho & \rho & 1
+\end{bmatrix}
+\begin{bmatrix}
+0&0&0\\
+0&1&0\\
+0&0&0
+\end{bmatrix}
+\begin{bmatrix}
+1 & \rho & \rho \\
+\rho & 1 & \rho \\
+\rho & \rho & 1
+\end{bmatrix}\right)\\
+&= 2tr\left(
+\begin{bmatrix}
+1 & \rho & \rho\\
+0&0&0\\
+0&0&0
+\end{bmatrix}
+\begin{bmatrix}
+0&0&0\\
+\rho &1& \rho\\
+0&0&0
+\end{bmatrix}
+\right)\\
+&= 2tr\left(
+\begin{bmatrix}
+\rho^2 & \rho & \rho^2\\
+0&0&0\\
+0&0&0
+\end{bmatrix}
+\right)\\
+&=2\rho^2
+\end{aligned}
+\]
+  
+(since $\mu = 0$, the second term is 0). We know that $x'Ax \sim \chi^2_r$ and $x'Hx \sim \chi^2_r$, where $r$ is the rank of matrices $A$ and $H$, and is equal to 1 for both matrices. The variance of a chi-square random variable is two times its degrees of freedom, giving us
+\[
+Corr[X_1^2,X_2^2] = \frac{Cov(X_1^2,X_2^2)}{\sigma_1\sigma_2} = \frac{2\rho^2}{\sqrt{2}\sqrt{2}} = \rho^2
+\]
+  
 (b) Show that $\rho_{12|3} = \frac{\rho}{1 + \rho}$.
   
-(c) Show that $\rho_{1(2,3)} = \frac{2 \rho^2}{1 + \rho}$.
+We are looking for the partial correlation coefficient of $X_1$ and $X_2$ given $X_3$, which is given by Definition 5.2.7:
+\[
+\rho_{12|(3)} = \frac{\sigma_{12|(3)}}{[\sigma_{11|(3)}\sigma_{22|(3)}]^{1/2}}
+\]
   
--------
+where $\sigma_{12|(3)}$ is the $(1,2)^{th}$ element in $\Sigma_{11} - \Sigma_{12}\Sigma_{22}^{-1}\Sigma_{21}$. We can partition the variance-covariance matrix as
+\[
+\Sigma =
+\left[
+\begin{array}{cc|c}
+1&\rho&\rho\\
+\rho&1&\rho\\
+\hline
+\rho&\rho&1
+\end{array}
+\right]
+\]
+  
+Now we can find $\sigma_{12|(3)}$ by solving:
+\[
+\begin{aligned}
+&\begin{bmatrix}
+1&\rho\\
+\rho&1
+\end{bmatrix} -
+\begin{bmatrix}
+\rho\\
+\rho
+\end{bmatrix}
+\begin{bmatrix}
+\rho&\rho
+\end{bmatrix}\\
+&=\begin{bmatrix}
+1&\rho\\
+\rho&1
+\end{bmatrix}
+\begin{bmatrix}
+\rho^2&\rho^2\\
+\rho^2&\rho^2
+\end{bmatrix}\\
+\begin{bmatrix}
+1-\rho^2 & \rho - \rho^2\\
+\rho - \rho^2 & 1 - \rho^2
+\end{bmatrix}
+\end{aligned}
+\]
+  
+and $\sigma_{12|(3)} = \rho-\rho^2$. We also have now that $\sigma_{11|(3)} = 1-\rho^2$ and $\sigma_{22|(3)} = 1-\rho^2$. Finally,
+\[
+\rho_{12|(3)} = \frac{\sigma_{12|(3)}}{[(\sigma_{11|(3)}\sigma_{22|(3)})]^{1/2}} = \frac{\rho-\rho^2}{[(1-\rho^2)(1-\rho^2)]^{1/2}} = \frac{\rho(1-\rho)}{1-\rho^2}\frac{\rho(1-\rho)}{(1-\rho)(1+\rho)}=\frac{\rho}{1+\rho}
+\]
+  
+(c) Show that $\rho_{1(2,3)} = \sqrt{\frac{2 \rho^2}{1 + \rho}}$.
+  
+We are looking for the multiple correlation coefficient, which is give by Definition 5.2.8 as
+\[
+\rho_{0(1,\dots,k)}= \left\{\frac{\sigma_{01}\big[\Sigma^{(1)}\big]^{-1}\sigma_{10}}{\sigma_{00}}\right\}
+\]
+  
+We can partition the variance-covariance matrix as
+\[
+\Sigma = \left[
+\begin{array}{c|cc}
+1 & \rho&\rho\\
+\hline
+\rho & 1 & \rho\\
+\rho & \rho & 1
+\end{array}
+\right]
+\]
+  
+such that
+\[
+\Sigma^{(1)} = \begin{bmatrix}
+1&\rho\\
+\rho&1
+\end{bmatrix}
+\]
+  
+The inverse of $\Sigma^{(1)}$ is
+\[
+\big[
+\frac{1}{1-\rho^2}
+\begin{bmatrix}
+1 & -\rho\\
+-\rho & 1
+\end{bmatrix}
+\big]
+\]
+  
+Now we can solve for $\rho_{0(1,2)}$:
+\[
+\begin{aligned}
+\rho_{0(1,2)} &= \left\{\frac{\sigma_{01}\big[\Sigma^{(1)}\big]^{-1}\sigma_{10}}{\sigma_{00}}\right\}\\
+&= \left\{
+\frac{1}{1-\rho^2}
+\begin{bmatrix}
+\rho & \rho
+\end{bmatrix}
+\begin{bmatrix}
+1 & -\rho\\
+-\rho & 1
+\end{bmatrix}
+\begin{bmatrix}
+\rho\\
+\rho
+\end{bmatrix}
+\right\}^{1/2}\\
+&= \left\{
+\frac{1}{1-\rho^2}
+\begin{bmatrix}
+\rho -\rho^2 & -\rho^2 + \rho
+\end{bmatrix}
+\begin{bmatrix}
+\rho\\
+\rho
+\end{bmatrix}
+\right\}^{1/2}\\
+&= \left\{
+\frac{1}{1-\rho^2}
+\begin{bmatrix}
+\rho^2 -\rho^3 -\rho^3 + \rho^2
+\end{bmatrix}
+\right\}^{1/2}\\
+&= \left\{
+\frac{2\rho^2(1-\rho)}{1-\rho^2}
+\right\}^{1/2}\\
+&= \left\{
+\frac{2\rho^2(1-\rho)}{(1-\rho)(1 + \rho)}
+\right\}^{1/2}\\
+&= \left\{
+\frac{2\rho^2}{1 + \rho}
+\right\}^{1/2}\\
+\end{aligned}
+\]
   
 ### Problem 5.15.
 For any distribution, let $E[X_2 | X_1 = x_1] = \alpha + \beta x_1$.  Show that $Corr[x_1, x_2] = \frac{\beta \sigma_1}{\sigma_2}$, where $\sigma_1$ and $\sigma_2$ represent the standard deviations of $X_1$ and $X_2$.  
@@ -200,13 +483,65 @@ has a $\chi^2$ distribution.  What are its parameters?
   
 -------
   
+We already know that
+\[
+\frac{1}{1-\rho^2}\left[
+\left(\frac{X_1 - \mu_1}{\sigma_1}\right)^2 - 2\rho\left(\frac{X_1 - \mu_1}{\sigma_1}\right)\left(\frac{X_2 - \mu_2}{\sigma_2}\right) - \left(\frac{X_2 - \mu_2}{\sigma_2}\right)^2
+\right] = (\mathbf{x}-\mu)'\mathbf{\Sigma}(\mathbf{x}-\mu)
+\]
+  
+But Result 5.3.3 also tells us that
+\[
+T=(\mathbf{x}-\mu)'\mathbf{\Sigma}(\mathbf{x}-\mu) \sim \chi^2_k
+\]
+  
+where $r=rank(\Sigma)$. Note that $\Sigma^{-1}$ is only defined if $\Sigma$ is full rank, so $r=2$.
+  
 ### Problem 5.21.  
   
-5.21-a.  Let $\mathbf{x} \sim N_k(\mathbf{\mu}, \mathbf{D})$, where $\mathbf{D} = diag(\sigma_1^2, ..., \sigma_k^2), \; rank(\mathbf{D}) = k$.  Find the mean and variance of the random variable $U = \mathbf{x' D}^{-1}\mathbf{x}$.  
+(a) Let $\mathbf{x} \sim N_k(\mathbf{\mu}, \mathbf{D})$, where $\mathbf{D} = diag(\sigma_1^2, ..., \sigma_k^2), \; rank(\mathbf{D}) = k$.  Find the mean and variance of the random variable $U = \mathbf{x' D}^{-1}\mathbf{x}$.  
   
-5.21-b.  Let $\mathbf{x} \sim N_k(\mathbf{\mu}, \mathbf{\Sigma})$, with $rank(\mathbf{\Sigma}) = k$.  What is the distribution of $U = (\mathbf{x} - \mathbf{\mu})' \mathbf{\Sigma}^{-1} (\mathbf{x} - \mathbf{\mu})$?  
+---
   
-5.21-c.  Assume that $\mathbf{x} \sim N_k(\mathbf{\mu}, \mathbf{D})$ distribution.  Suppose that 
+From Result 5.3.3, we know that $U=\mathbf{x}'\mathbf{D}^{-1}\mathbf{x} \sim \chi^2_{(k,\lambda)}$, where $\lambda = \frac{1}{2}\mu'\Sigma^{-1}\mu$ and $k=rank(\Sigma)$. From Result 5.3.4, we also know that $E[U] = k + 2\lambda$ and $Var[U] = 2(k+4\lambda)$. We just need to find $\lambda$.
+\[
+\begin{aligned}
+\lambda &= \frac{1}{2}\mu'\Sigma^{-1}\mu\\
+&=\frac{1}{2}
+\begin{bmatrix}
+\mu_1 & \mu_2 & \dots & \mu_k
+\end{bmatrix}
+\begin{bmatrix}
+\sigma_1^2 & 0 & \dots & 0\\
+0 & \sigma_2^2 & \dots & 0\\
+\vdots & \vdots & \ddots & \vdots\\
+0 & 0 & \dots & \sigma_k^2
+\end{bmatrix}
+\begin{bmatrix}
+\mu_1\\ \mu_2\\ \vdots \\ \mu_k
+\end{bmatrix}\\
+&=\frac{1}{2}\left(
+\frac{\mu_1^2}{\sigma^2_1} + \frac{\mu_2^2}{\sigma^2_2} + \dots + \frac{\mu_k^2}{\sigma^2_k}
+\right)\\
+&=\frac{1}{2}\sum_{i=1}^k\frac{\mu_i^2}{\sigma_i^2}
+\end{aligned}
+\]
+  
+Now,
+\[
+\begin{aligned}
+E[U] &= k + 2\frac{1}{2}\sum_{i=1}^k\frac{\mu_i^2}{\sigma_i^2} = \sum_{i=1}^k\frac{\mu_i^2}{\sigma_i^2}\\
+Var[U] &= 2\left(k + 4\frac{1}{2}\sum_{i=1}^k\frac{\mu_i^2}{\sigma_i^2}\right) = 2\left(k + 2\sum_{i=1}^k\frac{\mu_i^2}{\sigma_i^2}\right)
+\end{aligned}
+\]
+  
+(b) Let $\mathbf{x} \sim N_k(\mathbf{\mu}, \mathbf{\Sigma})$, with $rank(\mathbf{\Sigma}) = k$.  What is the distribution of $U = (\mathbf{x} - \mathbf{\mu})' \mathbf{\Sigma}^{-1} (\mathbf{x} - \mathbf{\mu})$?  
+  
+---
+  
+By Result 5.3.3, we know that $U = (\mathbf{x} - \mu)'\mathbf{\Sigma}^{-1}(\mathbf{x} - \mu) \sim \chi^2_k$
+  
+(c) Assume that $\mathbf{x} \sim N_k(\mathbf{\mu}, \mathbf{D})$ distribution.  Suppose that 
 \[
 \mathbf{A} = \mathbf{D}^{-1} - \frac{ \mathbf{D^{-1} 11' D^{-1}} }{\mathbf{1' D^{-1} 1}}
 \]
@@ -215,142 +550,217 @@ Find the distribution of $\mathbf{x' A x}$.
   
 -------
   
+If $AD$ is idempotent, then we can Result 5.4.5, which states that $U = \mathbf{x' A x} \sim \chi^2_{m,k}$, where $\lambda = \mu'A\mu/2$ and $m=rank(AD)$. Let's check:
+\[
+\begin{aligned}
+\mathbf{AD} &= \mathbf{D}^{-1} - \frac{ \mathbf{D^{-1} 11' D^{-1}} }{\mathbf{1' D^{-1} 1}}\mathbf{D}\\
+&= \mathbf{D}^{-1}\mathbf{D} - \frac{ \mathbf{D^{-1} 11' D^{-1}\mathbf{D}} }{\mathbf{1' D^{-1} 1}}\\
+&= \mathbf{I} - \frac{ \mathbf{D^{-1} 11'} }{\mathbf{1' D^{-1} 1}}\\
+\end{aligned}
+\]
+  
+Now we can check for idempotency:
+\[
+\begin{aligned}
+&\left(\mathbf{I} - \frac{\mathbf{D^{-1}11'}}{\mathbf{1' D^{-1} 1}}\right)\left(\mathbf{I} - \frac{\mathbf{D^{-1}11'}}{\mathbf{1'D^{-1}1}}\right)\\
+&=\mathbf{I} - 2\frac{\mathbf{D^{-1} 11'}}{\mathbf{1' D^{-1} 1}} + \frac{ \mathbf{D^{-1} 11'}}{\mathbf{1' D^{-1} 1}}\frac{ \mathbf{D^{-1} 11'}}{\mathbf{1' D^{-1} 1}}\\
+&=\mathbf{I} - 2\frac{\mathbf{D^{-1} 11'}}{\mathbf{1' D^{-1} 1}} + \frac{ \mathbf{D^{-1} 1(1'D^{-1} 1)1'}}{\mathbf{1' D^{-1} 1(1' D^{-1} 1)}}\\
+&=\mathbf{I} - 2\frac{\mathbf{D^{-1} 11'}}{\mathbf{1' D^{-1} 1}} + \frac{ \mathbf{D^{-1} 11'}}{\mathbf{1' D^{-1} 1}}\\
+&=\mathbf{I} - \frac{\mathbf{D^{-1} 11'}}{\mathbf{1' D^{-1} 1}}\\
+\end{aligned}
+\]
+  
+Thus, AD is idempotent, and we can use Result 5.4.5. We just need $m$, the rank of $AD$. Note that by the same logic used to show that AD is idempotent, we know that the second term in AD is itself idempotent, and so by Result 2.3.9 we know that $rank(AD) = rank(I_k-M)=k-tr(M) = k-1$, where $M$ is the second term of $AD$. $\lambda$ is given to us by Result 5.4.5 as $\mu'A\mu/2$.
+  
 ### Problem 5.28.
 Let $\mathbf{x} \sim N_k(\mathbf{0}, \mathbf{\Sigma})$, where $\mathbf{\Sigma} = \sigma^2[ (1 - \rho) \mathbf{I}_k + \rho \mathbf{I}_k], \; 0 \leq \rho < 1$.
   
-5.28-a.  Show that the distinct eigenvalues of $\mathbf{\Sigma}$ are $\lambda_1 = 1 - \rho$ with multiplicity $g_1 = k - 1$ and $\lambda_2 = 1 + (k - 1) \rho$ with multiplicity $g_2 = 1$.
+(a) Show that the distinct eigenvalues of $\mathbf{\Sigma}$ are $\lambda_1 = 1 - \rho$ with multiplicity $g_1 = k - 1$ and $\lambda_2 = 1 + (k - 1) \rho$ with multiplicity $g_2 = 1$.
   
-5.28-b.  Define $\mathbf{A}_1 = \mathbf{I}_k - \frac{\mathbf{J}_k}{k}$ and $\mathbf{A}_2 = \frac{\mathbf{J}_k}{k}$.
+---
   
-5.28-b-i.  Show that $\mathbf{A}_1$ and $\mathbf{A}_2$ are idempotent.
+(b) Define $\mathbf{A}_1 = \mathbf{I}_k - \frac{\mathbf{J}_k}{k}$ and $\mathbf{A}_2 = \frac{\mathbf{J}_k}{k}$.
   
-Let
+(b-i) Show that $\mathbf{A}_1$ and $\mathbf{A}_2$ are idempotent.
+  
+---
+  
+Let's first look at the idempotency of $A_1$. Note that if $\frac{1}{k}J_k$ is idempotent, then by Result 2.3.9 $I_k - \frac{1}{k}J_k$ is idempotent.
 \[
-\mathbf{a}_i = \begin{bmatrix}
-- \frac{1}{k} & - \frac{1}{k} & ... & - \frac{1}{k} & 1 - \frac{1}{k} & - \frac{1}{k} & ... & - \frac{1}{k}
-\end{bmatrix}'
+\frac{1}{k^2}J_kJ_k = \frac{1}{k}kJ_k = \frac{1}{k}J_k
 \]
   
-be the $i$th row of $\mathbf{A}_1$.  So $\mathbf{a}_i$ is a vector with $1 - \frac{1}{k}$ in the $i$th term, and $- \frac{1}{k}$ for all other terms.  
+so $A_1$ is idempotent. Naturally, $A_2$ is idempotent by the same logic.
   
-For the diagonal terms, we have:  
+(b-ii) Show that $\mathbf{A}_1 \mathbf{A}_2 = \mathbf{0}$.  
+  
+---
+  
+\[
+A_1A_2 = (I_k - \frac{1}{k}J_k)\frac{1}{k}J_k = \frac{1}{k}J_k - \frac{1}{k}J_k\frac{1}{k}J_k = \frac{1}{k}J_k - \frac{1}{k}J_k = 0
+\]
+  
+(b-iii) Show that $\Sigma = \lambda_1 \mathbf{A}_1 + \lambda_2 \mathbf{A}_2$. 
+  
+---
+  
+From part (a) we know that $\lambda_1 = \sigma^2(1-\rho)$ and $\lambda_2 = \sigma^2\big[1 + (k-1)\rho\big]$
 \[
 \begin{aligned}
-\mathbf{a}_i' \mathbf{a}_i &= \left( 1 - \frac{1}{k} \right)^2 + \frac{1}{k^2} + ... + \frac{1}{k^2}\\
-&= \left( 1 - \frac{1}{k} \right)^2 + \frac{k - 1}{k^2}\\
-&= 1 - \frac{2}{k} + \frac{1}{k^2} + \frac{k - 1}{k^2}\\
-&= 1 - \frac{2}{k} + \frac{k}{k^2}\\
-&= 1 - \frac{2}{k} + \frac{1}{k}\\
-&= 1 - \frac{1}{k}
+\lambda_1A_1 + \lambda_2A_2 &= \sigma^2(1-\rho)\left(I_k - \frac{1}{k}J_k\right) + \sigma^2(1 + (k-1)\rho)\frac{1}{k}J_k\\
+&= \sigma^2\left[
+(1-\rho)I_k - \frac{1}{k}J_k+\rho\frac{1}{k}J_k + \frac{1}{k}J_k + k\rho\frac{1}{k}J_k-\rho\frac{1}{k}J_k
+\right]\\
+&= \sigma^2\left[
+(1-\rho)I_k + k\rho\frac{1}{k}J_k
+\right]\\
+&= \sigma^2\left[
+(1-\rho)I_k + \rho J_k
+\right]\\
+&=\Sigma
 \end{aligned}
 \]
   
-For the off-diagonal terms (i.e. $i \neq j$), we have:  
-\[
-\begin{aligned}
-\mathbf{a}_i' \mathbf{a}_j &= - \frac{1}{k} \left( 1 - \frac{1}{k} \right) - \frac{1}{k} \left( 1 - \frac{1}{k} \right) + \frac{1}{k^2} + ... + \frac{1}{k^2}\\
-&= \left( - \frac{1}{k} + \frac{1}{k^2} \right) + \left( - \frac{1}{k} + \frac{1}{k^2} \right) + \frac{k - 2}{k^2}\\
-&= - \frac{2}{k} + \frac{k}{k^2}\\
-&= - \frac{2}{k} + \frac{1}{k}\\
-&= - \frac{1}{k}
-\end{aligned}
-\]
+(c) Let $Q_i = \frac{\mathbf{x'A}_i \mathbf{x}}{\lambda_i} \; i = 1, 2$.
   
-Both the diagonal terms and off-diagonal terms of the product $\mathbf{A}_1 \mathbf{A}_1$ match the original terms of $\mathbf{A}_1$, so $\mathbf{A}_1$ is idempotent.  
-
-
-Idempotency of $\mathbf{A}_2$:
+(c-i) Show that $Q_1$ and $Q_2$ have independent $\chi^2$ distributions.    
+---
   
-Let
-\[
-\mathbf{a}_i = \begin{bmatrix}
-\frac{1}{k} & \frac{1}{k} & ... & \frac{1}{k}
-\end{bmatrix}'
-\]
+We have $Q_1 = \frac{\mathbf{x'A}_1 \mathbf{x}}{\lambda_1}$ and $Q_2 = \frac{\mathbf{x'A}_2 \mathbf{x}}{\lambda_2}$
   
-be the $i$th row of the matrix $\mathbf{A}_2$.  Because every row and column of $\mathbf{A}_2$ is identical, then for all $i \in 1, ..., k$ and $j \in 1, ..., k$, we have: $\mathbf{a}_i' \mathbf{a}_j = \frac{1}{k^2} + \frac{1}{k^2} + ... + \frac{1}{k^2} = \frac{k}{k^2} = \frac{1}{k}$.  (That is, we get $k$ copies of $\frac{1}{k^2}$, which reduces back to $\frac{1}{k}$.)  
-   
-Applying this to the full matrix, we have:  
-\[
-\begin{aligned}
-\mathbf{A}_2 \mathbf{A}_2 &= 
-\begin{bmatrix}
-\frac{1}{k} & \frac{1}{k} & ... & \frac{1}{k} \\
-\frac{1}{k} & \frac{1}{k} & ... & \frac{1}{k} \\
-\vdots & \vdots & \ddots & \vdots \\
-\frac{1}{k} & \frac{1}{k} & ... & \frac{1}{k}
-\end{bmatrix}_{k \times k}
-\begin{bmatrix}
-\frac{1}{k} & \frac{1}{k} & ... & \frac{1}{k} \\
-\frac{1}{k} & \frac{1}{k} & ... & \frac{1}{k} \\
-\vdots & \vdots & \ddots & \vdots \\
-\frac{1}{k} & \frac{1}{k} & ... & \frac{1}{k}
-\end{bmatrix}_{k \times k}\\
-&=\begin{bmatrix}
-\frac{k}{k^2} & \frac{k}{k^2} & ... & \frac{k}{k^2}  \\
-\frac{k}{k^2} & \frac{k}{k^2} & ... & \frac{k}{k^2}  \\
-\vdots & \vdots & \ddots & \vdots  \\
-\frac{k}{k^2} & \frac{k}{k^2} & ... & \frac{k}{k^2}
-\end{bmatrix}_{k \times k}\\
-&=\begin{bmatrix}
-\frac{1}{k} & \frac{1}{k} & ... & \frac{1}{k} \\
-\frac{1}{k} & \frac{1}{k} & ... & \frac{1}{k} \\
-\vdots & \vdots & \ddots & \vdots \\
-\frac{1}{k} & \frac{1}{k} & ... & \frac{1}{k}
-\end{bmatrix}_{k \times k} = \mathbf{A}_2
-\end{aligned}
-\]
-Therefore, $\mathbf{A}_2$ is idempotent.
+(c-ii) Find the parameters of these distributions.  
   
-5.28-b-ii.  Show that $\mathbf{A}_1 \mathbf{A}_2 = \mathbf{0}$.  
-
-\[
-\begin{aligned}
-\mathbf{A}_1 \mathbf{A}_2 &=
-\begin{bmatrix} 1 - \frac{1}{k} & - \frac{1}{k} & ... & - \frac{1}{k}  \\ - \frac{1}{k} & 1 - \frac{1}{k} & ... & - \frac{1}{k}  \\ \vdots & \vdots & \ddots & \vdots  \\ - \frac{1}{k} & - \frac{1}{k} & ... & 1 - \frac{1}{k} \end{bmatrix}_{k \times k}
-\begin{bmatrix} \frac{1}{k} & \frac{1}{k} & ... & \frac{1}{k} \\ \frac{1}{k} & \frac{1}{k} & ... & \frac{1}{k} \\ \vdots & \vdots & \ddots & \vdots \\ \frac{1}{k} & \frac{1}{k} & ... & \frac{1}{k} \end{bmatrix}_{k \times k}
-\end{aligned}
-\]
-  
-For any term in the product, we have:  
-\[
-\begin{aligned}
-\mathbf{a}_{1i}' \mathbf{a}_{2j} &= \left( 1 - \frac{1}{k} \right) \frac{1}{k} - \frac{1}{k^2} - ... - \frac{1}{k^2}\\
-&= \left( \frac{1}{k} - \frac{1}{k^2} \right) - \frac{k - 1}{k^2}\\
-&= \frac{1}{k} - \frac{k}{k^2}\\
-&= \frac{1}{k} - \frac{1}{k} = 0
-\end{aligned}
-\]
-  
-Since this holds for all terms in the matrix, we have $\mathbf{A}_1 \mathbf{A}_2 = \mathbf{0}$.  
-  
-5.28-b-iii.  Show that $\Sigma = \lambda_1 \mathbf{A}_1 + \lambda_2 \mathbf{A}_2$.  
-\[
-\mathbf{\Sigma} = \sigma^2[ (1 - \rho) \mathbf{I}_k + \rho \mathbf{I}_k], \; 0 \leq \rho < 1
-\]
-  
-5.28-c.  Let $Q_i = \frac{\mathbf{x'A}_i \mathbf{x}}{\lambda_i} \; i = 1, 2$.  (i) Show that $Q_1$ and $Q_2$ have independent $\chi^2$ distributions.  (ii) Find the parameters of these distributions.  
-  
--------
+---
   
 ### Problem 5.29.
 Let $\mathbf{x} \sim N_k(\mathbf{\mu}, \mathbf{\Sigma})$, where $\mathbf{\mu} = \mu \mathbf{1}_k$ and $\mathbf{\Sigma} = \sigma^2 [(1 - \rho) \mathbf{I}_k + \rho \mathbf{1}_k \mathbf{1}_k' ] \; 0 \leq \rho < 1$.  
   
-5.29-a.  Derive the distributions of (i) $\bar{X} = \sum_{i = 1}^{k} \frac{X_i}{k}$ and (ii) $Q = \sum_{i = 1}^{k} \frac{(X_i - \bar{X})^2}{\sigma^2 (1 - \rho)}$.  
+(a) Derive the distributions of
+  
+(a-i) $\bar{X} = \sum_{i = 1}^{k} \frac{X_i}{k}$
+  
+---
+  
+By the Reproductive Property, we know that the sum of random normal variables is a random normal variable with
+\[
+E\bigg[\frac{1}{k}\sum_{i=1}^kX_i\bigg] = \frac{1}{k}E\bigg[\sum_{i=1}^kX_i\bigg] = \frac{1}{k}kE[X] = \mu
+\]
+  
+and
+\[
+\begin{aligned}
+Var\bigg[\frac{1}{k}\sum_{i=1}^kX_i\bigg] &= \frac{1}{k^2}Var\bigg[\sum_{i=1}^kX_i\bigg]\\
+&= \frac{1}{k^2}\sum_{i=1}^kVar[X_i]\\
+&= \frac{1}{k^2}\sum_{i=1}^k\Sigma_i\\
+&= \frac{\sigma^2}{k^2}\sum_{i=1}^k[(1-\rho)I_k + \rho J_k]\\
+\end{aligned}
+\]
+  
+Note that if we expand the matrix $[(1-\rho)I_k + \rho J_k]$, each diagonal element would be $\rho + (1-\rho) = 1$ and each $k-1$ non-diagonal element would be 1. That is, each row sums to $1 + (k-1)\rho$, and so
+\[
+Var(\bar X) = \frac{\sigma^2}{k^2}k(1 + (k-1)\rho) = \frac{\sigma^2}{k}[1 + (k-1)\rho]
+\]
+  
+(a-ii) $Q = \sum_{i = 1}^{k} \frac{(X_i - \bar{X})^2}{\sigma^2 (1 - \rho)}$.
+  
+---
+  
+Let $Q=\mathbf{x}'\mathbf{A}\mathbf{x}$, where
+\[
+A = \frac{I - \frac{1}{k}J_k}{\sigma^2(1-\rho)}
+\]
+  
+If we can show that $\Sigma A$ is idempotent, then we can use Result 5.4.5 to determine the distribution of Q. Let's check for idempotency:
+\[
+\begin{aligned}
+\Sigma A &= \sigma^2[(1-\rho)I_k + \rho J_k]\frac{I_k - \frac{1}{k}J_k}{\sigma^2(1-\rho)}\\
+&= \frac{1}{(1-\rho)}[(1-\rho)I_k + \rho J_k](I_k - \frac{1}{k}J_k)\\
+&= \frac{1}{(1-\rho)}[(1-\rho)I_kI_k - \frac{1}{k}(1-\rho)I_kJ_k + \rho J_kI_k - \rho\frac{1}{k}J_kJ_k]\\
+&= \frac{1}{(1-\rho)}[(1-\rho)I_kI_k - \frac{1}{k}(1-\rho)I_kJ_k]\\
+&= [I_k - \frac{1}{k}J_k]\\
+\end{aligned}
+\]
+  
+We already know that $\frac{1}{k}J_k$ is idempotent, so by Result 2.3.9 $\Sigma A$ is also idempotent (with rank $k-1$). Therefore, we know that $Q \sim \chi^2_{k-1}$. Now we just need to find $\lambda$.
+\[
+\begin{aligned}
+\lambda &= \frac{(\mu\mathbf{1})'A(\mu\mathbf{1})}{2}\\
+&=\frac{\mu^2}{2}\frac{\mathbf{1}'(I_k - \frac{1}{k}J_k)\mathbf{1}}{\sigma^2(1 - \rho)}\\
+&=\frac{\mu^2}{2\sigma^2(1 - \rho)}\mathbf{1}'(I_k - \frac{1}{k}J_k)\mathbf{1}\\
+&=\frac{\mu^2}{2\sigma^2(1 - \rho)}(\mathbf{1}'I_k\mathbf{1} - \frac{1}{k}\mathbf{1}'J_k\mathbf{1})\\
+&=\frac{\mu^2}{2\sigma^2(1 - \rho)}(\mathbf{1}'\mathbf{1} - \frac{1}{k}kk)\\
+&=\frac{\mu^2}{2\sigma^2(1 - \rho)}(k - k)\\
+&=0
+\end{aligned}
+\]
+  
+Therefore, we have that $Q \sim \chi^2_{k-1}$
   
 5.29-b.  Verify that $\bar{X}$ is distributed independently of $Q$.  
   
--------
+---
+  
+From Result 5.4.6 we know that is $B\Sigma A = 0$ then $Bx$ and $x'A x$ are independent.
+\[
+B\Sigma A = \frac{1}{k}1'\big(I_k - \frac{1}{k}J_k\big) = \frac{1}{k}1' - \frac{1}{k^2}k1' = 0
+\]
+  
+so $\bar X$ and $Q$ are independent.
   
 ### Problem 5.30.
 Let $\mathbf{x} \sim N_k( \mathbf{\Sigma \mu}, \sigma^2 \mathbf{\Sigma})$, where $\mathbf{\Sigma}$ is a symmetric matrix of rank $k$, $\sigma^2 > 0$, and $\mathbf{\mu}$ is a fixed vector.  Let $\mathbf{B} = \mathbf{\Sigma}^{-1} - \mathbf{\Sigma}^{-1} \mathbf{1}_k (\mathbf{1}_k' \mathbf{\Sigma}^{-1} \mathbf{1}_k)^{-1} \mathbf{1}_k' \mathbf{\Sigma}^{-1}$.  
   
-5.30-a.  Derive the distribution of $\mathbf{y} = \mathbf{Bx}$.  
+(a) Derive the distribution of $\mathbf{y} = \mathbf{Bx}$.  
   
-5.30-b.  Derive the distribution of $\mathbf{y' \Sigma y}$ when (i) $\mathbf{\mu} = \mathbf{0}$, and (ii) $\mathbf{\mu} \neq \mathbf{0}$.  
-
-
-
+---
+  
+From Result 5.2.6 we have that if $\mathbf{x} \sim N_k(\mu,\Sigma)$ and $r(\Sigma) = r \le k$, then
+\[
+\mathbf{y} = \mathbf{Bx} + \mathbf{b} \sim N_q(\mathbf{B}\mu + \mathbf{b},\mathbf{B}\Sigma\mathbf{B}')
+\]
+  
+If we consider the case where $\mathbf{b} = 0$, we see that
+\[
+M_y(\mathbf{t}) = E\big[\exp(\mathbf{t'y})\big] = E\big[\exp(\mathbf{t'\mathbf{Bx}})\big]=M_{\mathbf{x}}(\mathbf{B't}) = \exp\big(\mathbf{t'B}\mu + \frac{1}{2}\mathbf{t'B\Sigma B't}\big)
+\]
+  
+that is, the mgf of a normal vector with mean $\mathbf{B}\mu$ and variance-covariance matrix $\mathbf{B\Sigma B'}$. If we substitute for the given mean and variance of $\mathbf{x}$, we have
+\[
+\mathbf{y} \sim N_k(\mathbf{B\Sigma}\mu,\sigma^2\mathbf{B\Sigma B'})
+\]
+  
+(b) Derive the distribution of $\mathbf{y' \Sigma y}$ when (i) $\mathbf{\mu} = \mathbf{0}$, and (ii) $\mathbf{\mu} \neq \mathbf{0}$.  
+  
+---
+  
+We are given $\mathbf{B}$, and to show it is symmetric we take its transpose:
+\[
+\begin{aligned}
+\mathbf{B'} &= \big[\mathbf{\Sigma}^{-1} - \mathbf{\Sigma}^{-1}\mathbf{1}_k(\mathbf{1'_k\Sigma^{-1}1_k})^{-1}\mathbf{1'_k\Sigma^{-1}}\big]'\\
+& = (\mathbf{\Sigma}^{-1})' - (\mathbf{\Sigma}^{-1})'\mathbf{1}_k[(\mathbf{1}'_k\mathbf{\Sigma^{-1}}\mathbf{1}_k)^{-1}]'\mathbf{1}_k'(\mathbf{\Sigma}^{-1})'\\
+& = \mathbf{\Sigma}^{-1} - \mathbf{\Sigma}^{-1}\mathbf{1}_k[(\mathbf{1}'_k\mathbf{\Sigma^{-1}}\mathbf{1}_k)^{-1}]'\mathbf{1}_k'\mathbf{\Sigma}^{-1}\\
+\end{aligned}
+\]
+  
+so $\mathbf{B}$ is symmetric. Next we want to show that $\mathbf{B\Sigma}$ is idempotent. First let's find $\mathbf{B\Sigma}$:
+\[
+\mathbf{B\Sigma} = \big[\mathbf{\Sigma}^{-1} - \mathbf{\Sigma}^{-1}\mathbf{1}_k(\mathbf{1'_k\Sigma^{-1}1_k})^{-1}\mathbf{1'_k\Sigma^{-1}}\big]\mathbf{\Sigma}=\mathbf{I} - \mathbf{\Sigma}^{-1}\mathbf{1}_k(\mathbf{1'_k\Sigma^{-1}1_k})^{-1}\mathbf{1'_k}
+\]
+  
+Now we can check if it's idempotent:
+\[
+\begin{aligned}
+\mathbf{B\Sigma B\Sigma}&= \big[I - \mathbf{\Sigma}^{-1}\mathbf{1}_k(\mathbf{1'_k\Sigma^{-1}1_k})^{-1}\mathbf{1'_k}\big]\big[I - \mathbf{\Sigma}^{-1}\mathbf{1}_k(\mathbf{1'_k\Sigma^{-1}1_k})^{-1}\mathbf{1'_k}\big]\\
+&= I - 2\mathbf{\Sigma}^{-1}\mathbf{1}_k(\mathbf{1'_k\Sigma^{-1}1_k})^{-1}\mathbf{1'_k} + \mathbf{\Sigma}^{-1}\mathbf{1}_k(\mathbf{1'_k\Sigma^{-1}1_k})^{-1}\mathbf{1'_k}\mathbf{\Sigma}^{-1}\mathbf{1}_k(\mathbf{1'_k\Sigma^{-1}1_k})^{-1}\mathbf{1'_k}\\
+&= I - 2\mathbf{\Sigma}^{-1}\mathbf{1}_k(\mathbf{1'_k\Sigma^{-1}1_k})^{-1}\mathbf{1'_k} + \mathbf{\Sigma}^{-1}\mathbf{1}_k(\mathbf{1'_k\Sigma^{-1}1_k})^{-1}\mathbf{1'_k}\\
+&= I - \mathbf{\Sigma}^{-1}\mathbf{1}_k(\mathbf{1'_k\Sigma^{-1}1_k})^{-1}\mathbf{1'_k}\\
+&=\mathbf{B\Sigma}\\
+\end{aligned}
+\]
+  
+so $\mathbf{B\Sigma}$ is idempotent.
+  
+Now we can find the distribution of $\mathbf{y'\Sigma y}$.
 
 
 
