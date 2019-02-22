@@ -1,0 +1,600 @@
+---
+title: "STAT 665 Midterm"
+author: "Maggie Buffum"
+date: "February 21, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library(pracma)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Problem 1
+Suppose that $\mathbf{X} = (X_1,X_2,X_3)'$ is a trivariate normal random vector with the moment generating function
+\[
+m(\mathbf{t}) = \exp\left(t_1 - t_2 + 2t_3 + t_1^2 + \frac{1}{2}t_2^2 + 2t_3^2 - \frac{1}{2}t_1t_2 - t_1t_3\right),\ \mathbf{t} \in \mathcal{R}^3
+\]
+  
+Let $\bar{X} = (X_1 + X_2 + X_3)/3$. Find the distribution of $X_1$, conditional on $\bar{X} = 6$.
+  
+---
+  
+From the mgf we find $\mu$ and $\Sigma$ by recalling that the mgf of a multivariate normal random variable takes the form
+\[
+M_X(\mathbf{t}) = \exp\{\mathbf{t}'\mu + \frac{1}{2}\mathbf{t}'\Sigma\mathbf{t}\}
+\]
+  
+Clearly,
+\[
+\mu = \begin{bmatrix}
+1\\-1\\2
+\end{bmatrix}
+\]
+  
+and
+\[
+\Sigma = \begin{bmatrix}
+2 & -\frac{1}{2} & -1\\
+-\frac{1}{2} & 1 & 0\\
+-1 & 0 & 4
+\end{bmatrix}
+\]
+  
+We need to find the conditional probability of $X_1$ given $\bar{X} = 6$. From Result 5.2.6 we know that $[X_1,\bar{X}]'\sim N(\mathbf{B}\mu,\mathbf{B\Sigma B'})$. We can rewrite $\bar{X}$ as $\frac{1}{3}X_1 + \frac{1}{3}X_2 + \frac{1}{3}X_3$ such that
+\[
+\begin{aligned}
+\begin{bmatrix}
+X_1\\ \bar{X}
+\end{bmatrix}=
+\begin{bmatrix}
+X_1\\
+\frac{1}{3}X_1 + \frac{1}{3}X_2 + \frac{1}{3}X_3
+\end{bmatrix}&=
+\begin{bmatrix}
+1 &0 &0\\
+\frac{1}{3} & \frac{1}{3} & \frac{1}{3}
+\end{bmatrix}
+\begin{bmatrix}
+X_1\\X_2\\X_3
+\end{bmatrix}
+\end{aligned}
+\]
+  
+Solving for $\mathbf{B}\mu$ we get
+\[
+\begin{bmatrix}
+1 &0 &0\\
+\frac{1}{3} & \frac{1}{3} & \frac{1}{3}
+\end{bmatrix}
+\begin{bmatrix}
+1 \\ -1 \\ 2
+\end{bmatrix} = 
+\begin{bmatrix}
+1\\ \frac{2}{3}
+\end{bmatrix}
+\]
+  
+and
+\[
+\mathbf{B\Sigma B'}=
+\begin{bmatrix}
+1 &0 &0\\
+\frac{1}{3} & \frac{1}{3} & \frac{1}{3}
+\end{bmatrix}
+\begin{bmatrix}
+2 & -\frac{1}{2} & -1\\
+-\frac{1}{2} & 1 & 0\\
+-1 & 0 & 4
+\end{bmatrix}
+\begin{bmatrix}
+1 & \frac{1}{3}\\
+0 & \frac{1}{3}\\
+0 & \frac{1}{3}\\
+\end{bmatrix} =
+\begin{bmatrix}
+2 & \frac{1}{6}\\
+\frac{1}{6} & \frac{4}{9}
+\end{bmatrix}
+\]
+  
+From Result 5.2.10 we know that if $\mathbf{x} \sim N_k(\mu,\Sigma)$ with rank of $\Sigma$ k, then the conditional distribution of $x_1$ given that $x_2 = c_2$ is multivariate normal with mean vector
+\[
+\mu_{1.2} = \mu_1 + \Sigma_{12}\Sigma_{22}^{-1}(\mathbf{c_2} - \mu_2)
+\]
+  
+and
+\[
+\Sigma_{11.2} = \Sigma_{11} - \Sigma_{12}\Sigma_{22}^{-1}\Sigma_{21}
+\]
+  
+We can partition $\mathbf{x}$, $\mathbf{B}\mu$, and $\mathbf{B}'\Sigma\mathbf{B}$ as
+\[
+\begin{bmatrix}
+X_1\\
+\hline
+\bar{X}
+\end{bmatrix},\ 
+\begin{bmatrix}
+1\\ \hline \frac{2}{3}
+\end{bmatrix},\ 
+\left[
+\begin{array}{c|c}
+2 & \frac{1}{6}\\
+\hline
+\frac{1}{6} & \frac{4}{9}
+\end{array}
+\right].
+\]
+  
+Plugging into Result 5.2.10 we have that the distribution of $X_1$ given $\bar{X}=6$ is normal with mean
+\[
+\mu_{1.2} = 1 + (\frac{1}{6})(\frac{4}{9})^{-1}(6 - \frac{2}{3}) = 1 + \frac{9}{24}\frac{16}{3} = 1 + 2 = 3
+\]
+  
+and variance
+\[
+\Sigma_{11.2} = 2 - (\frac{1}{6})(\frac{4}{9})^{-1}(\frac{1}{6}) = 2 - \frac{9}{24}\frac{1}{6} = 2 - \frac{1}{16} = \frac{31}{16}
+\]
+```{r,include=FALSE}
+mu <- matrix(c(
+  1,-1,2
+),nrow = 3)
+
+sigma <- matrix(c(
+  2,-1/2,-1,
+  -1/2,1,0,
+  -1,0,4
+),nrow = 3)
+
+B <- matrix(c(
+  1,0,0,
+  rep(1/3,3)
+),nrow = 2,byrow = T)
+
+Bmu <- B %*% mu
+
+BsigmaB <- B %*% sigma %*% t(B)
+
+
+
+```
+  
+## Problem 2
+Suppose that $\mathbf{Y} = X\mathbf{\beta} + \mathbf{\epsilon}$, where $\mathbf{\epsilon}$ are $N(\mathbf{0},\sigma^2\mathbf{I})$. The design matrix is given as follows:
+\[
+\mathbf{X}=
+\begin{bmatrix}
+1&1&1\\
+1&1&0\\
+1&1&1\\
+1&0&0\\
+1&0&1\\
+1&0&0\\
+\end{bmatrix}
+\]
+  
+(a) Compute the rank of $P=X(X'X)^{-1}X'$.
+  
+---
+  
+Solving for $P_X$, we get
+  
+```{r}
+X <- matrix(c(
+  rep(1,6),rep(1,3),rep(0,3),rep(c(1,0),3)
+),nrow = 6,byrow = F)
+
+P_X <- X %*% solve(t(X) %*% X) %*% t(X)
+print(P_X)
+```
+  
+After row reduction, we have the following matrix, which has 3 linearly independent columns, and thus a rank of 3.
+  
+```{r}
+rref(P_X)
+```
+  
+(b) Compute the rank of $Q = I-P$.
+  
+---
+  
+We know that $P_X$ is idempotent, so $I_n - P_X$ is also idempotent with rank equal to $n - tr(P_X)=n - rank(P_X) = 6 - 3 = 3$ (by Result 2.3.9). So the rank of $Q$ is 3.
+  
+(c) If $\rho(Q)$ is the rank of $Q$, prove that $\mathbf{Y}'Q\mathbf{Y}/\rho(Q)$ is an unbiased estimator of $\sigma^2$, where $\mathbf{Y} = (Y_1,\dots,Y_6)'$.
+  
+---
+  
+As a result of Exercise 5.23, we have that $E(\mathbf{x'Ax})= tr(\mathbf{A}\Sigma) + \mu'\mathbf{A}\mu$. Therefore,
+\[
+E[\mathbf{Y}'Q\mathbf{Y}/\rho(Q)]=\frac{1}{\rho(Q)}E[\mathbf{Y}'Q\mathbf{Y}] = \frac{1}{\rho(Q)}\big[tr(Q\Sigma) + \mu'Q\mu\big]
+\]
+  
+Note that $Var(\mathbf{Y}) = Var(\mathbf{X}\beta + \epsilon) = Var(\epsilon) = \mathbf{I}\sigma^2$ and $\mu = E[\mathbf{Y}] = E[\mathbf{X}\beta + \epsilon] + E[\mathbf{X}\beta] + E[\epsilon] =\mathbf{X}\beta$.
+  
+Now we have
+\[
+\begin{aligned}
+E[\mathbf{Y}'Q\mathbf{Y}/\rho(Q)]&= \frac{1}{\rho(Q)}\big[tr(Q\Sigma) + \mu'Q\mu\big]\\
+&=\frac{1}{3}\big[tr(QI\sigma^2) + (X\beta)'(I - P)X\beta\big]\\
+&=\frac{1}{3}\big[tr(Q\sigma^2) + \beta'X'X\beta - \beta'X'PX\beta\big]\\
+&\text{Recalling that }PX = X,\\
+&=\frac{1}{3}\big[\sigma^2tr(Q) + \beta'X'X\beta - \beta'X'X\beta\big]\\
+&=\frac{1}{3}\big[3\sigma^2\big]\\
+&=\sigma^2
+\end{aligned}
+\]
+  
+Since $E\left[\frac{\mathbf{Y}'Q\mathbf{Y}}{\rho(Q)}\right] = \sigma^2$, $\frac{\mathbf{Y}'Q\mathbf{Y}}{\rho(Q)}$ is an unbiased estimator for $\sigma^2$.
+  
+## Problem 3
+Suppose that $X_1,X_2,$ and $X_3$ are iid $N(0,1)$.
+  
+(a) Find the distribution of $Q$, where
+\[
+Q = \frac{1}{6}\left(5x_1^2 + 2x_2^2 + 5x_3^2 + 4x_1x_2 - 2x_1x_3 + 4x_2x_3\right)
+\]
+  
+---
+  
+We can write $Q$ as
+\[
+\begin{aligned}
+Q &= \mathbf{x'Ax} =
+\begin{bmatrix}
+x_1 & x_2 & x_3
+\end{bmatrix}
+\begin{bmatrix}
+a_{11} & a_{12} & a_{13}\\
+a_{21} & a_{22} & a_{23}\\
+a_{31} & a_{32} & a_{33}
+\end{bmatrix}
+\begin{bmatrix}
+x_1 \\ x_2 \\ x_3
+\end{bmatrix}\\
+&=\begin{bmatrix}
+x_1a_{11} + x_2a_{21} + x_3a_{31} & x_1a_{12} + x_2a_{22} + x_3a_{32} & x_1a_{13} + x_2a_{23} + x_3a_{33}
+\end{bmatrix}
+\begin{bmatrix}
+x_1 \\ x_2 \\ x_3
+\end{bmatrix}\\
+&=
+x_1^2a_{11} + x_2^2a_{22} + x_3^2a_{33} + x_1x_2(a_{21} + a_{12}) + x_1x_3(a_{31} + a_{13}) + x_2x_3(a_{32} + a_{23})\\
+\end{aligned}
+\]
+  
+which implies that
+\[
+A=\frac{1}{6}
+\begin{bmatrix}
+5&2&-1\\
+2&2&2\\
+-1&2&5
+\end{bmatrix}
+\]
+  
+If $A$ is idempotent, we can use Result 5.4.1. Let's check:
+  
+```{r}
+A <- matrix(c(
+  5/6,2/6,-1/6,
+  2/6,2/6,2/6,
+  -1/6,2/6,5/6
+),nrow = 3)
+A
+A%*%A
+```
+  
+Since $A$ is idempotent, we can use Result 5.4.1 to show that $Q ~ \chi^2_m$, where $m=rank(A)$ which, in this case, is 2 (see A in row-reduced Echelon form below).
+  
+```{r}
+rref(A)
+```
+  
+Therefore, $Q \sim \chi^2_2$.
+  
+(b) Find the distribution of $Y$ and $Var(Y)$, where
+\[
+Y=4x_1^2 + 3x_2^2 + 4x_3^2 + 2\sqrt{2}x_2x_3.
+\]
+  
+(Hint: Express $Y$ as a quadratic form with a matrix being nonidempotent. Try to use a famous theorem to represent the matrix in the quadratic form as a linear combination of some matrices.)
+  
+---
+  
+Similar to part (a), we can express $Y$ as
+\[
+Y = \mathbf{x'Ax}
+\]
+  
+where
+\[
+\mathbf{A} =
+\begin{bmatrix}
+4 & 0 & 0\\
+0 & 3 & \sqrt{2}\\
+0 & \sqrt{2} & 4
+\end{bmatrix}
+\]
+  
+```{r}
+A <- matrix(c(
+  4,0,0,
+  0,3,sqrt(2),
+  0,sqrt(2),4
+),nrow = 3)
+
+A%*%A
+```
+  
+Clearly, $A$ is not idempotent. Instead, let's consider the spectral decomposition theorem, since $A$ is symmetric. Using this theorem we can rewrite $\mathbf{Y}$ as
+\[
+\begin{aligned}
+Y &= x'Ax\\
+&= x'(\lambda_1p_1p_1' + \lambda_2p_2p_2' + \lambda_3p_3p_3')x\\
+&= x'(\lambda_1p_1p_1')x + x'(\lambda_2p_2p_2')x + x'(\lambda_3p_3p_3')x\\
+&= \lambda_1x'(p_1p_1')x + \lambda_2x'(p_2p_2')x + \lambda_3x'(p_3p_3')x\\
+\end{aligned}
+\]
+  
+where $p_k$ are the eigenvectors for corresponding $\lambda_k$. Note that $p_ip_i'$ are $3\times 3$ orthongal, idempotent matrices of rank 1. Using Result 5.4.1 we know that since $p_ip_i'$ are idempotent and $X \sim iid\ N(0,1)$, $x_i'(p_ip_i')x_i$ are $\chi^2_1$ independent random variables.
+  
+Let's determine the distribution of $\lambda_1(x_i'p_ip_i'x) = \lambda(x'pp'x)$. Let $y = \lambda x$. Then $x = y/\lambda$, and $\frac{dx}{dy}\frac{y}{\lambda} = \frac{1}{\lambda}$. The distribution of $y$ is
+\[
+f_Y(y) = \frac{\left(\frac{y}{\lambda}\right)^{1/2 - 1}e^{-(1/2)(y/\lambda)}\frac{1}{\lambda}}{\Gamma\left(\frac{1}{2}\right)2^{1/2}} = \frac{y^{1/2 - 1}e^{-(y/2\lambda)}}{\Gamma\left(\frac{1}{2}\right)(2\lambda)^{1/2}},
+\]
+  
+that is, $Y \sim Gamma(\frac{1}{2}, 2\lambda)$. Now we have the sum of three independent Gamma($\frac{1}{2},2\lambda_i$), with $\lambda_1 = 5,\lambda_2=4,\lambda_3=2$. Since they do not have the same scale parameter (since $\lambda_i$s are unique), they don't form a known distribution. But they are independent, making the variance of $\mathbf{Y}$ easy to calculate:
+\[
+\begin{aligned}
+Var(\mathbf{Y}) &= Var(Y_1) + Var(Y_2) + Var(Y_3)\\
+&= \frac{1}{2}(2\lambda_1)^2 + \frac{1}{2}(2\lambda_2)^2 + \frac{1}{2}(2\lambda_3)^2\\
+&= 2\sum_{i=1}^3\lambda_i^2
+\end{aligned}
+\]
+  
+```{r}
+eig(A)
+```
+  
+The eigenvalues of $\mathbf{A}$ are 5, 4, and 2, giving us
+\[
+Var(\mathbf{Y})= 2\sum_{i=1}^3\lambda_i^2 = 2(5^2 + 4^2 + 2^2) = 90.
+\]
+  
+## Problem 4
+Consider the two-way crossed classification model without interaction with exactly one observation per cell, i.e.,
+\[
+y_{ij} = \mu + \alpha_i + \beta_j + d_{ij},\ (i=1,\dots,p;\ j=1,\dots,q).
+\]
+  
+Suppose further that $\mathbf{d} = \{d_{ij}\}$ has a multivariate normal distribution with mean vector $\mathbf{0}$ and variances and covariances given by
+\[
+\begin{aligned}
+cov(d_{ij},d_{i\prime,j\prime}) &= \lambda + 2\gamma_i,&\text{if }i'=i\text{ and }j'=j\\
+&=\gamma_i + \gamma_{i\prime}, &\text{ if }i'\ne i\text{ and }j'=j\\
+&=0, &\text{if }j' \ne j.
+\end{aligned}
+\]
+  
+Here, $\lambda$ and $\gamma_i$ are known quantities satisfying $\lambda > 0$ and $\lambda + 2\gamma_i > 0$, for all $i$.
+  
+(a) Express $q\sum_{i=1}^p (\bar{y}_{i.} - \bar{y}_{..})^2$ as a quadratic form in the vector $\mathbf{z}$, where $\mathbf{z}'=(\bar{y}_1,\dots,\bar{y}_p)$.
+  
+---
+  
+Let's expand $q\sum_{i=1}^p (\bar{y}_{i.} - \bar{y}_{..})^2$:
+\[
+\begin{aligned}
+q\sum_{i=1}^p (\bar{y}_{i.} - \bar{y}_{..})^2 &= q\sum_{i=1}^p \left(\bar{y}_{i.}^2 + \bar{y}_{..}^2 - 2\bar{y}_{i.}\bar{y}_{..}\right)\\
+&= q\left[\sum_{i=1}^p\bar{y}_{i.}^2 + \sum_{i=1}^p\bar{y}_{..}^2 - \sum_{i=1}^p2\bar{y}_{i.}\bar{y}_{..}\right]\\
+&= q\left[\sum_{i=1}^p\bar{y}_{i.}^2 + p\bar{y}_{..}^2 - 2p\bar{y}_{..}^2\right]\\
+&= q\left[\sum_{i=1}^p\bar{y}_{i.}^2 - p\bar{y}_{..}^2\right]\\
+\end{aligned}
+\]
+  
+We are looking for some matrix $\mathbf{A}$ such that $\mathbf{z'Az} = q\left[\sum_{i=1}^p\bar{y}_{i.}^2 - p\bar{y}_{..}^2\right]$. Consider $\mathbf{A} = \mathbf{B} - \mathbf{C}$ such that $\mathbf{z'Az} = \mathbf{z'}q\mathbf{(B-C)z}$. Note that
+\[
+\mathbf{z'I_pz} =
+\begin{bmatrix}
+\bar{y}_{1.} & \bar{y}_{2.} & \dots & \bar{y}_{p.}
+\end{bmatrix}I_p
+\begin{bmatrix}
+\bar{y}_{1.} \\ \bar{y}_{2.} \\ \vdots \\ \bar{y}_{p.}
+\end{bmatrix}=
+\bar{y}_{1.}^2 + \bar{y}_{2.}^2 + \dots + \bar{y}_{p.}^2 = \sum_{i=1}^p\bar{y}_{i.}
+\]
+  
+and
+\[
+\begin{aligned}
+\mathbf{z'\frac{1}{p}J_pz} &=
+\begin{bmatrix}
+\bar{y}_{1.} & \bar{y}_{2.} & \dots & \bar{y}_{p.}
+\end{bmatrix}\frac{1}{p}J_pz
+\begin{bmatrix}
+\bar{y}_{1.} \\ \bar{y}_{2.} \\ \vdots \\ \bar{y}_{p.}
+\end{bmatrix}\\
+&=\frac{1}{p}
+\begin{bmatrix}
+\sum_{i=1}^p\bar{y}_{i.} & \sum_{i=1}^p\bar{y}_{i.} & \dots & \sum_{i=1}^p\bar{y}_{i.}
+\end{bmatrix}
+\begin{bmatrix}
+\bar{y}_{1.} \\ \bar{y}_{2.} \\ \vdots \\ \bar{y}_{p.}
+\end{bmatrix}\\
+&=\frac{1}{p}\sum_{i=1}^p\bar{y}_{i.}
+\begin{bmatrix}
+1&1&\dots&1
+\end{bmatrix}
+\begin{bmatrix}
+\bar{y}_{1.} \\ \bar{y}_{2.} \\ \vdots \\ \bar{y}_{p.}
+\end{bmatrix}\\
+&=\frac{1}{p}\sum_{i=1}^p\bar{y}_{i.}\times \sum_{i=1}^p\bar{y}_{i.}\\
+&=p\bar{y}_{..}^2
+\end{aligned}
+\]
+  
+Therefore, $q\sum_{i=1}^p(\bar{y}_{i.} - \bar{y}_{..})^2=\mathbf{z'}q\mathbf{(I_p - \frac{1}{p}J_p)z}$.
+  
+(b) Obtain the covariance matrix of $\mathbf{z}$.
+  
+---
+  
+To begin, let's look at the full model variance-covariance matrix, based on the description of $cov(d_{ij},d_{i'j'})$ given to us. We know that within each $q\times q$ submatrix where $i=i'$, that is, the submatrices along the diagonal, the covariance is $\lambda + 2\gamma_i$ whenever $j=j'$, giving us $(\lambda + 2\gamma_i)I_q$ submatrices along the diagonal. The off-diagonal $q\times q$ partitions include all cases where $i\ne i'$. Within these off-diagonal submatrices,  the covariance is $(\gamma_i + \gamma_{i'})I_q$. For all submatrices, the covariance is 0 whenever $j\ne j'$, which is why each submatrix is a scalar multiplied by the identity matrix.
+\[
+\left[
+\begin{array}{cccc}
+(\lambda + 2\gamma_1)I_q & (\gamma_1 + \gamma_2)I_q&\dots&(\gamma_1 + \gamma_p)I_q\\
+(\gamma_2 + \gamma_1)I_q & (\lambda + 2\gamma_2)I_q&\dots&(\gamma_2 + \gamma_p)I_q\\
+\vdots&\vdots&\ddots&\vdots\\
+(\gamma_p + \gamma_1)I_q&(\gamma_p + \gamma_2)I_q&\dots&(\lambda + 2\gamma_p)I_q
+\end{array}
+\right]_{pq\times pq}
+\]
+  
+But we want to find the covariance of $\mathbf{z}' = [\bar{y}_{1.},\bar{y}_{2.},\dots,\bar{y}_{p.}]'$. Because $\bar{y}_{i.}$ is the sum across all $q$ within group $i$, and $\mathbf{y}$ is normally distributed (since its variation comes from the $d_{ij}$s), $\bar{y}_{i.}$s will be normally distributed (the reproductive property) with the following vaiance-covariance structure:
+\[
+Cov(\bar{Y}_{i.},\bar{Y}_{i'.})=\frac{1}{q}
+\left[
+\begin{array}{cccc}
+\lambda + 2\gamma_1 & \gamma_1 + \gamma_2&\dots&\gamma_1 + \gamma_p\\
+\gamma_2 + \gamma_1 & \lambda + 2\gamma_2&\dots&\gamma_2 + \gamma_p\\
+\vdots&\vdots&\ddots&\vdots\\
+\gamma_p + \gamma_1&\gamma_p + \gamma_2&\dots&\lambda + 2\gamma_p
+\end{array}
+\right]_{p\times p}
+\]
+  
+(c) Show that $q\sum_{i=1}^p(\bar{y}_{i.} - \bar{y}_{..})^2$ is distributed as a scalar of a noncentral chi-square random variable, and determine the noncentrality parameter. You may assume that the covariance matrix of $\mathbf{z}$ is positive definite.
+  
+---
+  
+By Result 5.4.5, if we can show that $q\mathbf{(I_p - \frac{1}{p}J_p)\Sigma_{z}}$ is idempotent, then $q\sum_{i=1}^p(\bar{y}_{i.} - \bar{y}_{..})^2$ has a noncentral chi-square distribution. Note that $\Sigma_z$ can be rewritten as $\lambda \mathbf{I} + \mathbf{1}\mathbf{\gamma'} + \mathbf{\gamma}\mathbf{1'}$.
+  
+Let's check for idempotency by first simplifying $A\Sigma_z$:
+\[
+\begin{aligned}
+\mathbf{A\Sigma_z}&=
+q(\mathbf{I_p} - \frac{1}{p}\mathbf{J_p})\frac{1}{q}(\lambda \mathbf{I_p} + \mathbf{1}\mathbf{\gamma'} + \mathbf{\gamma}\mathbf{1'})\\
+&=\lambda \mathbf{I_p} + \mathbf{1}\mathbf{\gamma'} + \mathbf{\gamma}\mathbf{1'} - \frac{1}{p}\mathbf{J_p}\lambda \mathbf{I_p} - \frac{1}{p}\mathbf{J_p}\mathbf{1}\mathbf{\gamma'} - \frac{1}{p}\mathbf{J_p}\mathbf{\gamma}\mathbf{1'}\\
+&=\lambda \mathbf{I_p} + \mathbf{1}\mathbf{\gamma'} + \mathbf{\gamma}\mathbf{1'} - \frac{1}{p}\mathbf{J_p}\lambda \mathbf{I_p} - \frac{1}{p}\mathbf{11'}\mathbf{1}\mathbf{\gamma'} - \frac{1}{p}\mathbf{J_p}\mathbf{\gamma}\mathbf{1'}\\
+&=\lambda \mathbf{I_p} + \mathbf{1}\mathbf{\gamma'} + \mathbf{\gamma}\mathbf{1'} - \frac{1}{p}\mathbf{J_p}\lambda \mathbf{I_p} - \frac{1}{p}\mathbf{1}p\mathbf{\gamma'} - \frac{1}{p}\mathbf{J_p}\mathbf{\gamma}\mathbf{1'}\\
+&=\lambda \mathbf{I_p} + \mathbf{\gamma}\mathbf{1'} - \frac{1}{p}\mathbf{J_p}\lambda \mathbf{I_p} - \frac{1}{p}\mathbf{J_p}\mathbf{\gamma}\mathbf{1'}\\
+&=\lambda(\mathbf{I_p}- \frac{1}{p}\mathbf{J_p}) + \mathbf{\gamma}\mathbf{1'}(\mathbf{I_p} - \frac{1}{p}\mathbf{J_p})\\
+&=(\lambda+ \mathbf{\gamma}\mathbf{1'})(\mathbf{I_p} - \frac{1}{p}\mathbf{J_p})\\
+\end{aligned}
+\]
+  
+Now we can check for idempotency of $A\Sigma_z$.
+\[
+\begin{aligned}
+\mathbf{A\Sigma_zA\Sigma_z}&=(\lambda+ \mathbf{\gamma}\mathbf{1'})(\mathbf{I_p} - \frac{1}{p}\mathbf{J_p})(\lambda+ \mathbf{\gamma}\mathbf{1'})(\mathbf{I_p} - \frac{1}{p}\mathbf{J_p})\\
+&=(\lambda\mathbf{I_p} - \frac{1}{p}\lambda\mathbf{J_p} + \mathbf{\gamma}\mathbf{1'} - \frac{1}{p}\mathbf{\gamma}\mathbf{1'}\mathbf{J_p})(\lambda\mathbf{I_p} - \frac{1}{p}\lambda\mathbf{J_p} + \mathbf{\gamma}\mathbf{1'} - \frac{1}{p}\mathbf{\gamma}\mathbf{1'}\mathbf{J_p})\\
+&=(\lambda\mathbf{I_p} - \frac{1}{p}\lambda\mathbf{J_p} + \mathbf{\gamma}\mathbf{1'} - \frac{1}{p}\mathbf{\gamma}\mathbf{1'}\mathbf{11'})(\lambda\mathbf{I_p} - \frac{1}{p}\lambda\mathbf{J_p} + \mathbf{\gamma}\mathbf{1'} - \frac{1}{p}\mathbf{\gamma}\mathbf{1'}\mathbf{11'})\\
+&=(\lambda\mathbf{I_p} - \frac{1}{p}\lambda\mathbf{J_p} + \mathbf{\gamma}\mathbf{1'} - \frac{1}{p}\mathbf{\gamma}p\mathbf{1'})(\lambda\mathbf{I_p} - \frac{1}{p}\lambda\mathbf{J_p} + \mathbf{\gamma}\mathbf{1'} - \frac{1}{p}\mathbf{\gamma}p\mathbf{1'})\\
+&=(\lambda\mathbf{I_p} - \frac{1}{p}\lambda\mathbf{J_p} + \mathbf{\gamma}\mathbf{1'} - \mathbf{\gamma}\mathbf{1'})(\lambda\mathbf{I_p} - \frac{1}{p}\lambda\mathbf{J_p} + \mathbf{\gamma}\mathbf{1'} - \mathbf{\gamma}\mathbf{1'})\\
+&=(\lambda\mathbf{I_p} - \frac{1}{p}\lambda\mathbf{J_p})(\lambda\mathbf{I_p} - \frac{1}{p}\lambda\mathbf{J_p})\\
+&=\lambda^2(\mathbf{I_p} - \frac{1}{p}\mathbf{J_p})
+\end{aligned}
+\]
+  
+$\lambda$ is obviously a scalar. If we define $\mathbf{A^*}=\frac{1}{\lambda}\mathbf{A}$, we quickly see that $\mathbf{z'A^{*}z}$ has a noncentral chi-square distribution with $rank(A^{*})=rank(\frac{q}{\lambda}(I_p - \frac{1}{p}J_p)) =rank(I_p - \frac{1}{p}J_p)=p-rank(J_p) = p-1$ and noncentrality parameter
+  
+\[
+\begin{aligned}
+\mu'\mathbf{A^*}\mu &= \frac{q}{\lambda}\mu'(\mathbf{I_p} - \frac{1}{p}\mathbf{J_p})\mu\\
+&=\frac{q}{\lambda}
+\begin{bmatrix}
+\mu_{1.}&\mu_{2.}&\dots&\mu_{p.}
+\end{bmatrix}
+(\mathbf{I_p} - \frac{1}{p}\mathbf{J_p})
+\begin{bmatrix}
+\mu_{1.}\\\mu_{2.}\\\dots\\\mu_{p.}
+\end{bmatrix}\\
+&=\frac{q}{\lambda}
+\begin{bmatrix}
+\mu + \alpha_1&\mu + \alpha_2&\dots&\mu + \alpha_p
+\end{bmatrix}
+\begin{bmatrix}
+1-\frac{1}{p}&-\frac{1}{p}&\dots&-\frac{1}{p}\\
+-\frac{1}{p}&1-\frac{1}{p}&\dots&-\frac{1}{p}\\
+\vdots&\vdots&\ddots&\vdots\\
+-\frac{1}{p}&-\frac{1}{p}&\dots&1-\frac{1}{p}
+\end{bmatrix}
+\begin{bmatrix}
+\mu + \alpha_1\\\mu + \alpha_2\\\dots\\\mu + \alpha_p\\
+\end{bmatrix}\\
+&=\frac{q}{\lambda}
+\begin{bmatrix}
+\mu + \alpha_1-\frac{1}{p}(\mu+\alpha_1) - \frac{1}{p}(\mu + \alpha_2) - \frac{1}{p}(\mu + \alpha_s)&\dots&\dots&\dots
+\end{bmatrix}
+\begin{bmatrix}
+\mu + \alpha_1\\\mu + \alpha_2\\\dots\\\mu + \alpha_p\\
+\end{bmatrix}\\
+&=\frac{q}{\lambda}
+\begin{bmatrix}
+\mu+\alpha_1 - \frac{1}{p}(p\mu + \sum_{i=1}^p\alpha_i) & \mu+\alpha_2 - \frac{1}{p}(p\mu + \sum_{i=1}^p\alpha_i)&\dots&\mu+\alpha_p - \frac{1}{p}(p\mu + \sum_{i=1}^p\alpha_i)
+\end{bmatrix}
+\begin{bmatrix}
+\mu + \alpha_1\\\mu + \alpha_2\\\dots\\\mu + \alpha_p\\
+\end{bmatrix}\\
+&=\frac{q}{\lambda}
+(\mu+\alpha_1 - \frac{1}{p}(p\mu + \sum_{i=1}^p\alpha_i))(\mu + \alpha_1)\\
+&\ \ \ \ + (\mu+\alpha_2 - \frac{1}{p}(p\mu + \sum_{i=1}^p\alpha_i))(\mu+\alpha_2)+\dots+(\mu+\alpha_p - \frac{1}{p}(p\mu + \sum_{i=1}^p\alpha_i))(\mu+\alpha_p)\\
+&=\frac{q}{\lambda}
+(\alpha_1+\mu)(\alpha_1 -\bar{\alpha_.}) + (\alpha_2+\mu)(\alpha_2 -\bar{\alpha_.}) +\dots+(\alpha_p+\mu)(\alpha_p -\bar{\alpha_.})\\
+&=\frac{q}{\lambda}\sum_{i=1}^p(\alpha_i+\mu)(\alpha_i -\bar{\alpha_.})\\
+&=\frac{q}{\lambda}\sum_{i=1}^p(\alpha_i^2 - \alpha_i\bar{\alpha_.}+\mu\alpha_i -\mu\bar{\alpha_.})\\
+&=\frac{q}{\lambda}\left(\sum_{i=1}^p\alpha_i^2 - p\bar{\alpha_.}^2+p\mu\bar{\alpha_.} -p\mu\bar{\alpha_.}\right)\\
+&=\frac{q}{\lambda}\left(\sum_{i=1}^p\alpha_i^2 - p\bar{\alpha_.}^2\right)\\
+\end{aligned}
+\]
+  
+As a result, we see that $q\sum_{i=1}^p(\bar{y}_{i.} - \bar{y}_{..})^2=\mathbf{z'Az} = \mathbf{z}'\lambda\mathbf{A^*}\mathbf{z}$ is distributed as a scalar of a noncentral chi-square distribution with parameters $p-1$ and $\frac{q}{\lambda}\left(\sum_{i=1}^p\alpha_i^2 - p\bar{\alpha_.}^2\right)$.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
