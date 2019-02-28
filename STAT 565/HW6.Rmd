@@ -1,0 +1,317 @@
+---
+title: "STAT 665 Midterm"
+author: "Maggie Buffum"
+date: "February 21, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Problem 6.30
+Let $X_1,\dots,X_n$ be a random sample from the pdf $f(x|\mu) = e^{-(x-\mu)}$, where $-\infty < \mu < x < \infty$.
+  
+(a) Show that $X_{(1)}=\min_iX_i$ is a complete sufficient statistic.
+  
+---
+  
+The likelihood function of $\mathbf{\mu}$ is
+\[
+L(\theta) = \prod_{i=1}^n e^{-(x_i-\mu)}I_{\{-\infty < \mu < x < \infty\}} = e^{-\sum_{i=1}^n(x-\mu)}I_{\{-\infty < \mu < x < \infty\}}
+\]
+  
+Note that for $\mu$ to be less than $x$ means that $\mu$ must be less than $\min(x) = x_{(1)}$. Therefore, by factorization theorem, $X_{(1)}$ is a sufficient statistic for $\theta$.
+  
+To show completeness, consider some function of $T(\mathbf{X})$, say $g(T(\mathbf{X}))$, such that $E[g(T(\mathbf{X}))] = 0$. To find the expected value, we write
+\[
+E[g(X_{(1)})] = \int_{\mu}^{\infty}g(t)f(t|\mathbf{x})dt
+\]
+  
+We know the distribution of $T(\mathbf{X}) = X_{(1)}$ is
+\[
+\frac{n!}{(n-1)!(i-1)!}f_X(x)[F_X(x)]^{i-1}[1-F_X(x)]^{n-1} = n[e^{-(x-\mu)}][1 - (1 - e^{-(x-\mu)})]^{n-1} = n[e^{-(t-\mu)}]^n
+\]
+  
+such that
+\[
+\begin{aligned}
+E[g(X_{(1)})] &= \int_{\mu}^{\infty}g(t)n[e^{-(t-\mu)}]^ndt = 0\\
+&\implies ne^{n\mu}\int_{\mu}^{\infty}g(t)e^{-nt}dt = 0\\
+&\implies \int_{\mu}^{\infty}g(t)e^{-nt}dt = 0\\
+&\implies \int_{\mu}^{\infty}h(t)dt = 0\\
+&\implies H(t)_{t \rightarrow \infty} - H(\mu) = 0\\
+\end{aligned}
+\]
+  
+where $H'(t) = h(t)$. Consider that taking the derivative of both sides with respect to $\mu$ doesn't change the equality, but gives us
+\[
+h(t) = g(t)e^{-nt} = 0
+\]
+  
+which only holds for all $t$ if $g(t) = 0$. Therefore, $T(X)=X_{(1)}$ is a complete statistic for $\mu$.
+  
+(b) Use Basu's Theorem to show that $X_{(1)}$ and $S^2$ are independent.
+  
+---
+  
+Basu's theorem states that if $T(\mathbf{X})$ is a complete and minimally sufficient statistic, then $T(\mathbf{X})$ is independent of every ancillary statistic. Let's first show that $X_{(1)}$ is also minimally sufficient:
+\[
+\frac{e^{-\sum_{i=1}^n x_i}e^{- n\mu}I_{\{\infty < \mu<x_{(1)}<\infty\}}}{e^{-\sum_{i=1}^n y_i}e^{- n\mu}I_{\{\infty < \mu<y_{(1)}<\infty\}}} = \frac{e^{-\sum_{i=1}^n x_i}I_{\{\infty < \mu<x_{(1)}<\infty\}}}{e^{-\sum_{i=1}^n y_i}I_{\{\infty < \mu<y_{(1)}<\infty\}}}
+\]
+  
+Clearly this ratio is only constant as a function of $\mu$ is when $x_{(1)} = y_{(1)}$, so $X_{(1)}$ is minimally sufficient.
+  
+Now we want to show that $S^2$ is an ancillary statistic. $S^2 \sim \chi^2_{n-1}$, whose distribution doesn't depend on $X_{(1)}$, and thus is constant as a function of $X_{(1)}$. Therefore, $S^2$ is ancillary and by Basu's Theorem, independent from $X_{(1)}$.
+  
+## Problem 7.6
+Let $X_1,\dots,X_n$ be a random sample from the pdf
+\[
+f(x|\theta) = \theta x^{-2},\ 0 < \theta \le x < \infty
+\]
+  
+(a) What is a sufficient statistic for $\theta$?
+  
+---
+  
+The likelihood function of $\theta$ is
+\[
+L(\theta) = \prod_{i=1}^n \theta x^{-2}I_{\{0 < \theta < x < \infty\}} =  \left(\prod_{i=1}^n x\right)^{-2}\theta^nI_{\{0 < \theta < x < \infty\}} = \left(\prod_{i=1}^n x\right)^{-2}\theta^nI_{\{0 < \theta < x_{(1)} < \infty\}}
+\]
+  
+By the factorization theorem, we see that $X_{(1)}$ is a sufficient statistic for $\theta$.
+  
+(b) Find the MLE of $\theta$.
+  
+---
+  
+We now need to find the value of $\theta$ that maximizes the likelihood function. We quickly see that to maximize the likelihood function, we just need to maximize $\theta$, which has an upper bound of $x_{(1)}$. Therefore, the MLE of $\theta$ is $X_{(1)}$.
+  
+(c) Find the method of moments estimator of $\theta$.
+  
+---
+  
+Let's first find the first moment:
+\[
+EX^1 = \int_{\theta}^{\infty}x\theta x^{-2}dx = \int_{\theta}^{\infty} \theta x^{-1}dx = \theta\left[-x^{-2}\right]_{\theta}^{\infty},
+\]
+  
+so the first moment doesn't exist, and the method of moments estimator doesn't exist.
+  
+## Problem 7.10
+The independent random variables $X_1,\dots,X_n$ have the common distribution
+\[
+P(X_i \le x|\alpha,\beta) =
+\begin{cases}
+0 & \text{if }x < 0\\
+(x/\beta)^{\alpha} & \text{if }0 \le x \le \beta\\
+1 & \text{if }x > \beta
+\end{cases}
+\]
+  
+where the parameters $\alpha$ and $\beta$ are positive.
+  
+(a) Find a two-dimensional sufficient statistic for $(\alpha,\beta)$.
+  
+---
+  
+We are given the cdf; the pdf of $X_i$ is $\alpha(1/\beta)(x/\beta)^{\alpha - 1}$, and the likelihood function is
+\[
+L(\alpha,\beta) = \prod_{i=1}^n\frac{\alpha}{\beta}\left(\frac{x_i}{\beta}\right)^{\alpha - 1}I_{\{0 \le x \le \beta\}} = \frac{\alpha^n}{\beta^{ n\alpha}}\left(\prod_{i=1}^nx_i\right)^{\alpha - 1}I_{\{0 \le x_{(n)} \le \beta\}}
+\]
+  
+By the factorization theorem it's clear that $(\prod_{i=1}^nX_i,X_{(i)})$ is a sufficient statistic for $(\alpha,\theta)$.
+  
+(b) Find the MLEs of $\alpha$ and $\beta$.
+  
+---
+  
+To find MLEs, we want to find $\hat\alpha$ and $\hat\beta$ that maximize the likelihood function. Quickly we see that to maximize $L(\alpha,\beta)$ we need to minimize $\beta$, meaning that $\hat\beta = x_{(n)}$. It's tricker to see how defining $\alpha$ can maximize the likelihood function, so let's take the partial derivative of the log-likelihood with respect to $\alpha$ and set equal to 0:
+\[
+l(\alpha,\beta) = n\ln(\alpha) - n\alpha\ln(\beta) + (\alpha-1)\sum_{i=1}^n\ln(x_i)
+\]
+  
+Now we can take the derivative with respect to $\alpha$, set equal to 0, and solve for $\hat\alpha$:
+\[
+\begin{aligned}
+\frac{dl}{d\alpha} &= \frac{n}{\alpha} - n\ln{\beta} + \sum_{i=1}^nx_i = 0\\
+&\implies \frac{n}{\alpha} = n\ln{\beta} - \sum_{i=1}^nx_i\\
+&\implies \hat\alpha = \frac{n}{n\ln{\beta} - \sum_{i=1}^nx_i}\\
+\end{aligned}
+\]
+  
+We need to check the second derivative to make sure we have a maximum and not a minimum.
+\[
+\frac{d}{d\alpha} \frac{n}{\alpha} - n\ln{\beta} + \sum_{i=1}^nx_i = -\frac{n}{\alpha^2}<0,
+\]
+  
+confirming that $\hat\alpha$ is the MLE.
+  
+(c) The length (in millimeters) of cuckoos' eggs found in hedge sparrow nests can be modeled with this distribution. For the data
+\[
+22.0,\ 23.9,\ 20.9,\ 23.8,\ 25.0,\ 24.0,\ 21.7,\ 23.8,\ 22.8,\ 23.1,\ 23.1,\ 23.5,\ 23.0,\ 23.0,
+\]
+  
+find the MLEs of $\alpha$ and $\beta$.
+  
+---
+  
+```{r}
+x <- as.vector(c(
+  22.0,23.9,20.9,23.8,25.0,24.0,21.7,
+  23.8,22.8,23.1,23.1,23.5,23.0,23.0
+))
+
+n <- length(x)
+
+beta  <- max(x)
+alpha <- (n)/(n*log(beta) - sum(log(x)))
+
+```
+  
+We have that $\alpha$ is `r alpha` and $\beta$ is `r beta`.
+  
+## Problem 7.11
+Let $X_1,\dots,X_n$ be iid with pdf
+\[
+f(x|\theta) = \theta x^{\theta - 1},\ 0 \le x \le 1,\ 0 < \theta < \infty
+\]
+  
+(a) Find the MLE of $\theta$, and show that its variance $\rightarrow 0$ as $n \rightarrow \infty$.
+  
+---
+  
+First we need to find the likelihood function of $\theta$:
+\[
+L(\theta) = \prod_{i=1}^n\theta x_i^{\theta - 1} = \theta^n\prod_{i=1}^n x_i^{\theta - 1}
+\]
+  
+Now let's find the log-likelihood to make determining the MLE easier:
+\[
+l(\theta) = n\ln(\theta) + (\theta - 1)\sum_{i=1}^n\ln(x_i)
+\]
+  
+Setting equal to 0 and solving for $\theta$ we can solve for $\hat\theta$:
+\[
+\begin{aligned}
+\frac{dl}{d\theta} &= \frac{n}{\theta} + \sum_{i=1}^n\ln(x_i) = 0\\
+&\implies \hat\theta  = -\frac{n}{\sum_{i=1}^n\ln(x_i)}\\
+&\implies \hat\theta=\left(-\frac{1}{n}\sum_{i=1}^n\ln(x_i)\right)^{-1}
+\end{aligned}
+\]
+  
+To confirm this is a maximum, take the second derivative:
+\[
+\frac{d}{d\theta}\frac{n}{\theta} + \sum_{i=1}^n\ln(x_i) = -\frac{n}{\theta^2} < 0,
+\]
+  
+so $\hat\theta$ is a valid MLE.
+  
+Next we need to find the variance of $\hat\theta$ and show that it goes to 0 as $n \rightarrow \infty$. Note that the distribution of $-\ln(X_i)$ is gamma($\alpha = 1,\beta = 1/\theta$), and the sum of iid gamma random variables is another gamma random variable (let's call this Y) with paramters $\alpha = n$ and $\beta = 1/\theta$.
+\[
+\begin{aligned}
+E[n/Y] &= \int_{0}^{\infty}\frac{1}{\Gamma(n)(1/\theta)^n}\frac{n}{y}y^{n-1}e^{-y/(1/\theta)}dy\\
+&=\frac{n\theta^n}{\Gamma(n)}\int_{0}^{\infty}y^{(n-1)-1}e^{-y\theta}dy\\
+&=\frac{n\theta^n\Gamma(n-1)}{\Gamma(n)\theta^{n-1}}\int_{0}^{\infty}\frac{\theta^{n-1}}{\Gamma(n-1)}y^{(n-1)-1}e^{-y\theta}dy\\
+&=\frac{n\theta}{n-1}
+\end{aligned}
+\]
+  
+and
+\[
+\begin{aligned}
+E[n/Y^2] &= \int_{0}^{\infty}\frac{1}{\Gamma(n)(1/\theta)^n}\frac{n^2}{y^2}y^{n-1}e^{-y/(1/\theta)}dy\\
+&=\frac{n^2\theta^n}{\Gamma(n)}\int_{0}^{\infty}y^{(n-2)-1}e^{-y\theta}dy\\
+&=\frac{n^2\theta^n\Gamma(n-2)}{\Gamma(n)\theta^{n-2}}\int_{0}^{\infty}\frac{\theta^{n-2}}{\Gamma(n-2)}y^{(n-1)-1}e^{-y\theta}dy\\
+&=\frac{n^2\theta^2}{(n-1)(n-2)}
+\end{aligned}
+\]
+  
+such that the variance of $\hat\theta$ is
+\[
+Var(\hat\theta) = \frac{n^2\theta^2}{(n-1)(n-2)} - \left(\frac{n\theta}{n-1}\right)^2 = \frac{n^2\theta^2(n-1) - n^2\theta^2(n-2)}{(n-1)^2(n-2)} = \frac{n^2\theta^2}{(n-1)^2(n-2)}
+\]
+  
+which goes to zero as $n\rightarrow \infty$.
+  
+(b) Find the method of moments estimator of $\theta$.
+  
+---
+  
+We recognize the distribution of $X_i$s as beta($\theta,1$), and so $EX = \frac{\theta}{\theta + 1}$. To find the method of moments estimator, we need to solve
+\[
+EX = \frac{1}{n}\sum_{i=1}^nX_i = \frac{\theta}{\theta + 1}
+\]
+  
+for $\hat\theta$:
+\[
+\begin{aligned}
+&\frac{1}{n}\sum_{i=1}^nX_i = \frac{\theta}{\theta + 1}\\
+&\implies \theta \frac{1}{n}\sum_{i=1}^nX_i + \frac{1}{n}\sum_{i=1}^nX_i = \theta\\
+&\implies \frac{1}{n}\sum_{i=1}^nX_i = \theta\left(1 - \frac{1}{n}\sum_{i=1}^nX_i\right)\\
+&\implies \hat\theta = \frac{\frac{1}{n}\sum_{i=1}^nX_i}{1 - \frac{1}{n}\sum_{i=1}^nX_i}
+\end{aligned}
+\]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
