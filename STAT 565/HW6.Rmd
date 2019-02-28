@@ -1,7 +1,7 @@
 ---
-title: "STAT 665 Midterm"
+title: "STAT 562 HW #6"
 author: "Maggie Buffum"
-date: "February 21, 2019"
+date: "February 28, 2019"
 output: pdf_document
 ---
 
