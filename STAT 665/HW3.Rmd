@@ -1,0 +1,182 @@
+---
+title: "STAT 665 HW #3"
+author: "Maggie Buffum"
+date: "March 5, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library(pracma)
+library(knitr)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Problem 6.2
+Prove the identities (6.1.4):
+\[
+\begin{aligned}
+\bar{\mathbf{x}}_{m+1} &&=&&\frac{1}{m+1}(m\bar{\mathbf{x}}_m + \mathbf{x}_{m+1}),\ \ \ \ \ \ \ \ \ \ \ &\text{ and}&\\
+\mathbf{S}_{m+1} &&=&&\mathbf{S}_m + \frac{m}{m+1}(\mathbf{x}_1 - \bar{\mathbf{x}})(\mathbf{x}_2 - \bar{\mathbf{x}})'
+\end{aligned}
+\]
+  
+---
+  
+## Problem 6.4
+Suppose $\mathbf{S}_{N_1} \sim W_k(\Sigma,N_1-1)$ and is independent of $\mathbf{S}_{N_2} \sim W_k(\Sigma,N_2 - 1)$. For any $\mathbf{a} = (a_1,a_2,\dots,a_k)'$, find the distribution of $\mathbf{a}'\mathbf{S}_{N_1}\mathbf{a}/\mathbf{a}'\mathbf{S}_{N_2}\mathbf{a}$.
+  
+---
+  
+\[
+\begin{aligned}
+&\frac{\frac{a'S_{N_1}a}{a'\Sigma a}}{\frac{a'S_{N_2}a}{a'\Sigma a}}\\
+&=\frac{a'S_{N_1}aa'\Sigma a}{a'\Sigma aa'S_{N_2}a}\\
+&=\frac{a'S_{N_1}a}{a'S_{N_2}a}\\
+&=\frac{(N_1 - 1)}{(N_2 - 1)}\frac{a'S_{N_1}a/(N_1 - 1)}{a'S_{N_2}a/(N_2 - 1)} \sim \frac{(N_1 - 1)}{(N_2 - 1)}F_{(N_1 - 1,N_2-1)}\\
+\end{aligned}
+\]
+  
+## Problem 6.6
+The following table gives the means and the variance-covariance matri of four variables $X_0$, $X_1$, $X_2$, and $X_3$:
+  
+```{r,echo = F}
+cov_mat <- matrix(c(
+  60.516,0.998,3.511,21.122,
+  0.998,15.129,23.860,1.793,
+  3.511,23.860,54.756,3.633,
+  21.122,1.793,3.633,18.225
+),nrow = 4,dimnames = list(c("X_0","X_1","X_2","X_3"),
+                           c("X_0","X_1","X_2","X_3")))
+
+means <- matrix(c(
+  18.3,14.9,30.5,7.8
+),nrow = 4, dimnames = list(c("X_0","X_1","X_2","X_3"),"Means"))
+
+kable(cbind(cov_mat,means),align = "c")
+```
+  
+(a) Compute the multiple correlation coefficient of $X_0$ on $X_1,X_2$ and $X_3$.
+  
+---
+  
+(b) Compute the partial correlation coefficient between $X_0$ and $X_3$, eliminating the effects of $X_1$ and $X_2$.
+  
+---
+  
+## Problem 6.7
+Suppose $\mathbf{S}$ is partitioned as in (6.2.9). Evaluate $\hat\rho_{0(1,\dots,k)}^2$ in terms of $|\mathbf{S}|$, $|\mathbf{S}^{(1)}|$ and $S_{00}$.
+    
+---
+  
+From (6.2.9), we have that $\mathbf{S}$ is partitioned as
+\[
+\mathbf{S} = 
+\left(
+\begin{array}{cc}
+S_{00} & \mathbf{s}_{01}\\
+\mathbf{s}_{10} & \mathbf{S}^{(1)}
+\end{array}
+\right)
+\]
+  
+By Result 6.2.4, we can estimate the multiple correlation coefficient $\hat\rho_{0(1,\dots,k)}$ as
+\[
+\frac{\left(\mathbf{s}_{01}|\mathbf{S}^{(1)}|^{-1}\mathbf{s}_{10}\right)^{1/2}}{S_{00}^{1/2}}
+\]
+  
+Let's solve for $\hat\rho_{0(1,\dots,k)}^2$. Note that the determinant of $\mathbf{S}$ is $|\mathbf{S}| = S_{00}S^{(1)} - s_{01}s_{10}$.
+\[
+\begin{aligned}
+\hat\rho_{0(1,\dots,k)}^2 &=\left[ \frac{\left(\mathbf{s}_{01}|\mathbf{S}^{(1)}|^{-1}\mathbf{s}_{10}\right)^{1/2}}{S_{00}^{1/2}}\right]^2\\
+&= \frac{\mathbf{s}_{01}|\mathbf{S}^{(1)}|^{-1}\mathbf{s}_{10}}{S_{00}}\\
+&= \frac{\mathbf{s}_{01}\mathbf{s}_{10}}{|\mathbf{S}^{(1)}|S_{00}}\\
+&= \frac{S_{00}\mathbf{S}^{(1)} - |\mathbf{S}|}{|\mathbf{S}^{(1)}|S_{00}}\\
+&= \frac{S_{00}|\mathbf{S}^{(1)}|}{|\mathbf{S}^{(1)}|S_{00}} - \frac{|\mathbf{S}|}{|\mathbf{S}^{(1)}|S_{00}}\\
+&= 1 - \frac{|\mathbf{S}|}{|\mathbf{S}^{(1)}|S_{00}}\\
+\end{aligned}
+\]
+  
+## Problem 6.8
+When $\rho_{0(1,\dots,k)}=0$, show that the statistic $\hat\rho^2_{0(1,\dots,k)}$ follow a Beta distribution. What are the parameters of the distribution?
+  
+---
+  
+Let $\rho_{0(1,\dots,k)}=0$. Then, from Result 6.2.5 we have that
+\[
+\frac{(N-k-1)\hat\rho_{0(1,\dots,k)}^2}{k(1 - \hat\rho_{0(1,\dots,k)}^2)} \sim F_{(k,N-k-1)}
+\]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
