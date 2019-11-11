@@ -1,0 +1,322 @@
+---
+title: "STAT 666 Homework 2"
+author: "Maggie Buffum"
+date: "May 2, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Problem 7.12
+In the less-than-full-rank linear model, suppose we wish to test $H:\mathbf{C}'\beta = \mathbf{d}$. Let $\mathbf{G} = (\mathbf{X}'\mathbf{X})^{-}$. Show that $\mathbf{C}'\mathbf{G}\mathbf{C}$ is nonsingular whenever $H$ is a testable hypothesis.
+  
+\hrulefill
+  
+Let $H$ be a testable hypothesis. That is, for $H:\mathbf{C}'\beta = \mathbf{d}$, we know that $\mathbf{C}'_{s\times p}\mathbf{H}_{N\times p}=\mathbf{C}'_{s\times p}$, where $H=(X'X)^{-}X'X$. We need to show that $\mathbf{C}'\mathbf{G}\mathbf{C}$ is nonsingular, which happens when $rank(\mathbf{C}'\mathbf{G}\mathbf{C}) = \dim(\mathbf{C}'\mathbf{G}\mathbf{C})$. 
+  
+Consider that $C'H=C'(X'X)^{-}X'X=C'$ has dimensions $s\times p$ and rank $s$. By Result 1.2.12, we know that
+
+\[
+rank(C'(X'X)^{-}X'X) \le rank(C'(X'X)^{-}X') \le rank(C')
+\]
+  
+but since we know $rank(C'(X'X)^{-}X'X)=rank(C')$, we have that $rank(C'(X'X)^{-}X')=s$ also. Now, recalling that $rank(A) = rank(AA')$, we show that
+\[
+\begin{aligned}
+rank(C') &= rank(C'(X'X)^{-}X')\\
+&= rank(C'(X'X)^{-}X'(C'(X'X)^{-}X')')\\
+&= rank(C'(X'X)^{-}X'X(X'X)^{-}C)\\
+&= rank(C'(X'X)^{-}C)\\
+&= rank(C'GC)\\
+\end{aligned}
+\]
+  
+Since the dimensions of $\mathbf{C'GC}$ are $s\times s$ and its rank is also $s$, $\mathbf{C'GC}$ is nonsingular when the hypothesis $H$ is testable.
+  
+## Problem 7.14
+[Wu, Hosking and Ravishanker, 1993]. For $i = 1,\dots,N$, let
+\[
+\begin{aligned}
+&Y_i &= &\epsilon_i,&i \ne k, k+1, k+2\\
+&Y_k &= &\lambda_1 + \epsilon_k&\\
+&Y_{k+1} &= &-c\lambda_1 + \lambda_2 + \epsilon_{k+1}&\\
+&Y_{k+2} &= &-c\lambda_2 + \epsilon_{k+2},&
+\end{aligned}
+\]
+  
+where $k$ is a fixed integer, $1 \le k \le N-2$, $|c|<1$ is a known constant, and $\epsilon_i$'s are iid $N(0,\sigma^2)$ variables. Let $\beta=(\lambda_1,\lambda_2)'$, and suppose $\sigma^2$ is known.
+  
+\hrulefill
+  
+(a) Derive the least squares estimate of $\beta$, and the variance of the estimate.
+  
+---
+  
+We have the following model:
+\[
+\begin{aligned}
+\begin{bmatrix}
+Y_i\\Y_k\\Y_{k+1}\\Y_{k+2}
+\end{bmatrix}&=
+\begin{bmatrix}
+0 & 0\\
+1 & 0\\
+-c & 1\\
+0 & -c
+\end{bmatrix}
+\begin{bmatrix}
+\lambda_1\\\lambda_2
+\end{bmatrix} +
+\begin{bmatrix}
+\epsilon_i\\\epsilon_k\\\epsilon_{k+1}\\\epsilon_{k+2}
+\end{bmatrix}
+\end{aligned}
+\]
+  
+such that we can calculate $\hat\beta=\mathbf{G}\mathbf{X}'\mathbf{y}$ as
+\[
+\begin{aligned}
+\mathbf{G}&=(\mathbf{X}'\mathbf{X})^{-1}=
+\left(
+\begin{bmatrix}
+0&1&-c&0\\
+0&0&1&-c
+\end{bmatrix}
+\begin{bmatrix}
+0&0\\
+1&0\\
+-c&1\\
+0&-c
+\end{bmatrix}
+\right)^{-1}\\
+&=\left(
+\begin{bmatrix}
+c^2 + 1 & -c\\
+-c & c^2+1
+\end{bmatrix}
+\right)^{-1}\\
+&=\frac{1}{c^4 + c^2 + 1}\begin{bmatrix}
+c^2+1 & c\\
+c & c^2+1
+\end{bmatrix}\\
+\mathbf{G}\mathbf{X}'\mathbf{y}&=
+\frac{1}{c^4 + c^2 + 1}\begin{bmatrix}
+c^2+1 & c\\
+c & c^2+1
+\end{bmatrix}\begin{bmatrix}
+0&1&-c&0\\
+0&0&1&-c
+\end{bmatrix}
+\begin{bmatrix}
+Y_i\\Y_{k}\\Y_{k+1}\\Y_{k+2}
+\end{bmatrix}\\
+&=
+\frac{1}{c^4 + c^2 + 1}\begin{bmatrix}
+0 & c^2+1 & -c^3 & -c^2\\
+0 & c & 1 & -c(c^2+1)
+\end{bmatrix}\begin{bmatrix}
+Y_i\\Y_{k}\\Y_{k+1}\\Y_{k+2}
+\end{bmatrix}
+\end{aligned}
+\]
+  
+So that we have
+\[
+\begin{aligned}
+\hat\lambda_1&=\frac{(c^2+1)Y_k-c^3Y_{k+1}-c^2Y_{k+2}}{c^4+c^2+1},\\
+\hat\lambda_2&=\frac{cY_k+Y_{k+1}-c(c^2+1)Y_{k+2}}{c^4+c^2+1}
+\end{aligned}
+\]
+  
+To the variance around the parameter estimates, we note that rank of $\mathbf{X}$ is equal to the number of parameters *p*, and we can use Corollary 7.1.1 (1):
+\[
+Var(\hat\beta) = \sigma^2\mathbf{G} =
+\frac{\sigma^2}{c^4 + c^2 + 1}\begin{bmatrix}
+c^2+1 & c\\
+c & c^2+1
+\end{bmatrix}
+\]
+  
+\hrulefill
+  
+(b) Derive the least squares estimate of $\beta$ subject to the restriction $\lambda_1 + \lambda_2 = 0$. What is the variance of this estimate?
+  
+---
+  
+For $\lambda_1 + \lambda_2 = 0$, we know that $\lambda_1 = -\lambda_2 = \lambda$. Now our model is
+\[
+\begin{aligned}
+\begin{bmatrix}
+Y_i\\Y_{k}\\Y_{k+1}\\Y_{k+2}
+\end{bmatrix}=
+\begin{bmatrix}
+0\\1\\-c-1\\c
+\end{bmatrix}
+\begin{bmatrix}
+\lambda
+\end{bmatrix} +
+\begin{bmatrix}
+\epsilon_{i}\\\epsilon_{k}\\\epsilon_{k+1}\\\epsilon_{k+2}
+\end{bmatrix}
+\end{aligned}
+\]
+  
+So that
+\[
+\begin{aligned}
+\mathbf{X'X} &= (1)^2 + (-c-1)^2 + c^2\\
+&=1 + c^2 + 2c + 1 + c^2\\
+&= 2c^2 + 2c + 2\\
+&= 2(c^2 + c + 1) \ne 0\text{ (since }b^2 - 4ac =-3 < 0)
+\end{aligned}
+\]
+  
+and the inverse is
+\[
+\mathbf{X'X}^{-1} = \frac{1}{2(c^2 + c + 1)}
+\]
+  
+such that
+\[
+\begin{aligned}
+\hat\lambda_0 &= (X'X)^{-1}X'y\\
+&=\frac{1}{2(c^2 + c + 1)}
+\begin{bmatrix}
+0 & 1 & -c-1 & -
+\end{bmatrix}
+\begin{bmatrix}
+y_i\\y_k\\y_{k+1}\\y_{k+2}
+\end{bmatrix}\\
+&=\frac{1}{2(c^2 + c + 1)}\begin{bmatrix}y_k -(c+1)y_{k+1} + cy_{k+2}\end{bmatrix}
+\end{aligned}
+\]
+  
+with variance $Var(\hat\lambda_0)=\sigma^2(X'X)^{-1}=\frac{\sigma^2}{2c^2 + 2c + 2}$.
+  
+\hrulefill
+  
+(c) Derive a statistic for testing $H:\lambda_1 + \lambda_2 = 0$ versus the alternative hypothesis that $\lambda_1$ and $\lambda_2$ are unrestricted.
+  
+---
+  
+We can rewrite the hypothesis test in the form
+\[
+H: \mathbf{C}'\beta = \mathbf{d}
+\]
+  
+where
+\[
+\begin{aligned}
+\mathbf{C}' &= \begin{bmatrix}1&1\end{bmatrix}\\
+\beta &= \begin{bmatrix}
+\lambda_1\\\lambda_2
+\end{bmatrix}\\
+\mathbf{d} &= \mathbf{0}
+\end{aligned}
+\]
+  
+We can define $Q$ as
+\[
+\begin{aligned}
+Q &= (\mathbf{C}'\beta - \mathbf{d})'(\mathbf{C}'\mathbf{G}\mathbf{C})^{-1}(\mathbf{C}'\beta - \mathbf{d})\\
+&= (\hat\lambda_1 + \hat\lambda_2)\left(
+\frac{1}{c^4 + c^2 + 1}
+\begin{bmatrix}
+1 & 1
+\end{bmatrix}
+\begin{bmatrix}
+1 + c^2 & c\\
+c & c^2 + 1
+\end{bmatrix}
+\begin{bmatrix}
+1\\1
+\end{bmatrix}
+\right)^{-1}(\hat\lambda_1 + \hat\lambda_2)\\
+&= (\hat\lambda_1 + \hat\lambda_2)\left(
+\frac{2(c^2 + c + 1)}{c^4 + c^2 + 1}
+\right)^{-1}(\hat\lambda_1 + \hat\lambda_2)\\
+&= (\hat\lambda_1 + \hat\lambda_2)
+\frac{c^4 + c^2 + 1}{2(c^2 + c + 1)}
+(\hat\lambda_1 + \hat\lambda_2)\\
+\end{aligned}
+\]
+  
+Now,
+\[
+\begin{aligned}
+\hat\lambda_1 + \hat\lambda_2 &= \frac{(c^2+1)Y_k-c^3Y_{k+1}-c^2Y_{k+2} + cY_k+Y_{k+1}-c(c^2+1)Y_{k+2}}{c^4 + c^2 + 1}\\
+&= \frac{(c^2+1+c)Y_k+(c1-^3)Y_{k+1}-c(c^2 + c + 1)Y_{k+2}}{c^4 + c^2 + 1}\\
+\end{aligned}
+\]
+  
+such that
+\[
+\begin{aligned}
+Q&=\left(\frac{(c^2+1+c)Y_k+(c1-^3)Y_{k+1}-c(c^2 + c + 1)Y_{k+2}}{c^4 + c^2 + 1}\right)^2
+\frac{c^4 + c^2 + 1}{2(c^2 + c + 1)}\\
+&=\left((c^2+1+c)Y_k+(c1-^3)Y_{k+1}-c(c^2 + c + 1)Y_{k+2}\right)^2
+\frac{1}{2(c^2 + c + 1)(c^4 + c^2 + 1)}
+\end{aligned}
+\]
+  
+where we know that $Q/\sigma^2 \sim \chi^2_{(1)}$
+  
+\hrulefill
+  
+## Problem 7.16
+Prove property 2 in Result 7.4.3.
+  
+\hrulefill
+  
+Result 7.4.3 states that if the true model is $\mathbf{y}=\mathbf{X}_1\beta_1 + \epsilon$, but we fit the model $\mathbf{y}=\mathbf{X}_1\beta_1 + \mathbf{X}_2\beta_2 + \epsilon$ to the data, then
+  
+1. $E(\beta_1^0)=\mathbf{H}_1\beta_1$
+2. MSE is an unbiased estimate of $\sigma^2$.
+  
+We have that $MSE_H=\mathbf{y}'(I-P)\mathbf{y}/(N-r)$. Let's find the expected value of the MSE using Result 4.2.3, where $\mu_Y = X_1\mathbf{\beta}_1$ (based on the true model):
+\[
+\begin{aligned}
+E(MSE) &= \frac{1}{N-r}\left(\sigma^2tr(I-P) + (X_1\mathbf{\beta}_1)'(I-P)(X_1\mathbf{\beta}_1)\right)\\
+&=\frac{1}{N-r}\left(\sigma^2tr(I-P) + (X_1\mathbf{\beta}_1)'(X_1\mathbf-PX_1\mathbf){\beta}_1\right)\\
+&=\frac{1}{N-r}\left(\sigma^2tr(I-P)\right)\\
+&=\frac{1}{N-r}\sigma^2(N-r)\\
+&=\sigma^2\\
+\end{aligned}
+\]
+  
+Therefore, the MSE is an unbiased estimator for $\sigma^2$.
+  
+## Problem 7.19
+In Example 7.5.1, test $H:X^{*}=0$ versus $H_1:X^{*} \ne 0$ at the 5% level of significance when $N=40$.
+  
+\hrulefill
+  
+From Homework 1, we know that the F-statistic under the null hypothesis $H: X^{*}=0$ is
+\[
+F(H_0) = \frac{Q/s}{SSE/(N-r)} = \frac{\hat\beta_1^2\sum_{i=1}^NX_i^2/(1)}{SSE/(40 - 3)} = \frac{(37)\hat\beta_1^2\sum_{i=1}^NX_i^2}{SSE}
+\]
+  
+where
+\[
+\hat\beta_1 = \frac{\sum_{i=1}^NY_iX_i}{\sum_{i=1}^NX_i^2}
+\]
+  
+which, when plugged into the F-statistic, gives us
+\[
+\begin{aligned}
+F(H_0)&=\frac{(37)\hat\beta_1^2\sum_{i=1}^NX_i^2}{SSE}\\
+&=\frac{(37)\left(\frac{\sum_{i=1}^NY_iX_i}{\sum_{i=1}^NX_i^2}\right)^2\sum_{i=1}^NX_i^2}{SSE}\\
+&=\frac{(37)\left(\sum_{i=1}^NY_iX_i\right)^2}{SSE\sum_{i=1}^NX_i^2}\\
+\end{aligned}
+\]
+  
+This statistic follows an F distribution with 1 and 37 degrees of freedom. We will reject the null hypothesis in favor of the alternative when $F(H_0) > F_(1,37,0.05)$ = `r qf(p = 1-(1-0.95),df1 = 1,df2 = 37)`.
+
+
+
+
+
+
+

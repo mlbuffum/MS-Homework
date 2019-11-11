@@ -1,0 +1,471 @@
+---
+title: "STAT 666 - Midterm"
+author: "Maggie Buffum"
+date: "May 14, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(pracma)
+library(dplyr)
+```
+
+## Problem 1
+Suppose we want to fit the following model:
+\[
+Y_{ij} = \mu + \tau_i + \epsilon_{ij},\ i = 1,2,\ j=1,2
+\]
+  
+where $\epsilon_{ij} \sim\ (iid)\ N(0,\sigma^2)$ and $\sigma^2$ is unknown. Derive a suitable test for $H:\mu + \tau_1 = \mu + \tau_2$.
+  
+---
+  
+We can rewrite the hypothesis test as $H:\mu + \tau_1 - \mu - \tau_2 = \tau_1 - \tau_2 = 0$. Consider formatting the hypothesis test as $H: \mathbf{C}'\mathbf{\beta} = \mathbf{d}$, where
+\[
+\mathbf{C}'=
+\begin{bmatrix}
+0 & 1 & -1
+\end{bmatrix},\ \beta=
+\begin{bmatrix}
+\mu\\\tau_1\\\tau_2
+\end{bmatrix},\text{ and }d=0
+\]
+  
+Following Example 7.2.7, we know that we can derive a test statistic for the one-way fixed-effects ANOVA, testing for the equality of treatment means $\tau_1$ and $\tau_2$, as
+\[
+F(H) = \frac{SSTr/(a-1)}{SSE/(N-a)} \sim F(a-1,N-a)
+\]
+  
+where $SSTr = \sum_{i=1}^a n_i(\bar Y_i - \bar Y_{..})^2$ is the treatment sum of squares and $SSE = \sum_{i=1}^a\sum_{j=1}^{n_i}(Y_{ij} - \bar Y_i)^2$ is the error sum of squares. In this case we are given $a=2$ and $n_i = 2\ \forall i$, such that $N=n_1+n_2=2+2=4$.
+\[
+\begin{aligned}
+&\frac{SSTr/(a-1)}{SSE/(N-a)}\\
+&= \frac{\sum_{i=1}^2 (2)(\bar Y_i - \bar Y_{..})^2/(2-1)}{\sum_{i=1}^2\sum_{j=1}^{2}(Y_{ij} - \bar Y_i)^2/(4-2)}\\
+&= \frac{4\sum_{i=1}^2 (\bar Y_i - \bar Y_{..})^2}{\sum_{i=1}^2\sum_{j=1}^{2}(Y_{ij} - \bar Y_i)^2}\\
+&\sim F(1,2)
+\end{aligned}
+\]
+  
+\hrulefill
+  
+## Problem 2
+Consider the model $\mathbf{Y} = \mathbf{\beta} + \mathbf{\epsilon}$, where $\mathbf{\epsilon} \sim N_4(\mathbf{0},\sigma^2\mathbf{I})$ with $\sigma^2$ being unknown and $\sum_{i=1}^4\beta_i = 0$. Derive an appropriate test statistic for testing $H: \beta_1 = \frac{\beta_2 + \beta_3}{2}$.
+  
+---
+  
+Rewriting the null hypothesis, we have $H: 2\beta_2 - \beta_2 - \beta_3 = 0$, which we can format as $H:\mathbf{C}'\beta = \mathbf{d}$, where
+\[
+\mathbf{C}' =
+\begin{bmatrix}
+2 & -1 & -1 &0
+\end{bmatrix},\ 
+\beta =
+\begin{bmatrix}
+\beta_1\\\beta_2\\\beta_3\\\beta_4
+\end{bmatrix},\ \text{and }
+\mathbf{d} = 0.
+\]
+
+From Result 7.2.1 we know that for $\mathbf{Q} = (\mathbf{C}'\beta^0 - \mathbf{d})'[\mathbf{C}'\mathbf{G}\mathbf{C}]^{-1}(\mathbf{C}'\beta^0 - \mathbf{d})$,
+\[
+F(H) = \frac{\mathbf{Q}/s}{SSE/(N-r)}\sim F(s,N-r,\lambda)
+\]
+  
+Let's find $\mathbf{Q}$. It's clear that $\mathbf{C}'\beta - \mathbf{d}=2\beta_1 - \beta_2 - \beta_3$. However, we also have the constraint that $\sum_{i=1}^4\beta_i = 0 \implies \mathbf{1}'\beta = 0$. Under this restriction, $\hat\beta_r = \mathbf{y} - \bar y \mathbf{1}$, where $\bar y = \frac{1}{4}\sum_{i=1}^4 y_i$. Now we can calculate $\mathbf{C}'\beta - \mathbf{d}$ as
+\[
+\begin{aligned}
+\mathbf{C}'\beta - \mathbf{d} &= 2\beta_1 - \beta_2 - \beta_3\\
+&= 2(Y_1 - \bar y) - (Y_2 - \bar y) - (Y_3 - \bar y)\\
+&= 2Y_1 - 2\bar y - Y_2 + \bar y - Y_3 + \bar y\\
+&= 2Y_1 - Y_2 - Y_3
+\end{aligned}
+\]
+
+Next we need to find $\left(\mathbf{C}'\mathbf{G}\mathbf{C}\right)^{-1}$, where $\mathbf{G} = (\mathbf{X}'\mathbf{X})^{-}$. From the model we know that $\mathbf{X} = \mathbf{I}$, and therefore $\mathbf{G} = \mathbf{I}$.
+\[
+\begin{aligned}
+\left(\mathbf{C}'\mathbf{C}\right)^{-1}
+&=\left(
+\begin{bmatrix}
+2 & -1 & -1 & 0
+\end{bmatrix}
+\begin{bmatrix}
+2\\-1\\-1\\0
+\end{bmatrix}
+\right)^{-1}\\
+&=\left[
+2^2 + (-1)^2 + (-1)^2 + (0)^2
+\right]^{-1}\\
+&=\left[
+6
+\right]^{-1}\\
+\end{aligned}
+\]
+  
+and
+\[
+Q = \frac{(2Y_1 - Y_2 - Y_3)^2}{6}
+\]
+  
+We also need to find $SSE$ under the restriction:
+\[
+\begin{aligned}
+SSE &= (\mathbf{y} - \mathbf{X}\beta^0)'(\mathbf{y} - \mathbf{X}\beta^0)\\
+&= (\mathbf{y} - (\mathbf{y} - \bar y \mathbf{1}))'(\mathbf{y} - (\mathbf{y} - \bar y \mathbf{1}))\\
+&= (\mathbf{y} - \mathbf{y} + \bar y \mathbf{1})'(\mathbf{y} - \mathbf{y} + \bar y \mathbf{1})\\
+&= (\bar y \mathbf{1})'(\bar y \mathbf{1})\\
+&= 4\left(\frac{1}{4}\sum_{i=1}^4 Y_i\right)^2\\
+&= \frac{1}{4}\left(\sum_{i=1}^4 Y_i\right)^2
+\end{aligned}
+\]
+  
+Now we can calculate the F-statistics:
+\[
+\begin{aligned}
+F(H) &= \frac{\frac{(2Y_1 - Y_2 - Y_3)^2}{6}/s}{\frac{1}{4}\left(\sum_{i=1}^4 Y_i\right)^2/(N-r)}\\
+&= \frac{(N-r)(4)(2Y_1 - Y_2 - Y_3)^2}{6\left(\sum_{i=1}^4 Y_i\right)^2}\\
+&= \frac{(4-3)(4)(2Y_1 - Y_2 - Y_3)^2}{6\left(\sum_{i=1}^4 Y_i\right)^2}\\
+&= \frac{4(2Y_1 - Y_2 - Y_3)^2}{6\left(\sum_{i=1}^4 Y_i\right)^2}\\
+&= \left(\frac{2}{3}\right)\frac{(2Y_1 - Y_2 - Y_3)^2}{\left(\sum_{i=1}^4 Y_i\right)^2}\sim F(1,1)
+\end{aligned}
+\]
+  
+\hrulefill
+  
+## Problem 3
+Consider the Gauss-Markov model, and suppose that $\mathbf{d}$ has a multivariate normal distribution. There are *n* observations in total, and it is possible that some of these are repeated observations, i.e., that some of the rows in the X-matrix are identical. In accordance with this, the rows of X can be partitioned into *m*, say, distinct sets consisting of identical rows; we shall call each of these sets an experimental combination. Assume that $m>p$. Let $y_{ij}$ represent the *j*th response at the *i*th experimental combination ($j=1,\dots,n_i;\ i=1,\dots,m$); here, $\sum_{i=1}^mn_i = n$. Thus, there are $n_i$ repeated obserations at the *i*th experimental combination. In this context the residual sum of squares, $\mathbf{y}'(\mathbf{I}-\mathbf{P})\mathbf{y}$, can be expressed as
+\[
+\sum_{i=1}^m\sum_{j=1}^{n_i}(y_{ij} - \hat y_i)^2,
+\]
+  
+where $\hat y_i$ is the fitted value of the response at the *i*th experimental combination. Consider the following decomposition of this residual sum of squares:
+\[
+\sum_{i=1}^{m}\sum_{j=1}^{n_i}(y_{ij} - \hat y_i)^2 = \sum_{i=1}^{m}\sum_{j=1}^{n_i}(y_{ij} - \bar y_i)^2 + \sum_{i=1}^m n_i(\bar y_i - \hat y_i)^2,
+\]
+  
+where $\bar y_i$ is the average response at the *i*th experimental combination. This decomposition can be written as $RSS=SS(\text{Pure Error}) + SS(\text{Lack of Fit})$.
+  
+---
+  
+(a) Verify the above decomposition by showing that $SS(\text{Pure Error})=\mathbf{y}'(\mathbf{I} - \mathbf{P})\mathbf{y}$, $SS(\text{Lack of Fit})=\mathbf{y}'(\mathbf{Q}-\mathbf{P})\mathbf{y}$, and $(\mathbf{I} - \mathbf{Q})(\mathbf{Q}-\mathbf{P})=0$, for some matrix $\mathbf{Q}$. (You may assume that the elements of $\mathbf{y}$ have been permuted, if necessary, so that all responses coresponding to the 1st experimental combinations appear first, etc.)
+  
+---
+  
+Let $\hat y_e = P_e y$, where $\mathcal{C}(P)\subset \mathcal{C}(P_e)$. Then we can rewrite $SS(\text{Pure Error})$ as
+\[
+\begin{aligned}
+SS(\text{Pure Error})&=\sum_{i=1}^{m}\sum_{j=1}^{n_i}(y_{ij} - \bar y_i)^2\\
+&= \sum_{i=1}^{m}\sum_{j=1}^{n_i}(y_{ij}^2 + \bar y_i^2 - 2y_{ij}\bar y_i)\\
+&= \sum_{i=1}^{m}\sum_{j=1}^{n_i}y_{ij}^2 + \sum_{i=1}^{m}\sum_{j=1}^{n_i}\bar y_i^2 - 2\sum_{i=1}^{m}\sum_{j=1}^{n_i}y_{ij}\bar y_i\\
+&= \sum_{i=1}^{m}\sum_{j=1}^{n_i}y_{ij}^2 + \sum_{i=1}^{m}n_i\bar y_i^2 - 2\sum_{i=1}^{m}n_i\bar y_{i.}^2\\
+&= y'y - \sum_{i=1}^{m}n_i\bar y_{i.}^2\\
+&= y'y - y'P_ey\\
+&=y'(I - P_e)y
+\end{aligned}
+\]
+  
+and $SS(\text{Lack of Fit})$ as
+\[
+\begin{aligned}
+SS(\text{Lack of Fit}) &= \sum_{i=1}^{m}n_i(\bar y_{i.} - \hat y_{i.})^2\\
+&=\sum_{i=1}^mn_i(\bar y_{i.}^2 + \hat y_{i.}^2 - 2\bar y_{i.}\hat y_{i.})\\
+&=\sum_{i=1}^mn_i\bar y_{i.}^2 + \sum_{i=1}^mn_i\hat y_{i.}^2 - 2\sum_{i=1}^mn_i\bar y_{i.}\hat y_{i.}\\
+&=y'P_ey + y'Py - 2y'P_ePy\\
+\end{aligned}
+\]
+  
+But since $\mathcal{C}(P) \subset \mathcal{C}(P_e)$, we know that $P_eP = P$, and therefore
+\[
+\begin{aligned}
+SS(\text{Lack of Fit})&=y'P_ey + y'Py - 2y'P_ePy\\
+&=y'P_ey + y'Py - 2y'Py\\
+&=y'P_ey - y'Py\\
+&=y'(P_e - P)y\\
+\end{aligned}
+\]
+  
+which suggests that $Q=P_e$. Now, consider $(I-Q)(Q-P)$:
+\[
+\begin{aligned}
+(I-Q)(Q-P) &= (I-P_e)(P_e - P)\\
+&= IP_e - IP - P_eP_e + P_eP\\
+&= P_e - P - P_e + P\\
+&= 0
+\end{aligned}
+\]
+  
+\hrulefill
+  
+Now consider the following problem, related to a special case of the above decomposition. Data are available on a single regressor variable $x$ and a response $y$. It is desired to test the hypotheses
+\[
+H_0: E(y_{ij}) = \beta_0 + \beta_1x_i\ (\text{for }j=1,\dots,n_i,\text{ and all }i)
+\]
+  
+versus
+\[
+H_a: E(y_{ij}) = \beta_0 + \beta_1x_i + \sum_{l=1}^h \beta_{l+1}f_l(x_i)\ (\text{for }j=1,\dots,n_i,\text{ and all }i)
+\]
+  
+where the $\{f_l(.)\}$ are unspecified, possibly nonlinear functions. Assume $x_1 \ne x_2$.
+  
+---
+  
+(b) Obtain the distribution of $SS(\text{Pure Error})/\sigma^2$ under $H_0$.
+  
+---
+  
+Under the null hypothesis, we have that $y \sim N(X\beta,\sigma^2I)$. The sum of squares due to pure error has a quadratic form, specifically $SS(\text{Pure Error}) = y'(I-P_e)y$. We can use Result 5.4.5 to determine the distribution of $SS(\text{Pure Error})/\sigma^2$, so long as $\frac{(I-P_e)}{\sigma^2}I\sigma^2$ is idempotent:
+\[
+\begin{aligned}
+A\Sigma A\Sigma &= \frac{(I-P_e)}{\sigma^2}I\sigma^2\frac{(I-P_e)}{\sigma^2}I\sigma^2\\
+&=(I-P_e)(I-P_e)\\
+&=I - P_e - P_e + P_eP_e\\
+&=I - 2P_e + P_e\\
+&=I-P_e
+\end{aligned}
+\]
+  
+so we can use Result 5.4.5, and $\frac{y'(I-P_e)y}{\sigma^2}\sim \chi^2_{n-m}$.
+  
+\hrulefill
+  
+(c) Obtain the expected value of $SS(\text{Lack of Fit})/(m-2)$ under $H_a$.
+  
+---
+  
+We can use Result 5.4.2 to find the expected value of the sum of squares from lack of fit under the alternative hypothesis. Let $P_a$ be the projection matrix $P$ under the alternative hypothesis, $\beta_a$ be the vector of $\beta$'s under the alternative hypothesis, and $X_a$ be the design matrix under the alternative hypothesis. We can find the expected value of $SS(\text{Lack of Fit})/(m-2)$ under $H_a$ as
+\[
+\begin{aligned}
+E\left[\frac{y'(P_e - P_a)y}{(m-2)}\right] &= \frac{1}{(m-2)}E[y'(P_e - P_a)y]\\
+&= \frac{1}{(m-2)}\left[tr[(P_e-P_a)I\sigma^2] + \mu'(P_e-P)\mu\right]\\
+&= \frac{1}{(m-2)}\left[\sigma^2tr[(P_e-P_a)] + (X_a\beta_a)'(P_e-P_a)(X_a\beta_a)\right]\\
+&= \frac{1}{(m-2)}\left[\sigma^2tr[(P_e-P_a)] + \beta_a'X_a'(P_e-P_a)X_a\beta_a\right]\\
+&= \frac{1}{(m-2)}\left[\sigma^2tr[(P_e-P_a)] + \beta_a'X_a'P_eX_a\beta_a - \beta_a'X_a'P_aX_a\beta_a\right]\\
+&= \frac{1}{(m-2)}\left[\sigma^2tr[(P_e-P_a)] + \beta_a'X_a'X_a\beta_a - \beta_a'X_a'X_a\beta_a\right]\\
+&= \frac{\sigma^2tr(P_e-P_a)}{(m-2)}\\
+\end{aligned}
+\]
+  
+\hrulefill
+  
+(d) Obtain the distribution of $SS(\text{Lack of Fit})/\sigma^2$ under $H_0$.
+  
+---
+  
+Under the null hypothesis, we have that $y \sim N(X\beta,\sigma^2I)$. The sum of squares due to lack of it has a quadratic form, specifically $SS(\text{Lack of Fit}) = y'(P_e - P)y$. We can use Result 5.4.5 to determine the distribution of $SS(\text{Lack of Fit})/\sigma^2$, so long as $\frac{(P_e - P)}{\sigma^2}I\sigma^2$ is idempotent:
+\[
+\begin{aligned}
+A\Sigma A\Sigma &= \frac{(P_e - P)}{\sigma^2}I\sigma^2\frac{(P_e - P)}{\sigma^2}I\sigma^2\\
+&=(P_e - P)(P_e - P)\\
+&=P_eP_e - P_eP - PP_e + PP\\
+&=P_e - P - P + P\\
+&=P_e - P\\
+\end{aligned}
+\]
+  
+so we can use Result 5.4.5, and $\frac{y'(P_e - P)y}{\sigma^2}\sim \chi^2_{m-2}$.
+  
+\hrulefill
+  
+(e) Obtain the distribution of $\frac{SS(\text{Lack of Fit})/(m-2)}{SS(\text{Pure Error})/(n-m)}$ under $H_0$.
+  
+---
+  
+We showed in part (d) that $\frac{y'(P_e - P)y}{\sigma^2} = \frac{SS(\text{Lack of Fit})}{\sigma^2} = \sim\chi^2_{m-2}$, and in part (b) that $\frac{y'(I-P_e)y}{\sigma^2} = \frac{SS(\text{Pure Error})}{\sigma^2} \sim \chi^2_{n-m}$. Consider now
+\[
+\frac{\frac{SS(\text{Lack of Fit})}{\sigma^2}/(m-2)}{\frac{SS(\text{Pure Error})}{\sigma^2}/(n-m)} = \frac{SS(\text{Lack of Fit})/(m-2)}{SS(\text{Pure Error})/(n-m)}
+\]
+  
+is the ratio of two chi-squared random variables, each divided by their degrees of freedom, which we know to have an F distribution with degrees of freedom $m-2$ and $n-m$.
+  
+\hrulefill
+  
+## Problem 4
+Figure out LSE for Exercise 7.10, assuming the intersection of the two lines in two ways, one using the Result 7.1, and the other using the origin-shifted model.
+  
+---
+  
+In Exercise 7.10, we are given two lines ($x_0,y_0$):
+\[
+\begin{aligned}
+Y_{1,i} &= \beta_{1,0} + \beta_{1,1}X_{1,i} + \epsilon_{1,i}\\
+Y_{2,i} &= \beta_{2,0} + \beta_{2,1}X_{2,i} + \epsilon_{2,i}\\
+\end{aligned}
+\]
+  
+where $\epsilon_{i}\sim N(0,\sigma^2)$. We can estimate $\beta_{l,0}$ and $\beta_{l,2}$ by minimizing the function $S(\beta)$, From Example 7.2.4 we have
+\[
+\hat\beta_{l,1} = \frac{\sum_{i=1}^{n_l}(Y_{l,i} - \bar Y_{l.})(X_{l,i} - \bar X_{l.})}{\sum_{i=1}^{n_l}(X_{l,i} - \bar X_{l.})^2}
+\]
+  
+and
+\[
+\hat\beta_{l,0} = \bar Y_{l.} - \hat\beta_{l,1}\bar X_{l.}
+\]
+  
+providing the sum of squared errors as
+\[
+SSE = \sum_{i=1}^{n_1}(Y_{1,i} - \bar Y_{1.})^2 - \hat \beta^2_{1,1}\sum_{i=1}^{n_1}(X_{1,i} - \bar X_{1.})^2 + \sum_{i=1}^{n_2}(Y_{2,i} - \bar Y_{2.})^2 - \hat \beta^2_{2,1}\sum_{i=1}^{n_2}(X_{2,i} - \bar X_{2.})^2
+\]
+  
+We want to test the hypothesis that the two lines intersect at a point ($x_0,y_0$).
+  
+**First, let's use the shifted model approach to derive the F-test**
+  
+Consider the case where we shift each line by $x_0$ and $y_0$ such that if they intersect, they intersect at the origin. Our model (under no restrictions) becomes
+\[
+\begin{aligned}
+Y_{1,i} - y_0 &= \beta_{1,0} + \beta_{1,1}(X_{1,i} - x_0) + \epsilon_{1,i}\\
+Y_{2,i} - y_0 &= \beta_{2,0} + \beta_{2,1}(X_{2,i} - x_0) + \epsilon_{2,i}\\
+\end{aligned}
+\]
+  
+We want to test the hypothesis $H:(\beta_{1,0} + y_0) = (\beta_{2,0} + y_0) = 0$. The sum of squared errors under the null hypothesis is
+\[
+\begin{aligned}
+SSE_H &= \sum_{i=1}^{n_1}(Y_{1,i} - y_0 - \hat\beta_{1,0} - \hat\beta_{1,1}(X_{1,i} - x_0))^2 + \sum_{i=1}^{n_2}(Y_{2,i} - y_0 - \hat\beta_{2,0} - \hat\beta_{2,1}(X_{2,i} - x_0))^2\\
+&= \sum_{i=1}^{n_1}(Y_{1,i} - (\hat\beta_{1,0} + y_0) + \hat\beta_{1,1}(X_{1,i} - x_0))^2 + \sum_{i=1}^{n_2}(Y_{2,i} - (\hat\beta_{2,0} + y_0) + \hat\beta_{2,1}(X_{2,i} - x_0))^2\\
+&= \sum_{i=1}^{n_1}(Y_{1,i} + \hat\beta_{1,1}(X_{1,i} - x_0))^2 + \hat\sum_{i=1}^{n_2}(Y_{2,i} + \hat\beta_{2,1}(X_{2,i} - x_0))^2\\
+\end{aligned}
+\]
+  
+To derive the F-statistic, we need to evaluate $SEE_H - SSE$:
+\[
+\begin{aligned}
+SSE_H - SSE =& \sum_{i=1}^{n_1}(Y_{1,i} + \hat\beta_{1,1}(X_{1,i} - x_0))^2 - \sum_{i=1}^{n_1}(Y_{1,i} - \bar Y_{1.})^2 - \hat \beta^2_{1,1}\sum_{i=1}^{n_1}(X_{1,i} - \bar X_{1.})^2\\
+=& \sum_{i=1}^{n_1}Y_{1,i}^2 + \hat\beta_{1,1}^2\sum_{i=1}^{n_1}X_{1,i}^2 + \hat\beta_{1,1}^2n_1x_0^2 - 2\hat\beta_{1,1}^2x_0n_1\bar X_{1.} - 2\hat\beta_{1,1}\sum_{i=1}^{n_1}Y_{1,i}X_{1,i} - 2\hat\beta_{1,1}x_0n_1\bar Y_{1.}\\
+&- \sum_{i=1}^{n_1}Y_{1,i}^2 + n_1\bar Y_{1.}^2 - \hat \beta^2_{1,1}\sum_{i=1}^{n_1}X_{1,i}^2 + \hat \beta^2_{1,1}n_1\bar X_{1.}^2\\
+=&\hat\beta_{1,1}^2n_1x_0^2 - 2\hat\beta_{1,1}^2x_0n_1\bar X_{1.} - 2\hat\beta_{1,1}\sum_{i=1}^{n_1}Y_{1,i}X_{1,i} - 2\hat\beta_{1,1}x_0n_1\bar Y_{1.}+ n_1\bar Y_{1.}^2 + \hat \beta^2_{1,1}n_1\bar X_{1.}^2\\
+=&\hat\beta_{1,1}^2n_1(\bar X_{1.} - x_0)^2 - 2\hat\beta_{1,1}(\sum_{i=1}^{n_1}Y_{1,i}X_{1,i} + x_0n_1\bar Y_{1.}) + n_1\bar Y_{1.}^2\\
+\end{aligned}
+\]
+  
+**Next let's derive the F-statistic from the original model.**
+  
+We know that shifting the model should not change our estimates of the slope coefficients from the first part. Also, because of how I shifted the model in the first part, imposing the restriction that the original intercept shifted by $y_0$ must equal 0 (instead of hypothesising that $\beta_{l,0} = 0$), the estimates of the model intercept should not change. However, using a non-shifted model does change our hypothesis. Now the restriction imposed by $H$ is
+\[
+\begin{aligned}
+&\beta_{1,0} + \beta_{1,1}x_0 = \beta_{2,0} + \beta_{2,1}x_0\\
+&\implies \beta_{1,0} - \beta_{2,0} + \beta_{1,1}x_0 - \beta_{2,1}x_0 = 0\\
+\end{aligned}
+\]
+  
+such that we are testing the hypothesis $H:C'\beta = d$, where
+\[
+\begin{aligned}
+C' &= \begin{bmatrix} 1 & -1 & x_0 & -x_0\end{bmatrix}\\
+\beta' &= \begin{bmatrix} \beta_{1,0} & \beta_{2,0} & \beta_{1,1}x_0 & \beta_{2,1}x_0\end{bmatrix}\\
+d &= 0
+\end{aligned}
+\]
+  
+To derive the F-statistic, we need to evaluate Q. First we'll need to find $G$. We know that
+\[
+\begin{aligned}
+X'X &= 
+\left[
+\begin{array}{cc|cc}
+n_1 & 0 & \sum_{i=1}^{n_1}X_{1,i}&0\\
+0 & n_2 & 0&\sum_{i=1}^{n_2}X_{2,i}\\
+\hline
+\sum_{i=1}^{n_1}X_{1,i}&0 & \sum_{i=1}^{n_1}X_{1,i}^2&0\\
+0&\sum_{i=1}^{n_2}X_{2,i}&0&\sum_{i=1}^{n_2}X_{2,i}^2
+\end{array}
+\right]\\
+&= 
+\left[
+\begin{array}{cc|cc}
+n_1 & 0 & \bar n_1X_{1,.}&0\\
+0 & n_2 & 0&\bar n_2X_{2,.}\\
+\hline
+n_1\bar X_{1,.}&0 & \sum_{i=1}^{n_1}X_{1,i}^2&0\\
+0&n_2\bar X_{2,.}&0&\sum_{i=1}^{n_2}X_{2,i}^2
+\end{array}
+\right]\\
+\end{aligned}
+\]
+  
+Let
+\[
+\begin{aligned}
+&n &= n_1,&&a&&=\bar X_{1.},&&c&=\sum_{i=1}^{n_1}X_{1,i}^2\\
+&m &= n_2,&&b&&=\bar X_{2.},&&d&=\sum_{i=1}^{n_2}X_{2,i}^2\\
+\end{aligned}
+\]
+
+Because X is full rank, we can let $G=(X'X)^{-1}$, which is
+\[
+\begin{bmatrix}
+-\frac{c}{n(a^2n-c)} & 0                    & \frac{a}{a^2n-c}  & 0\\
+0                    & -\frac{d}{m(mb^2-d)} & 0                 & \frac{b}{mb^2-d}\\
+\frac{a}{a^2n-c}     & 0                    & -\frac{1}{a^2n-c} & 0\\
+0                    & \frac{b}{mb^2-d}     & 0                 & -\frac{1}{mb^2-d}
+\end{bmatrix}
+\]
+  
+Now,
+\[
+\begin{aligned}
+GC
+&=\begin{bmatrix}
+\frac{x_0na - c}{n(a^2n-c)}\\
+\frac{d - x_0mb}{m(mb^2-d)}\\
+\frac{a - x_0}{na^2 - c}\\
+\frac{x_0 - b}{mb^2-d}
+\end{bmatrix}\\
+\end{aligned}
+\]
+  
+and
+\[
+\begin{aligned}
+C'GC &=
+\frac{x_0na - c}{n(a^2n-c)} - \frac{d - x_0mb}{m(mb^2-d)} + x_0\frac{a - x_0}{na^2 - c} - x_0\frac{x_0 - b}{mb^2-d}\\
+&=\frac{2x_0na - c - nx_0^2}{n(a^2n-c)} + \frac{2x_0mb - d - mx_0^2}{m(mb^2-d)}\\
+&=\frac{2x_0a - nc - x_0^2}{a^2n-c} + \frac{2x_0b - md - x_0^2}{mb^2-d}\\
+&=\frac{(mb^2-d)(2x_0a - nc - x_0^2)}{(a^2n-c)(mb^2-d)} + \frac{(a^2n-c)(2x_0b - md - x_0^2)}{(a^2n-c)(mb^2-d)}\\
+&=\frac{(mb^2-d)(2x_0a - nc - x_0^2) + (a^2n-c)(2x_0b - md - x_0^2)}{(a^2n-c)(mb^2-d)}\\
+\end{aligned}
+\]
+  
+We also have that
+\[
+C'\beta^0 - d = \begin{bmatrix}
+1 & -1 & x_0 & -x_0
+\end{bmatrix}
+\begin{bmatrix}
+\beta_{1,0}\\
+\beta_{2,0}\\
+\beta_{1,1}\\
+\beta_{2,1}
+\end{bmatrix}=
+\beta_{1,0} - \beta_{2,0} + \beta_{1,1}x_0 - \beta_{2,1}x_0
+\]
+  
+such that
+\[
+Q = \frac{(\hat\beta_{1,0} - \hat\beta_{2,0} + \hat\beta_{1,1}x_0 - \hat\beta_{2,1}x_0)^2(a^2n-c)(mb^2-d)}{(mb^2-d)(2x_0a - nc - x_0^2) + (a^2n-c)(2x_0b - md - x_0^2)}
+\]
+
+  
+\hrulefill
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

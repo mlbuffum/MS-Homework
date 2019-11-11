@@ -1,0 +1,522 @@
+---
+title: "STAT 666 HW #3"
+author: "Maggie Buffum"
+date: "May 21, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(pracma)
+library(knitr)
+```
+
+## Problem 7.22
+In the regression model
+\[
+Y_i = \beta_0 + \beta_1X_i + \beta_2(3X_i^2 - 2) + \epsilon_i,\ i=1,2,3
+\]
+  
+with $X_1 = -1$, $X_2 = 0$, and $X_3 = 1$, what happens to the least squares estimates of $\beta_0$ and $\beta_1$ when $\beta_2 = 0$? Why?
+  
+---
+  
+We are given the model
+\[
+\begin{bmatrix}
+Y_1\\Y_2\\Y_3
+\end{bmatrix} = 
+\begin{bmatrix}
+1 & -1 &  1\\
+1 &  0 & -2\\
+1 &  1 & 1
+\end{bmatrix}
+\begin{bmatrix}
+\beta_0\\\beta_1\\\beta_2
+\end{bmatrix} + \mathbf{\epsilon}_{i}
+\]
+  
+The sum of squared errors is $S(\beta) = (\mathbf{y} - \mathbf{X}\beta)'(\mathbf{y} - \mathbf{X}\beta)$:
+\[
+\begin{aligned}
+\mathbf{y} - \mathbf{X}\beta &=
+\begin{bmatrix}
+Y_1\\Y_2\\Y_3
+\end{bmatrix} - 
+\begin{bmatrix}
+1 & -1 &  1\\
+1 &  0 & -2\\
+1 &  1 & 1
+\end{bmatrix}
+\begin{bmatrix}
+\beta_0\\\beta_1\\\beta_2
+\end{bmatrix}\\
+&=
+\begin{bmatrix}
+Y_1 - \beta_0 - \beta_1 + \beta_2\\
+Y_2 - \beta_0 - 2\beta_2\\
+Y_3 - \beta_0 + \beta_1 + \beta_2
+\end{bmatrix}\\
+S(\beta) &= 
+\begin{bmatrix}
+Y_1 - \beta_0 - \beta_1 + \beta_2 & Y_2 - \beta_0 - 2\beta_2 & Y_3 - \beta_0 + \beta_1 + \beta_2
+\end{bmatrix}
+\begin{bmatrix}
+Y_1 - \beta_0 - \beta_1 + \beta_2\\
+Y_2 - \beta_0 - 2\beta_2\\
+Y_3 - \beta_0 + \beta_1 + \beta_2
+\end{bmatrix}\\
+&=(Y_1 - \beta_0 - \beta_1 + \beta_2)^2 + (Y_2 - \beta_0 - 2\beta_2)^2 + (Y_3 - \beta_0 + \beta_1 + \beta_2)^2
+\end{aligned}
+\]
+
+The least squares estimate of $\beta_1$ is
+\[
+\begin{aligned}
+\frac{\partial S(\beta)}{\partial \beta_1} &= 2(Y_1 - \beta_0 - \beta_1 + \beta_2)(-1) + 2(Y_3 - \beta_0 + \beta_1 + \beta_2) = \text{ (set) } 0\\
+&\implies - Y_1 + \beta_0 + \beta_1 - \beta_2 + Y_3 - \beta_0 + \beta_1 + \beta_2 = 0\\
+&\implies \hat\beta_1= \frac{1}{2}\left(Y_1 - Y_3\right)\\
+\end{aligned}
+\]
+  
+and $\hat\beta_2$:
+\[
+\begin{aligned}
+\frac{\partial S(\beta)}{\partial \beta_2} &= 2(Y_1 - \beta_0 - \beta_1 + \beta_2) + 2(Y_2 - \beta_0 - 2\beta_2)(-2) + 2(Y_3 - \beta_0 + \beta_1 + \beta_2) = \text{ (set) } 0\\
+&\implies Y_1 - \beta_0 - \beta_1 + \beta_2 - 2Y_2 + 2\beta_0 + 4\beta_2 + Y_3 - \beta_0 + \beta_1 + \beta_2 = 0\\
+&\implies Y_1 + 6\beta_2 - 2Y_2 + Y_3 = 0\\
+&\implies \hat\beta_2 = \frac{1}{6}\left(-Y_1 + 2Y_2 - Y_3\right)\\
+\end{aligned}
+\]
+  
+Now $\beta_0$:
+\[
+\begin{aligned}
+\frac{\partial S(\beta)}{\partial \beta_0} &= 2(Y_1 - \beta_0 - \beta_1 + \beta_2)(-1) + 2(Y_2 - \beta_0 - 2\beta_2)(-1) + 2(Y_3 - \beta_0 + \beta_1 + \beta_2)(-1) = \text{ (set) } 0\\
+&\implies Y_1 - 3\beta_0 + Y_2 + Y_3 = 0\\
+&\implies \hat\beta_0 = \frac{1}{3}(Y_1 + Y_2 + Y_3)
+\end{aligned}
+\]
+  
+But consider what happens when $\beta_2=0$. The model is
+\[
+\begin{bmatrix}
+Y_1\\Y_2\\Y_3
+\end{bmatrix} = 
+\begin{bmatrix}
+1 & -1\\
+1 &  0\\
+1 &  1
+\end{bmatrix}
+\begin{bmatrix}
+\beta_0\\\beta_1\\
+\end{bmatrix} + \mathbf{\epsilon}_{i}
+\]
+  
+and we have sum of squares
+\[
+S(\beta) = (Y_1 - \beta_0 - \beta_1)^2 + (Y_2 - \beta_0)^2 + (Y_3 - \beta_0 + \beta_1)^2
+\]
+  
+Let's re-estimate $\beta_1$:
+\[
+\begin{aligned}
+\frac{\partial S(\beta)}{\partial\beta_1} &= 2(Y_1 - \beta_0 - \beta_1)(-1) + 2(Y_3 - \beta_0 + \beta_1) = \text{ (set) } 0\\
+&\implies - Y_1 + Y_3 + 2\beta_1 = 0\\
+&\implies \hat\beta_1 = \frac{1}{2}(Y_1 - Y_3)\\
+\end{aligned}
+\]
+  
+that is, the least squares estimate of $\hat\beta_1$ doesn't change when $\beta_2=0$.
+\[
+\begin{aligned}
+\frac{\partial S(\beta)}{\partial\beta_0} &= 2(Y_1 - \beta_0 - \beta_1)(-1) + 2(Y_2 - \beta_0)(-1) + 2(Y_3 - \beta_0 + \beta_1)(-1) = \text{ (set) } 0\\
+&\implies Y_1 - 3\beta_0 + Y_2 + Y_3 = 0\\
+&\implies \hat\beta_0 = \frac{1}{3}(Y_1 + Y_2 + Y_3)
+\end{aligned}
+\]
+  
+Again the least squares estimate doesn't change. This happens because the least squares estimates of $\beta_0$ and $\beta_1$ were independent of $\beta_2$.
+  
+\hrulefill
+  
+## Problem 7.28
+Let $Y_{ij} = \mu + \tau_i + \epsilon_{ij}$, $j=1,\dots,n$, $i = 1,\dots,3$, and $\epsilon_{ij} \sim N(0,\sigma^2)$. Derive a test for $H: \tau_2 = (\tau_1 + \tau_3)/2$.
+  
+---
+  
+We can rewrite the hypothesis test as $H: 2\tau_2 - \tau_1 - \tau_3 = 0$ such that we are testing $\mathbf{C}'\beta = \mathbf{d}$, where
+\[
+\mathbf{C}' = \begin{bmatrix}
+0 & -1 & 2 & -1
+\end{bmatrix},\ 
+\beta  = \begin{bmatrix}
+\mu\\\tau_1\\\tau_2\\\tau_3
+\end{bmatrix},\ \text{and }
+\mathbf{d} = \mathbf{0}
+\]
+  
+Our design matrix looks like
+\[
+\mathbf{X} =
+\begin{bmatrix}
+1 & 1 & 0 & 0\\
+\vdots & \vdots & \vdots & \vdots\\
+1 & 1 & 0 & 0\\
+1 & 0 & 1 & 0\\
+\vdots & \vdots & \vdots & \vdots\\
+1 & 0 & 1 & 0\\
+1 & 0 & 0 & 1\\
+\vdots & \vdots & \vdots & \vdots\\
+1 & 0 & 0 & 1\\
+\end{bmatrix}_{(3n \times 4)}
+\]
+  
+and $\mathbf{X}'\mathbf{X}$ is
+\[
+\begin{aligned}
+\mathbf{X}'\mathbf{X} &=
+\begin{bmatrix}
+1 & \dots & 1 & 1 & \dots & 1 & 1 & \dots & 1\\
+1 & \dots & 1 & 0 & \dots & 0 & 0 & \dots & 0\\
+0 & \dots & 0 & 1 & \dots & 1 & 0 & \dots & 0\\
+0 & \dots & 0 & 0 & \dots & 0 & 1 & \dots & 1\\
+\end{bmatrix}
+\begin{bmatrix}
+1 & 1 & 0 & 0\\
+\vdots & \vdots & \vdots & \vdots\\
+1 & 1 & 0 & 0\\
+1 & 0 & 1 & 0\\
+\vdots & \vdots & \vdots & \vdots\\
+1 & 0 & 1 & 0\\
+1 & 0 & 0 & 1\\
+\vdots & \vdots & \vdots & \vdots\\
+1 & 0 & 0 & 1\\
+\end{bmatrix}\\
+&=
+\begin{bmatrix}
+3n & n & n & n\\
+n  & n & 0 & 0\\
+n  & 0 & n & 0\\
+n  & 0 & 0 & n
+\end{bmatrix}
+\end{aligned}
+\]
+  
+This is a singular matrix, so we need to find the generalized inverse instead. Let's use Rao's method and take the inverse of the lower right $3\times 3$ matrix, giving us
+\[
+(X'X)^{-} = 
+\begin{bmatrix}
+0 & 0 & 0 & 0\\
+0 & \frac{1}{n} & 0 & 0\\
+0 & 0 & \frac{1}{n} & 0\\
+0 & 0 & 0 & \frac{1}{n}\\
+\end{bmatrix}
+\]
+  
+Now we can find Q. Let's start by evaluating $\mathbf{C}'\beta^0 - \mathbf{d}$:
+\[
+\mathbf{C}'\beta^0 - \mathbf{d} = 
+ \begin{bmatrix}
+0 & -1 & 2 & -1
+\end{bmatrix}\begin{bmatrix}
+\mu^0\\\tau_1^0\\\tau_2^0\\\tau_3^0
+\end{bmatrix} = 
+-\tau_1^0 + 2\tau_2^0 - \tau_3^0
+\]
+  
+We know the estimates of the coefficients are
+\[
+\begin{aligned}
+\mu^0 &= \bar Y_{...}, \text{ and }& \tau_i^0 &= \bar Y_{i..} - \bar Y_{...}
+\end{aligned}
+\]
+  
+and so we can substitute these into the evaluated $\mathbf{C}'\beta^0 - \mathbf{d}$:
+\[
+\begin{aligned}
+\mathbf{C}'\beta^0 - \mathbf{d} &= -\tau_1^0 + 2\tau_2^0 - \tau_3^0\\
+&=-(\bar Y_{1..} - \bar Y_{...}) + 2(\bar Y_{2..} - \bar Y_{...}) - (\bar Y_{3..} - \bar Y_{...})\\
+&=- \bar Y_{1..} + \bar Y_{...} + 2\bar Y_{2..} - 2\bar Y_{...} - \bar Y_{3..} + \bar Y_{...}\\
+&=- \bar Y_{1..} + 2\bar Y_{2..} - \bar Y_{3..}\\
+\end{aligned}
+\]
+  
+Next we need to evaluate $\mathbf{C}'(\mathbf{X}'\mathbf{X})^{-}\mathbf{C}$:
+\[
+\begin{aligned}
+\mathbf{C}'(\mathbf{X}'\mathbf{X})^{-}\mathbf{C} &=
+\begin{bmatrix}
+0 & -1 & 2 & -1
+\end{bmatrix}
+\begin{bmatrix}
+0 & 0 & 0 & 0\\
+0 & \frac{1}{n} & 0 & 0\\
+0 & 0 & \frac{1}{n} & 0\\
+0 & 0 & 0 & \frac{1}{n}\\
+\end{bmatrix}
+\begin{bmatrix}
+0 \\ -1 \\ 2 \\ -1
+\end{bmatrix}\\
+&=
+\begin{bmatrix}
+0 & -\frac{1}{n} & \frac{2}{n} & -\frac{1}{n}
+\end{bmatrix}
+\begin{bmatrix}
+0 \\ -1 \\ 2 \\ -1
+\end{bmatrix}\\
+&=\frac{1}{n} + \frac{4}{n} + \frac{1}{n}\\
+&= \frac{6}{n}
+\end{aligned}
+\]
+  
+Therefore,
+\[
+Q = \frac{n}{6}(- \bar Y_{1..} + 2\bar Y_{2..} - \bar Y_{3..})^2
+\]
+  
+The SSE is
+\[
+\begin{aligned}
+SSE &= \sum_{i=1}^3\sum_{j=1}^n(Y_{ij} - \mu^0 - \tau^0_{i})^2\\
+&= \sum_{i=1}^3\sum_{j=1}^n(Y_{ij} - \bar Y_{..} - (\bar Y_{i.} - \bar Y_{..}))^2\\
+&= \sum_{i=1}^3\sum_{j=1}^n(Y_{ij} - \bar Y_{i.})^2\\
+\end{aligned}
+\]
+  
+and now we can find the test statistic:
+\[
+\begin{aligned}
+F(H) &= \frac{Q/s}{SSE/(N-r)}\\
+&= \frac{\frac{n}{6}(- \bar Y_{1..} + 2\bar Y_{2..} - \bar Y_{3..})^2/(1)}{\sum_{i=1}^3\sum_{j=1}^n(Y_{ij} - \bar Y_{i.})^2/(3n-3)}\\
+&= \frac{3(n-1)n(- \bar Y_{1..} + 2\bar Y_{2..} - \bar Y_{3..})^2}{6\sum_{i=1}^3\sum_{j=1}^n(Y_{ij} - \bar Y_{i.})^2}\\
+&= \frac{(n-1)n(- \bar Y_{1..} + 2\bar Y_{2..} - \bar Y_{3..})^2}{2\sum_{i=1}^3\sum_{j=1}^n(Y_{ij} - \bar Y_{i.})^2}\\
+\end{aligned}
+\]
+  
+\hrulefill
+  
+## Problem 7.29
+Consider the three-factor model with normal errors, viz., $Y_{ijk} = \mu + \tau_i + \beta_j + (\tau\beta)_{ij} + \gamma_k + (\beta\gamma)_{jk} + \epsilon_{ijk}$, $i=1,\dots,a$, $j=1,\dots,b$, $k=1,\dots,c$, with the constraints $\sum_i\tau_i=0$, $\sum_j\beta_j=0$, $\sum_k\gamma_k=0$, $\sum_i(\tau\beta)_{ij}=0$, $\sum_j(\tau\beta)_{ij}=0$, $\sum_j(\beta\gamma)_{jk}=0$, and $\sum_k(\beta\gamma)_{jk}=0$. Derive a suitable sequence of nested hypotheses, giving the relevant sum of squares. Complete the ANOVA table.
+  
+---
+  
+Given our model, consider the following sequence of subspaces
+\[
+\begin{aligned}
+S_{H_0} &= \{Y_{ijk} = \mu + \tau_i + \beta_j + (\tau\beta)_{ij} + \gamma_k + (\beta\gamma)_{jk} + \epsilon_{ijk}\} \supset\\
+S_{H_1} &= \{Y_{ijk} = \mu + \tau_i + \beta_j + (\tau\beta)_{ij} + \gamma_k + \epsilon_{ijk}\} \supset\\
+S_{H_2} &= \{Y_{ijk} = \mu + \tau_i + \beta_j + (\tau\beta)_{ij} + \epsilon_{ijk}\} \supset\\
+S_{H_3} &= \{Y_{ijk} = \mu + \tau_i + \beta_j + \epsilon_{ijk}\} \supset\\
+S_{H_4} &= \{Y_{ijk} = \mu + \tau_i + \epsilon_{ijk}\} \supset\\
+S_{H_5} &= \{Y_{ijk} = \mu + \epsilon_{ijk}\} \supset\\
+S_{H_5} &= \{Y_{ijk} = \epsilon_{ijk}\} \supset\\
+\end{aligned}
+\]
+  
+assuming the constraints given in the problem hold. We need to find the fitted values under the different hypotheses to complete the sum of squares, meaning we need to solve for the least squares estimates of our parameters. Let's start with $H_5$:
+\[
+\begin{aligned}
+\frac{d}{d\mu}S(H_5) &= \frac{d}{d\mu}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^c(Y_{ijk} - \mu)^2\\
+&= 2\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^c(Y_{ijk} - \mu)(-1) = \text{ (set) } 0\\
+&= \sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^c\mu = \sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^cY_{ijk}\\
+&= abc\mu = Y_{...}\\
+&= \mu^0 = \bar Y_{...}\\
+\end{aligned}
+\]
+  
+We can find the estimate of $\tau_i$ using $H_4$:
+\[
+\begin{aligned}
+\frac{d}{d\tau_i}S(H_4) &= \frac{d}{d\tau_i}\sum_{j=1}^b\sum_{k=1}^c(Y_{ijk} - \mu - \tau_i)^2\\
+&\implies 2\sum_{j=1}^b\sum_{k=1}^c(Y_{ijk} - \mu - \tau_i)(-1) = \text{ (set) } 0\\
+&\implies \sum_{j=1}^b\sum_{k=1}^c\tau_i= \sum_{j=1}^b\sum_{k=1}^cbY_{ijk} - \sum_{j=1}^b\sum_{k=1}^c\mu\\
+&\implies bc\tau_i^0 = Y_{i..} - bc\mu^0\\
+&\implies \tau_i^0 = \bar Y_{i..} - \bar Y_{...}\\
+\end{aligned}
+\]
+  
+We can find the estimate of $\beta_j$ using $H_3$:
+\[
+\begin{aligned}
+\frac{d}{d\beta_j}S(H_3) &= \frac{d}{d\beta_j}\sum_{i=1}^a\sum_{k=1}^c(Y_{ijk} - \mu - \tau_i - \beta_j)^2\\
+&\implies 2\sum_{i=1}^a\sum_{k=1}^c(Y_{ijk} - \mu - \tau_i - \beta_j)(-1) = \text{ (set) } 0\\
+&\implies \sum_{i=1}^a\sum_{k=1}^c\beta_j = \sum_{i=1}^a\sum_{k=1}^cY_{ijk} - \sum_{i=1}^a\sum_{k=1}^c\mu - \sum_{i=1}^a\sum_{k=1}^c\tau_i\\
+&\implies ac\beta_j^0 = Y_{.j.} - ac\mu^0\\
+&\implies \beta_j^0 = \bar Y_{.j.} - \bar Y_{...}\\
+\end{aligned}
+\]
+  
+We can find the estimate of $(\tau\beta)_{ij}$ using $H_2$:
+\[
+\begin{aligned}
+\frac{d}{d(\tau\beta)_{ij}}S(H_2) &= \frac{d}{d(\tau\beta)_{ij}}\sum_{k=1}^c(Y_{ijk} - \mu - \tau_i - \beta_j - (\tau\beta)_{ij})^2\\
+&\implies 2\sum_{k=1}^c(Y_{ijk} - \mu - \tau_i - \beta_j - (\tau\beta)_{ij})(-1) = \text{ (set) } 0\\
+&\implies \sum_{k=1}^c (\tau\beta)_{ij} = \sum_{k=1}^cY_{ijk} - \sum_{k=1}^c\mu - \sum_{k=1}^c\tau_i - \sum_{k=1}^c\beta_j\\
+&\implies c(\tau\beta)_{ij}^0 = Y_{ij.} - c\mu^0 - c\tau_i^0 - c\beta_j^0\\
+&\implies (\tau\beta)_{ij}^0 = \bar Y_{ij.} - \bar Y_{...} - (\bar Y_{i..} - \bar Y_{...}) - (\bar Y_{.j.} - \bar Y_{...})\\
+&\implies (\tau\beta)_{ij}^0 = \bar Y_{ij.} - \bar Y_{...} - \bar Y_{i..} + \bar Y_{...} - \bar Y_{.j.} + \bar Y_{...}\\
+&\implies (\tau\beta)_{ij}^0 = \bar Y_{ij.} - \bar Y_{i..} - \bar Y_{.j.} + \bar Y_{...}\\
+\end{aligned}
+\]
+  
+We can find the estimate of $\gamma_k$ using $H_1$:
+\[
+\begin{aligned}
+\frac{d}{d\beta_j}S(H_1) &= \frac{d}{d\beta_j}\sum_{i=1}^a\sum_{j=1}^b(Y_{ijk} - \mu - \tau_i - \beta_j - (\tau\beta)_{ij} - \gamma_k)^2\\
+&\implies 2\sum_{i=1}^a\sum_{j=1}^b(Y_{ijk} - \mu - \tau_i - \beta_j - (\tau\beta)_{ij} - \gamma_k)(-1) = \text{ (set) } 0\\
+&\implies \sum_{i=1}^a\sum_{j=1}^b\gamma_k = \sum_{i=1}^a\sum_{j=1}^bY_{ijk} - \sum_{i=1}^a\sum_{j=1}^b\mu - \sum_{i=1}^a\sum_{j=1}^b\tau_i - \sum_{i=1}^a\sum_{j=1}^b\beta_j - \sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}\\
+&\implies ab\gamma_k^0 = Y_{..k} - ab\mu^0\\
+&\implies \gamma_k^0 = \bar Y_{..k} - \bar Y_{...}\\
+\end{aligned}
+\]
+  
+Finally, we can find the estimate of $(\beta\gamma)_{jk}$ using $H_0$:
+\[
+\begin{aligned}
+\frac{d}{d((\beta\gamma)_{jk}}S(H_0) &= \frac{d}{d(\beta\gamma)_{jk}}\sum_{i=1}^a(Y_{ijk} - \mu - \tau_i - \beta_j - (\tau\beta)_{ij} - \gamma_k - (\beta\gamma)_{jk})^2\\
+&\implies 2\sum_{i=1}^a(Y_{ijk} - \mu - \tau_i - \beta_j - (\tau\beta)_{ij} - \gamma_k - (\beta\gamma)_{jk})(-1) = \text{ (set) } 0\\
+&\implies \sum_{i=1}^a(\beta\gamma)_{jk} = \sum_{i=1}^aY_{ijk} - \sum_{i=1}^a\mu - \sum_{i=1}^a\tau_i - \sum_{i=1}^a\beta_j - \sum_{i=1}^a(\tau\beta)_{ij} - \sum_{i=1}^a\gamma_k\\
+&\implies a(\beta\gamma)_{jk}^0 = Y_{.jk} - a\mu^0 - a\beta_j^0 - a\gamma_k^0\\
+&\implies (\beta\gamma)_{jk}^0 = \bar Y_{.jk} - \bar Y_{...} - (\bar Y_{.j.} - \bar Y_{...}) - (\bar Y_{..k} - \bar Y_{...})\\
+&\implies (\beta\gamma)_{jk}^0 = \bar Y_{.jk} - \bar Y_{...} - \bar Y_{.j.} + \bar Y_{...} - \bar Y_{..k} + \bar Y_{...}\\
+&\implies (\beta\gamma)_{jk}^0 = \bar Y_{.jk} - \bar Y_{.j.} - \bar Y_{..k} + \bar Y_{...}\\
+\end{aligned}
+\]
+  
+Now we have the following fitted values under each hypothesis:
+\[
+\begin{aligned}
+\mathbf{\hat y}_{H_0} &= \{\mu^0 + \tau_i^0 + \beta_j^0 + (\tau\beta)_{ij}^0 + \gamma_k + (\beta\gamma)_{jk}\} = \{\bar{Y_{ij.}} + \bar{Y_{.jk}} - \bar{Y_{.j.}}\}\\
+\mathbf{\hat y}_{H_1} &= \{\mu^0 + \tau_i^0 + \beta_j^0 + (\tau\beta)_{ij}^0 + \gamma_k\} = \{\bar{Y_{ij.}} + \bar{Y_{..k}} - \bar{Y_{...}}\}\\
+\mathbf{\hat y}_{H_2} &= \{\mu^0 + \tau_i^0 + \beta_j^0 + (\tau\beta)_{ij}^0 \} =\{\bar{Y_{ij.}}\}\\
+\mathbf{\hat y}_{H_3} &= \{\mu^0 + \tau_i^0 + \beta_j^0\} =\{\bar{Y_{i..}} + \bar{Y_{.j.}} - \bar{Y_{...}}\}\\
+\mathbf{\hat y}_{H_4} &= \{\mu^0 + \tau_i^0\} =\{\bar{Y_{i..}}\}\\
+\mathbf{\hat y}_{H_5} &= \{\mu^0\} =\{\bar{Y_{...}}\}\\
+\end{aligned}
+\]
+  
+Now we can estimate the sum of squares attributed to each parameter. $R(H_5|H_6)$ will give us the sum of squares for $\mu$:
+\[
+\begin{aligned}
+R(H_5|H_6) &= (\mathbf{\hat y}_{H_5} - \mathbf{\hat y}_{H_6})'(\mathbf{\hat y}_{H_5} - \mathbf{\hat y}_{H_6})\\
+&=(\bar{Y_{...}})'(\bar{Y_{...}}) = \sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^c\bar{Y_{...}}^2\\
+&=abc\bar{Y_{...}}^2
+\end{aligned}
+\]
+  
+The sum of squares for $\tau_{i}$ is:
+\[
+\begin{aligned}
+R(H_4|H_5) &= (\mathbf{\hat y}_{H_4} - \mathbf{\hat y}_{H_5})'(\mathbf{\hat y}_{H_4} - \mathbf{\hat y}_{H_5})\\
+&=(\bar{Y_{i..}} - \bar{Y_{...}})'(\bar{Y_{i..}} - \bar{Y_{...}})\\
+&=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^c(\bar{Y_{i..}} - \bar{Y_{...}})^2\\
+&=bc(\sum_{i=1}^a\bar{Y_{i..}}^2 + \sum_{i=1}^a\bar{Y_{...}}^2 - 2\sum_{i=1}^a\bar{Y_{i..}}\bar{Y_{...}})\\
+&=bc\sum_{i=1}^a\bar{Y_{i..}}^2 + abc\bar{Y_{...}}^2 - 2abc\bar{Y_{...}}^2\\
+&=bc\sum_{i=1}^a\bar{Y_{i..}}^2 - abc\bar{Y_{...}}^2\\
+\end{aligned}
+\]
+  
+The sum of squares for $\beta_{j}$ is:
+\[
+\begin{aligned}
+R(H_3|H_4) &= (\mathbf{\hat y}_{H_3} - \mathbf{\hat y}_{H_4})'(\mathbf{\hat y}_{H_3} - \mathbf{\hat y}_{H_4})\\
+&=(\bar{Y_{.j.}} - \bar{Y_{...}})'(\bar{Y_{.j.}} - \bar{Y_{...}})\\
+&=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^c(\bar{Y_{.j.}} - \bar{Y_{...}})^2\\
+&=ac(\sum_{j=1}^b\bar{Y_{.j.}}^2 + \sum_{j=1}^b\bar{Y_{...}}^2 - 2\sum_{j=1}^b\bar{Y_{.j.}}\bar{Y_{...}})\\
+&=ac\sum_{j=1}^b\bar{Y_{.j.}}^2 + abc\bar{Y_{...}}^2 - 2abc\bar{Y_{...}}^2\\
+&=ac\sum_{j=1}^b\bar{Y_{.j.}}^2 - abc\bar{Y_{...}}^2\\
+\end{aligned}
+\]
+  
+The sum of squares for $(\tau\beta)_{ij}$ is:
+\[
+\begin{aligned}
+R(H_2|H_3) &= (\mathbf{\hat y}_{H_2} - \mathbf{\hat y}_{H_3})'(\mathbf{\hat y}_{H_2} - \mathbf{\hat y}_{H_3})\\
+&=(\bar{Y_{ij.}} - \bar{Y_{i..}} - \bar{Y_{.j.}} + \bar{Y_{...}})'(\bar{Y_{ij.}} - \bar{Y_{i..}} - \bar{Y_{.j.}} + \bar{Y_{...}})\\
+&=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^c((\bar{Y_{ij.}} - \bar{Y_{i..}}) + (\bar{Y_{...}} - \bar{Y_{.j.}}))^2\\
+&=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^c((\bar{Y_{ij.}} - \bar{Y_{i..}})^2 + (\bar{Y_{...}} - \bar{Y_{.j.}})^2 + 2(\bar{Y_{ij.}} - \bar{Y_{i..}})(\bar{Y_{...}} - \bar{Y_{.j.}}))\\
+&=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^c(\bar{Y_{ij.}}^2 + \bar{Y_{i..}}^2 - 2\bar{Y_{ij.}}\bar{Y_{i..}} + \bar{Y_{...}}^2 + \bar{Y_{.j.}}^2 - 2\bar{Y_{.j.}}\bar{Y_{...}} + 2\bar{Y_{ij.}}\bar{Y_{...}} - 2\bar{Y_{ij.}}\bar{Y_{.j.}} - 2\bar{Y_{i..}}\bar{Y_{...}} + 2\bar{Y_{i..}}\bar{Y_{.j.}})\\
+&=c(\sum_{i=1}^a\sum_{j=1}^b\bar{Y_{ij.}}^2 - b\sum_{i=1}^a\bar{Y_{i..}}^2 + ab\bar{Y_{...}}^2 + a\sum_{j=1}^b\bar{Y_{.j.}}^2 - 2ab\bar{Y_{...}}^2 + 2ab\bar{Y_{...}}^2 - 2a\sum_{j=1}^b\bar{Y_{.j.}}^2 - 2ab\bar{Y_{...}}^2 + 2ab\bar{Y_{...}}^2)\\
+&=c\sum_{i=1}^a\sum_{j=1}^b\bar{Y_{ij.}}^2 - bc\sum_{i=1}^a\bar{Y_{i..}}^2 - ac\sum_{j=1}^b\bar{Y_{.j.}}^2 + abc\bar{Y_{...}}^2\\
+\end{aligned}
+\]
+  
+The sum of squares for $\gamma_{k}$ is:
+\[
+\begin{aligned}
+R(H_1|H_2) &= (\mathbf{\hat y}_{H_1} - \mathbf{\hat y}_{H_2})'(\mathbf{\hat y}_{H_1} - \mathbf{\hat y}_{H_2})\\
+&=(\bar{Y_{ij.}} + \bar{Y_{..k}} - \bar{Y_{...}} - \bar{Y_{ij.}})'(\bar{Y_{ij.}} + \bar{Y_{..k}} - \bar{Y_{...}} - \bar{Y_{ij.}})\\
+&=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^c(\bar{Y_{..k}} - \bar{Y_{...}})^2\\
+&=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^c(\bar{Y_{..k}}^2 + \bar{Y_{...}}^2 - 2\bar{Y_{..k}}\bar{Y_{...}})\\
+&=ab(\sum_{k=1}^c\bar{Y_{..k}}^2 + \sum_{k=1}^c\bar{Y_{...}}^2 - 2\sum_{k=1}^c\bar{Y_{..k}}\bar{Y_{...}})\\
+&=ab\sum_{k=1}^c\bar{Y_{..k}}^2 - abc\bar{Y_{...}}^2\\
+\end{aligned}
+\]
+  
+and finally, the sum of squares for $(\beta\gamma)_{jk}$ is:
+\[
+\begin{aligned}
+R(H_0|H_1) &= (\bar{Y_{.jk}} - \bar{Y_{.j.}} -  \bar{Y_{..k}} + \bar{Y_{...}})'()\\
+&=(\bar{Y_{.jk}} - \bar{Y_{.j.}} - \bar{Y_{..k}} + \bar{Y_{...}})'(\bar{Y_{.jk}} - \bar{Y_{.j.}} - \bar{Y_{..k}} + \bar{Y_{...}})\\
+&=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^c(\bar{Y_{.jk}} - \bar{Y_{.j.}} - \bar{Y_{..k}} + \bar{Y_{...}})^2\\
+&=a\sum_{j=1}^b\sum_{k=1}^c\bar{Y_{.jk}}^2 - ac\sum_{j=1}^b\bar{Y_{.j.}}^2 - ab\sum_{k=1}^c\bar{Y_{..k}}^2 + abc\bar{Y_{...}}^2\\
+\end{aligned}
+\]
+  
+Now we can fill out the ANOVA table. Note that the error terms are the totals minus the sums of squares from all the parameters.
+  
+\[
+\begin{array}{c|cc}
+\text{Source} & \text{SS} & \text{Df}\\
+\hline
+\tau_i & bc\sum_{i=1}^a\bar{Y_{i..}}^2 - abc\bar{Y_{...}}^2 & (a-1)\\
+\beta_j & ac\sum_{j=1}^b\bar{Y_{.j.}}^2 - abc\bar{Y_{...}}^2 & (b-1)\\
+(\tau\beta)_{ij} & c\sum_{i=1}^a\sum_{j=1}^b\bar{Y_{ij.}}^2 - bc\sum_{i=1}^a\bar{Y_{i..}}^2 - ac\sum_{j=1}^b\bar{Y_{.j.}}^2 + abc\bar{Y_{...}}^2 & (a-1)(b-1)\\
+\gamma_k & ab\sum_{k=1}^c\bar{Y_{..k}}^2 - abc\bar{Y_{...}}^2 & (c-1)\\
+(\beta\gamma)_{jk} & a\sum_{j=1}^b\sum_{k=1}^c\bar{Y_{.jk}}^2 - ac\sum_{j=1}^b\bar{Y_{.j.}}^2 - ab\sum_{k=1}^c\bar{Y_{..k}}^2 + abc\bar{Y_{...}}^2 & (b-1)(c-1)\\
+\text{Error} & \sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^c Y_{ijk}^2 - ac\sum_{j=1}^b\bar{Y_{.j.}}^2 - c\sum_{i=1}^a\sum_{j=1}^b\bar{Y_{ij.}}^2 - a\sum_{j=1}^b\sum_{k=1}^c\bar{Y_{.jk}}^2 + abc\bar{Y_{...}}^2& b(a-1)(c-1)\\
+\hline
+\text{Total} & \sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^c Y_{ijk}^2& abc - 1
+\end{array}
+\]
+  
+\hrulefill
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

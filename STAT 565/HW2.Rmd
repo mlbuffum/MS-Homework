@@ -1,0 +1,254 @@
+---
+title: "STAT 562 HW #2"
+author: "Maggie Buffum"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Problem 5.7
+**In Example 5.2.10, a partial fraction decomposition is needed to derive the distribution of the sum of two independent Cauchy random variables. This exercise provides the details that are skipped in that example.**
+  
+**(a) Find the constants A, B, C, and D that satisfy**
+\[
+\begin{aligned}
+\frac{1}{1 + (w/\sigma)^2} &\frac{1}{1 + ((z - w)/\tau)^2}\\
+&=\frac{Aw}{1 + (w/\sigma)^2} + \frac{B}{1 + (x/\sigma)^2} - \frac{Cw}{1 + ((z-w)/\tau)^2} - \frac{D}{1 + (z + ((z-w)/\tau)^2)}
+\end{aligned}
+\]
+  
+**where A, B, C, and D may depend on z but not on w**.
+  
+We are given $\pi \sigma f_X(w)$ and $\pi \tau f_Y(z-w)$, where $X$ and $Y$ are independent Cauchy random variables with parameters $(0,\sigma)$ and $(0,\tau)$, respectively. Consider than integrating both sides of the equation with respect to $w$ will maintain the equality while also removing any dependence on $w$ from the constants A, B, C, and D. However, per the note, we already know that integrals involving A and C on their own do not exist, but if we group these two terms under one integral, their difference does exist. Now we can solve the following integrals:
+\[
+\begin{aligned}
+\int_{-\infty}^{\infty} &\frac{Aw}{1 + (w/\sigma)^2} + \frac{B}{1 + (x/\sigma)^2} - \frac{Cw}{1 + ((z-w)/\tau)^2} - \frac{D}{1 + (z + ((z-w)/\tau)^2)}dw\\
+&=\int_{-\infty}^{\infty} \frac{Aw}{1 + (w/\sigma)^2} - \frac{Cw}{1 + ((z-w)/\tau)^2}dw + \int_{-\infty}^{\infty}\frac{B}{1 + (x/\sigma)^2}dw - \int_{-\infty}^{\infty}\frac{D}{1 + (z + ((z-w)/\tau)^2)}dw\\
+\end{aligned}
+\]
+  
+Let's start by solving the first integral, involving A and C:
+\[
+\int_{-\infty}^{\infty} \frac{Aw}{1 + (w/\sigma)^2} - \frac{Cw}{1 + ((z-w)/\tau)^2}dw\\
+\]
+  
+If we take a sneak peek at part (b) we see that the solution to the first integral is almost given to us. We can rewrite to conform:
+\[
+\begin{aligned}
+\int_{-\infty}^{\infty} &\frac{Aw}{1 + (w/\sigma)^2} - \frac{Cw}{1 + ((z-w)/\tau)^2}dw\\
+&=\int_{-\infty}^{\infty} A\sigma^2\frac{w}{\sigma^2 + w^2} - C\tau^2\frac{(z-w)}{\tau^2 + (z-w)^2} + Cz\frac{1}{\tau^2 + (z-w)^2}dw\\
+&=A\sigma^2\int_{-\infty}^{\infty} \frac{w}{\sigma^2 + w^2} - C\tau^2\int_{-\infty}^{\infty}\frac{(z-w)}{\tau^2 + (z-w)^2} + Cz\int_{-\infty}^{\infty}\frac{1}{\tau^2 + (z-w)^2}dw\\
+&=A\sigma^2\bigg[\frac{1}{2}log\big(w^2 + \sigma^2\big)\bigg]_{-\infty}^{\infty} - C\tau^2\bigg[\frac{1}{2}log\big((z-w)^2 + \tau^2\big)\bigg]_{-\infty}^{\infty} + Cz\bigg[\frac{1}{\tau}arctan\big(\frac{z-w}{\tau}\big)\bigg]_{-\infty}^{\infty}\\
+&=\pi\tau C z
+\end{aligned}
+\]
+  
+Now we can solve integrals involving B and D:
+\[
+\begin{aligned}
+\int_{-\infty}^{\infty}&\frac{B}{1 + (w/\sigma)^2}dw\\
+&=B\bigg[\frac{1}{2}log(1 + (w/\sigma)^2\bigg]_{-\infty}^{\infty}\\
+&=\pi\sigma B
+\end{aligned}
+\]
+  
+\[
+\begin{aligned}
+\int_{-\infty}^{\infty}&\frac{D}{1 + ((z-w)/\tau)^2}dw\\
+&=D\bigg[\frac{1}{2}log(1 + ((z-w)/\tau)^2\bigg]_{-\infty}^{\infty}\\
+&=\pi\tau D
+\end{aligned}
+\]
+  
+We are given that the integral of $f_X(w)f_(z-w)$ with respect to $w$ is
+\[
+f_Z(z)=\frac{1}{\pi(\sigma + \tau)}\frac{1}{1 + (z/(\sigma + \tau))^2}
+\]
+  
+so now we need to solve
+\[
+\pi^2\sigma\tau\frac{1}{\pi(\sigma + \tau)}\frac{1}{1 + (z/(\sigma + \tau))^2}=\pi\tau C z + \pi\sigma B - \pi\tau D
+\]
+  
+I'm not sure how to find a solution from here because there aren't enough equations...?
+  
+**(b) Using the facts that**
+\[
+\int \frac{t}{1+t^2}dt=\frac{1}{2}log(1 + t^2) + c\text{ and }\int \frac{1}{1 + t^2}dt = arctan(t) + c
+\]
+  
+**evaluate (5.2.4) and hence verify (5.2.5).**
+  
+\[
+\begin{aligned}
+\frac{1}{\pi^2\tau\sigma}\int_{-\infty}^{\infty}&\frac{Aw}{1 + (w/\sigma)^2} + \frac{B}{1 + (x/\sigma)^2} - \frac{Cw}{1 + ((z-w)/\tau)^2} - \frac{D}{1 + (z + ((z-w)/\tau)^2)}\\
+&=\frac{1}{\pi^2\tau\sigma}(\pi\tau C z + \pi\sigma B - \pi\tau D)\\
+&=\frac{1}{\pi(\sigma +\tau)}\frac{1}{1 + (z/(\sigma + \tau))^2}
+\end{aligned}
+\]
+  
+**(Note that the integration in part (b) is quite delicate. Since the mean of a Cauchy does not exist, the integrals $\mathbf{\int_{-\infty}^{\infty}\frac{Aw}{1 + (w/\sigma)^2}dw}$ and $\mathbf{\int_{-\infty}^{\infty}\frac{Cw}{1 + ((z-w)/\tau)^2}dw}$ do not exist. However, the integral of the difference *does exist*, which is all that is needed.)**
+  
+## Problem 5.10
+**Let $\mathbf{X_1,\dots,X_n}$ be a random sample from a $\mathbf{n(\mu,\sigma^2)}$ population.**
+  
+**(c) Calculate $\mathbf{Var(S^2)}$ a completely different (and easier) way: use the fact that $\mathbf{(n-1)S^2/\sigma^2 \sim \chi^2_{n-1}}$.**
+  
+Knowing the distribution of $\frac{(n-1)S^2}{\sigma^2}$ has a chi-square distribution with $n-1$ degrees of freedom does make it easier to calculate the variance of $S^2$. Consider
+\[
+Var(S^2) = Var\bigg(\frac{(n-1)S^2}{\sigma^2}\frac{\sigma^2}{(n-1)}\bigg)=\frac{\sigma^4}{(n-1)^2}Var\bigg(\frac{(n-1)S^2}{\sigma^2}\bigg)
+\]
+  
+We know the variance of a chi-square random variable, so we have:
+\[
+Var(S^2) = \frac{\sigma^4}{(n-1)^2}Var\bigg(\frac{(n-1)S^2}{\sigma^2}\bigg) = \frac{\sigma^4}{(n-1)^2}2(n-1) = \frac{2\sigma^4}{n-1}
+\]
+  
+## Problem 5.13
+**Let $\mathbf{X_1,\dots,X_n}$ be iid $\mathbf{n(\mu,\sigma^2)}$. Find a function of $\mathbf{S^2}$, the sample variance, say $\mathbf{g(S^2)}$, that satisfies $\mathbf{Eg(S^2)} = \sigma$. (*Hint*: try $\mathbf{g(S^2) = c\sqrt{S^2}}$, where c is a constant.)**
+  
+Let's first simplify $E[g(S^2)]$, substituing $c\sqrt{S^2}$ for $g(S^2)$
+  
+\[
+E[g(S^2)] = E\big[c\sqrt{S^2}\big] = cE\big[\sqrt{S^2}\big]
+\]
+  
+We know that a function of the sample variance, $(n-1)S^2/\sigma^2$, has a chi-squared distribution with $n-1$ degrees of freedom. If we plug in this value for $S^2$ is our expected value, and then divide out $(n-1)/\sigma^2$, we get
+\[
+\begin{aligned}
+cE\big[\sqrt{S^2}\big] &= cE\bigg[\sqrt{\frac{(n-1)S^2}{\sigma^2}\frac{\sigma^2}{(n-1)}}\bigg]\\
+&=c\frac{\sigma}{\sqrt{n-1}}E\bigg[\sqrt{\frac{(n-1)S^2}{\sigma^2}}\bigg]\\
+&=c\frac{\sigma}{\sqrt{n-1}}E[\sqrt{W}]\\
+\end{aligned}
+\]
+  
+Now we just need to find the expected value of the square root of a chi-squared random variable with $n-1$ degrees of freedom:
+  
+\[
+\begin{aligned}
+E[\sqrt{W}] &= \int_0^{\infty} \sqrt{w}\frac{1}{\Gamma(\frac{n-1}{2})2^{(n-1)/2}}w^{(n-1)/2 - 1}e^{-w/2}dw\\
+&= \int_0^{\infty} w^{1/2}\frac{1}{\Gamma(\frac{n-1}{2})2^{(n-1)/2}}w^{(n-1)/2 - 1}e^{-w/2}dw\\
+&= \int_0^{\infty} \frac{1}{\Gamma(\frac{n-1}{2})2^{(n-1)/2}}w^{(n-1)/2 - 1 + 1/2}e^{-w/2}dw\\
+&= \int_0^{\infty} \frac{1}{\Gamma(\frac{n-1}{2})2^{(n-1)/2}}w^{(n-1+1)/2 - 1}e^{-w/2}dw\\
+&= \int_0^{\infty} \frac{1}{\Gamma(\frac{n-1}{2})2^{-1/2}2^{n/2}}w^{n/2 - 1}e^{-w/2}dw\\
+&= \frac{\Gamma(\frac{n}{2})}{\Gamma(\frac{n-1}{2})2^{-1/2}}\int_0^{\infty} \frac{1}{\Gamma(\frac{n}{2})2^{n/2}}w^{n/2 - 1}e^{-w/2}dw\\
+&= \frac{\Gamma(\frac{n}{2})}{\Gamma(\frac{n-1}{2})2^{-1/2}}\text{ (Gamma distribution with }\alpha = n/2\text{)}\\
+\end{aligned}
+\]
+  
+Now we can solve for c by setting $E[g(S^2)] = \sigma$:
+\[
+\begin{aligned}
+c\frac{\sigma}{\sqrt{n-1}}E[\sqrt{W}] &= c\frac{\sigma}{\sqrt{n-1}}\frac{\Gamma(\frac{n}{2})}{\Gamma(\frac{n-1}{2})2^{-1/2}} =\sigma\\
+&\implies c =\sigma\frac{\sqrt{n-1}\Gamma(\frac{n-1}{2})2^{-1/2}}{\Gamma(\frac{n}{2})}\\
+\end{aligned}
+\]
+
+  
+## Problem 5.15
+**Establish the following recursion relations for means and variances. Let $\mathbf{\bar X_n}$ and $\mathbf{S^2_n}$ be the mean and variance, respectively,of $\mathbf{X_1,\dots,X_n}$. Then suppose another observation, $\mathbf{X_{n+1}}$, becomes available. Show that**
+  
+**(a) $\mathbf{\bar X_{n+1}=\frac{X_{n+1} + n\bar X_n}{n+1}}$.**
+  
+The mean of the sample including the new observation is
+\[
+\frac{1}{n+1}\sum_{i=1}^{n+1}X_i = \frac{1}{n+1}\bigg[\sum_{i=1}^{n}X_i + X_{n+1}\bigg] = \frac{1}{n+1}\bigg[n\bar X_n + X_{n+1}\bigg]
+\]
+  
+**(b) $\mathbf{nS^2_{n+1} = (n-1)S^2_n + \bigg(\frac{n}{n+1}\bigg)(X_{n+1} - \bar X_n)^2}.$**
+  
+We are trying to show that
+\[
+nS_{n+1}^2 = (n-1)S_n^2 + \bigg(\frac{n}{n+1}\bigg)\big(X_{n+1} - \bar X_n\big)^2
+\]
+
+Note that
+\[
+(n-1)S^2_n = (n-1)\frac{1}{n-1}\sum_{i=1}^n(X_i - \bar X_n)^2 = \sum_{i=1}^n(X_i^2 + \bar X_n^2 - 2X_i\bar X_n) = \sum_{i=1}^nX_i^2 + n \bar X_n^2 - 2n \bar X_n^2
+\]
+  
+and
+\[
+\bigg(\frac{n}{n+1}\bigg)\bigg(X_{n+1} - \bar X_n\bigg)^2 = \bigg(\frac{n}{n+1}\bigg)\bigg(X_{n+1}^2 + \bar X_n^2 - 2X_{n+1}\bar X_{n}\bigg)
+\]
+  
+Now we can solve for $nS^2_{n+1}$:
+\[
+\begin{aligned}
+nS^2_{n+1} &= \frac{n}{(n+1)-1}\sum_{i=1}^{n+1}\big(X_i - \bar X_{n+1})^2\\
+&=\sum_{i=1}^{n}\big(X_i - \bar X_{n+1})^2 + (X_{n+1} - \bar X_{n+1})^2\\
+&=\sum_{i=1}^{n}\big(X_i^2 + \bar X_{n+1}^2 - 2X_i\bar X_{n+1}) + (X_{n+1}^2 + \bar X_{n+1}^2 - 2X_{n+1}\bar X_{n+1})\\
+&=\sum_{i=1}^{n}X_i^2 + n\bar X_{n+1}^2 - 2\bar X_{n+1}n\bar X_n + X_{n+1}^2 + \bar X_{n+1}^2 - 2X_{n+1}\bar X_{n+1}\\
+&=\sum_{i=1}^{n}X_i^2 - 2\bar X_{n+1}(n\bar X_n + X_{n+1}) + X_{n+1}^2 + (n+1)\bar X_{n+1}^2\\
+&=\sum_{i=1}^{n}X_i^2 - 2(n+1)\bar X_{n+1}^2 + X_{n+1}^2 + (n+1)\bar X_{n+1}^2\\
+&=\sum_{i=1}^{n}X_i^2 - (n+1)\bar X_{n+1}^2 + X_{n+1}^2\\
+&=\sum_{i=1}^{n}X_i^2 - (n+1)\bigg(\frac{1}{n+1}(n\bar X_n + X_{n+1})\bigg)^2 + X_n^2\\
+&=\sum_{i=1}^{n}X_i^2 - \frac{1}{n+1}\bigg(n^2\bar X_n^2 + X_{n+1}^2 + 2n\bar X_nX_{n+1}\bigg) + X_{n+1}^2\\
+&=\sum_{i=1}^{n}X_i^2 - \frac{1}{n+1}n^2\bar X_n^2 - \frac{1}{n+1}X_{n+1}^2 - \frac{1}{n+1}2n\bar X_nX_{n+1} + X_{n+1}^2\\
+&=\sum_{i=1}^{n}X_i^2 - \frac{1}{n+1}n^2\bar X_n^2 - \frac{1}{n+1}2n\bar X_nX_{n+1} + X_{n+1}^2\bigg(1 - \frac{1}{n+1}\bigg)\\
+&=\sum_{i=1}^{n}X_i^2 - \bigg(\frac{n}{n+1}\bigg)n\bar X_n^2 - \bigg(\frac{n}{n+1}\bigg)2\bar X_nX_{n+1} + \bigg(\frac{n}{n+1}\bigg)X_{n+1}^2\\
+&=\sum_{i=1}^{n}X_i^2 + n\bar X_n -2n\bar X_n^2- \bigg(\frac{n}{n+1}\bigg)n\bar X_n^2 -n\bar X_n +2n\bar X_n^2- \bigg(\frac{n}{n+1}\bigg)2\bar X_nX_{n+1} + \bigg(\frac{n}{n+1}\bigg)X_{n+1}^2\\
+&=(n-1)S^2_n -n\bar X_n +\frac{n^2\bar X_n^2+2n\bar X_n^2}{n+1}- \bigg(\frac{n}{n+1}\bigg)2\bar X_nX_{n+1} + \bigg(\frac{n}{n+1}\bigg)X_{n+1}^2\\
+\end{aligned}
+\]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

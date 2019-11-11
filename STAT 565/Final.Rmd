@@ -1,0 +1,425 @@
+---
+title: "STAT 562 Final"
+author: "Maggie Buffum"
+date: "March 18, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+  
+\hrule
+  
+## Problem 1
+$X_1, X_2,\dots,X_n$ is a random sample from a distribution having a pdf of the form
+\[
+f(x) = 
+\begin{cases}
+\lambda x^{\lambda - 1},&0 < x < 1\\
+0,&\text{elsewhere}
+\end{cases}
+\]
+  
+Find a complete and sufficient statistic for $\lambda$. Justify your answer.
+  
+---
+  
+If we can show that a minimally sufficient statistic exists for $\lambda$, then by Theorem 6.2.28 any complete statistic is also a minimally sufficient statistic. To find a minmally sufficient statistic, consider
+\[
+\frac{f(\mathbf{x}|\lambda)}{f(\mathbf{y}|\lambda)} = \frac{\prod_{i=1}^n\lambda x_i^{\lambda - 1}}{\prod_{i=1}^n\lambda y_i^{\lambda - 1}} = \frac{\left(\prod_{i=1}^nx_i\right)^{\lambda-1}}{\left(\prod_{i=1}^ny_i\right)^{\lambda-1}}
+\]
+  
+Clearly this ratio is only constant as a function of $\lambda$ when $\prod_{i=1}^nx_i = \prod_{i=1}^ny_i$, so $\prod_{i=1}^nX_i$ is a minimally sufficient statistic for $\lambda$.
+  
+We need to final a complete statistic for $\lambda$. First, rewrite the equation as
+\[
+f(x|\mathbf{\lambda}) = \lambda^n\left(\prod_{i=1}^n x_i\right)^{\lambda-1}=\lambda^n\exp\left[(\lambda - 1)\sum_{i=1}^n\ln(x_i)\right]
+\]
+  
+so that it's clear $X_1,\dots,X_n$ are observations from an exponential family, where $h(x) = 1$, $c(\theta) = \lambda^n$, $w(\lambda) = (\lambda - 1)$, and $t(x) = \sum_{i=1}^n x_i$. Because $\lambda > 0$, the set is open, and by Theorem 6.2.25, $T(X)=\sum_{i=1}^n\ln(X_i)$ is a complete statistic for $\lambda$. Note that by Theorem 6.2.28, $T(X)=\sum_{i=1}^n\ln(X_i)$ is also minimally sufficient.
+  
+\hrulefill
+  
+## Problem 2
+Let $Y_n$ be the $n$th order statistic of a random sample of size $n$ from the normal distribution $N(\theta,\sigma^2)$. Prove that $Y_n - \bar{Y}$ and $\bar{Y}$ are independent.
+  
+---
+  
+We want to prove that $Y_n - \bar Y$ and $\bar Y$ are independent. First, let's note that $Y_n - \bar Y$ is the deviation between the maximum sample drawn and the sample mean. Also, recall that $S^2 = \sum_{i=1}^n (Y_i - \bar Y)^2$ is independent from $\bar Y$ by Theorem 5.3.1. But by Lemma 5.3.3, for $\bar Y$ and $\sum_{i=1}^n (Y_i - \bar Y)^2$ to be independent, all pairs of $Y_i - \bar Y$ and $\bar Y$ must be independent, including when $i=n$, the nth order statistic. Therefore, $Y_n-\bar Y$ and $\bar Y$ are independent.
+  
+\hrulefill
+  
+## Problem 3
+Suppose that $X_1,\dots,X_n \sim$ iid Exponential($\theta$), i.e. $f(x|\theta) = \theta e^{-\theta x}$, $x>0$. Assume that the prior distribution of $\theta$ is $\pi(\theta)=\lambda e^{-\lambda\theta}$, $\theta > 0$.
+  
+(a) Find the posterior distribution $\pi(\theta|\vec{x})$.
+  
+---
+  
+The posterior distribution of $\theta|\vec{x}$ is $g(\vec{x},\theta)/m(\vec{x})$, where the joint distribution of $(X_1,\dots,X_n,\theta)$ is $g(\vec{x},\theta) = \pi(\theta)\prod_{i=1}^nf(x_i|\theta)$ and the marginal distribtion of $(X_1,\dots,X_n)$ is $m(\vec{x}) = \int_{-\infty}^{\infty}g(\vec{x},\theta)d\theta$. Given $f(x|\theta) = \theta e^{-\theta x}$, $x>0$ and $\pi(\theta)=\lambda e^{-\lambda\theta}$, $\theta > 0$, we have
+\[
+\begin{aligned}
+g(\vec{x},\theta) &= \pi(\theta)\prod_{i=1}^nf(x_i|\theta)\\
+&=\lambda e^{-\lambda\theta}\prod_{i=1}^n\theta e^{-\theta x_i}\\
+&=\lambda\theta^ne^{-\theta\left(\sum_{i=1}^n x_i + \lambda\right)}\\
+\end{aligned}
+\]
+  
+and
+\[
+\begin{aligned}
+m(\vec{x}) &= \int_{-\infty}^{\infty}g(\vec{x},\theta)d\theta\\
+&=\int_{0}^{\infty}\lambda\theta^ne^{-\theta\left(\sum_{i=1}^n x_i + \lambda\right)}d\theta\\
+&=\lambda\frac{\Gamma(n+1)}{\left(\sum_{i=1}^n x_i + \lambda\right)^{n+1}}\int_{0}^{\infty}\frac{\left(\sum_{i=1}^n x_i + \lambda\right)^{n+1}}{\Gamma(n+1)}\theta^ne^{-\theta\left(\sum_{i=1}^n x_i + \lambda\right)}d\theta
+\end{aligned}
+\]
+  
+From here we recognize the gamma distribution, where $\alpha = n+1$ and $1/\beta = \sum_{i=1}^n x_i + \lambda$, and we find that $m(\vec{x})=\frac{\lambda\Gamma(n+1)}{\left(\sum_{i=1}^n x_i + \lambda\right)^{n+1}}$. Now we can calculate the posterior distribution of $\theta|\vec{x}$:
+\[
+\begin{aligned}
+\pi(\theta|\vec{x}) &= \frac{g(\vec{x},\theta)}{m(\vec{x})} = \frac{\lambda\theta^ne^{-\theta\left(\sum_{i=1}^n x_i + \lambda\right)}}{\frac{\lambda\Gamma(n+1)}{\left(\sum_{i=1}^n x_i + \lambda\right)^{n+1}}}\\
+&=\frac{\theta^ne^{-\theta\left(\sum_{i=1}^n x_i + \lambda\right)}\left(\sum_{i=1}^n x_i + \lambda\right)^{n+1}}{\Gamma(n+1)}\\
+&=\frac{\left(\sum_{i=1}^n x_i + \lambda\right)^{n+1}}{\Gamma(n+1)}\theta^ne^{-\theta\left(\sum_{i=1}^n x_i + \lambda\right)}\\
+\end{aligned}
+\]
+  
+which is again a gamma distribution with $\alpha = n+1$ and $1/\beta=\sum_{i=1}^n x_i + \lambda$.
+  
+(b) Find the Bayes estimator of $\theta$, assuming squared-error loss.
+  
+---
+  
+We are given a squared-error loss function, implying that $\mathcal{L}_{\theta}(\hat\theta) = (\hat\theta - \theta)^2$. We want to find the Bayes estimator of $\theta$, that is, the value of $\theta$, $\hat\theta$, that minimizes $E\left[\mathcal{L}_{\theta}(\hat\theta)|\vec{x}\right]$, which we already know is $\hat\theta = E[\theta|\vec{x}]$, i.e., the posterior mean. Since the posterior distribution is Gamma($n+1,\left(\sum_{i=1}^n x_i + \lambda\right)^{-1}$), the Bayes estimator for $\theta$ is
+\[
+\hat\theta = \frac{n+1}{\sum_{i=1}^n x_i + \lambda}
+\]
+  
+(c) Write this estimator as a weighted (arithmetic, geometric, or harmonic) average of the MLE and some prior constant.
+  
+---
+  
+The prior distribution was exponential, so the mean of the proir is simply $1/\lambda$, and the MLE of an exponential random variable is just the mean across the $x_i$s, $(1/n)\sum_{i=1}^n x_i$. Looking at the harmonic mean, we see that
+\[
+\frac{1}{E[\hat\theta|\vec{x}]} = \frac{\sum_{i=1}^nx_i + \lambda}{n+1} = \frac{\frac{n}{n}\sum_{i=1}^nx_i + \lambda}{n+1} = \frac{n\bar{x}}{n+1} + \frac{\lambda}{n+1} = \frac{n}{n+1}\bar{x} + \frac{\lambda^2}{n+1}\frac{1}{\lambda}
+\]
+  
+(d) Find the Bayes estimator of $\theta$, assuming absolute loss.
+  
+---
+  
+We know that assuming aboslute loss, the Bayes estimator of $\theta$, $\hat\theta$, is equal to the posterior median. But the posterior distribution is Gamma($n+1,\sum_{i=1}^n + \lambda$), which doesn't have a median with a closed form.
+  
+(e) Find the Bayes estimator of $\theta$, assuming binary loss.
+  
+---
+  
+Using a binary loss function, we know that the Bayes estimator $\hat\theta$ is equal to the mode of the posterior distribution. The mode of a Gamma($\alpha,\beta$) random variable is $(\alpha - 1)\beta$, and so the mode of the Bayes estimator is
+\[
+\hat\theta = \frac{n+1-1}{\sum_{i=1}^n x_i + \lambda} = \frac{n}{\sum_{i=1}^n x_i + \lambda}
+\]
+  
+\hrulefill
+  
+## Problem 4
+Redo all of Problem 3, using the non-informative prior $\pi(\theta) = 1$, $\theta > 0$. Note that this is not a valid density function since its integral is infinite, but proceed with it anyways.
+  
+---
+  
+The joint distribution of $(X_1,\dots,X_n,\theta)$ is just the likelihood function of $\theta$ since the prior distribution is simply 1. Therefore, the marginal of $\vec{x}$ is
+\[
+\begin{aligned}
+m(\vec{x}) &= \int_{0}^{\infty}\theta^ne^{-\theta\sum_{i=1}^n x_i}d\theta\\
+&= \frac{\Gamma(n+1)}{(\sum_{i=1}^n x_i)^{n+1}}\int_{0}^{\infty}\frac{(\sum_{i=1}^nx_i)^{n+1}}{\Gamma(n+1)}\theta^ne^{-\theta\sum_{i=1}^n x_i}d\theta\\
+&= \frac{\Gamma(n+1)}{(\sum_{i=1}^n x_i)^{n+1}}
+\end{aligned}
+\]
+  
+and the posterior distribution, $\pi(\theta|\vec{x})$ is
+\[
+\begin{aligned}
+\pi(\theta|\vec{x}) &= \frac{g(\theta,\vec{x})}{m(\vec{x})} - \frac{\theta^ne^{-\theta\sum_{i=1}^n x_i}}{\frac{\Gamma(n+1)}{(\sum_{i=1}^n x_i)^{n+1}}}\\
+&=\frac{(\sum_{i=1}^n x_i)^{n+1}\theta^ne^{-\theta\sum_{i=1}^n x_i}}{\Gamma(n+1)}\\
+&=\frac{(\sum_{i=1}^n x_i)^{n+1}}{\Gamma(n+1)}\theta^ne^{-\theta\sum_{i=1}^n x_i}\\
+\end{aligned}
+\]
+  
+which is a Gamma($n+1,\sum_{i=1}^n x_i$) random variable.
+  
+Given a squared-error loss function, we know that posterior mean is the Bayes estimator. Therefore,
+\[
+\hat\theta = \alpha\beta = \frac{n+1}{\sum_{i=1}^n x_i}
+\]
+  
+We can rewrite $\hat\theta$ in terms of the prior mean (1) and MLE of the posterior distribution ($\bar x$) by looking at the harmonic mean:
+\[
+\frac{1}{E[\hat\theta|\vec{x}]} = \frac{\sum_{i=1}^n x_i}{n+1} = \frac{n}{n+1}\bar x_i + \frac{0}{n+1}1
+\]
+  
+Now, let's assume an absolute loss funtion. That is, we're looking for the median of the posterior distribution. However, the median of a gamma random variable has no closed form.
+  
+Assuming a binary loss function, the Bayes estimator is the mode of the posterior distribution, which for a gamma random variable is equal to $(\alpha - 1)\beta$. Using the posterior $\alpha$ and $\beta$, we have
+\[
+\hat\theta = \frac{n+1-1}{\sum_{i=1}^n x_i} = \frac{n}{\sum_{i=1}^n x_i} = \frac{1}{\bar x}
+\]
+  
+\hrulefill
+  
+## Problem 5
+Let $X_1,X_2,\dots,X_n \sim$ iid $f(x|\theta) = \theta x^{-\theta - 1}$, $x_i > 1$, $\theta > 2$.
+  
+(a) Find $\hat{\theta}_{MLE}$, the maximum likelihood estimator of $\theta$.
+  
+---
+  
+The likelihood function $\theta$ is
+\[
+L(\theta) = \prod_{i=1}^n \theta x_i^{-\theta - 1} =\theta^n\left(\prod_{i=1}^nx_i\right)^{-\theta - 1}
+\]
+  
+and the log-likelihood function is
+\[
+l(\theta) = \ln\left(\theta^n\left(\prod_{i=1}^nx_i\right)^{-\theta - 1}\right) = n\ln(\theta) - (\theta + 1)\sum_{i=1}^n \ln(x_i)
+\]
+  
+We want to find $\theta$ such that $l(\theta)$ is maximized. Let's take the derivative of $l(\theta)$ with respect to $\theta$, set equal to 0, and solve for $\hat\theta$:
+\[
+\begin{aligned}
+\frac{d}{d\theta}l(\theta) &= \frac{n}{\theta} - \sum_{i=1}^n \ln(x_i) = 0\\
+&\implies \frac{n}{\theta} = \sum_{i=1}^n \ln(x_i)\\
+&\implies \hat\theta = \frac{n}{\sum_{i=1}^n\ln(x_i)}
+\end{aligned}
+\]
+  
+To ensure $\hat\theta = n/(\sum_{i=1}^n \ln(x_1))$ is the MLE, the second derivative of $l(\theta)$ must be negative, which it is ($l''(\theta) = -n/\theta^2$). Therefore,
+\[
+\hat\theta_{MLE} = \frac{n}{\sum_{i=1}^n\ln(x_i)}
+\]
+  
+(b) Find the expected value of $\hat{\theta}_{MLE}$.
+  
+---
+  
+To find the expected value of $\hat\theta_{MLE}$, let $Y_i = \ln(X_i)$. Then, $e^{y_i} = x_i = g^{-1}(y_i)$ and $\frac{d}{dy_i}e^{y_i} = e^{y_i}$ such that
+\[
+f(y_i) = \theta (e^{y_i})^{-\theta - 1}|e^{y_i}| = \theta e^{y_i(-\theta - 1)}e^{y_i}=\theta e^{-y_i\theta - y_i}e^{y_i}=\theta e^{-y_i\theta}
+\]
+  
+which has an Exponential($\theta$) distribution. We are looking for the distribution of the sum of $Y_i$s, call it $Y$, and since the eponential distribution is a special case of the gamma distribution, we are really looking for the sum of independent gamma random variables with $\alpha = 1$ and $\beta = \theta$. So $Y \sim Gamma(n,\theta)$. Now we can more easily find $E[\hat\theta_{MLE}]$:
+\[
+E[\hat\theta_{MLE}] = nE[Y^{-1}] = n\left(\frac{\Gamma(n-1)}{\Gamma(n)\theta^{-1}}\right) = n\left(\frac{\Gamma(n-1)}{(n-1)\Gamma(n-1)}\theta\right) = \frac{n\theta}{n-1}
+\]
+  
+(c) Find the variance of $\hat{\theta}_{MLE}$.
+  
+---
+  
+The variance of $\hat\theta_{MLE}$ is $E[\hat\theta_{MLE}^2] - (E[\hat\theta_{MLE}])^2$. Using the same logic as in part (b),
+\[
+E[\hat\theta_{MLE}^2] = n^2E[Y^{-2}] = n^2\frac{\Gamma(n-2)\theta^2}{\Gamma(n)} = n^2\theta^2\frac{\Gamma(n-2)}{(n-1)(n-2)\Gamma(n-2)} = \frac{n^2\theta^2}{(n-1)(n-2)}
+\]
+  
+and the variance is
+\[
+\begin{aligned}
+V[\hat\theta_{MLE}] &= E[\hat\theta_{MLE}^2] - (E[\hat\theta_{MLE}])^2\\
+&=\frac{n^2\theta^2}{(n-1)(n-2)} - \left(\frac{n\theta}{n-1}\right)\\
+&=\frac{n^2\theta^2}{(n-1)(n-2)} - \frac{n^2\theta^2}{(n-1)^2}\\
+&=\frac{n^2\theta^2(n-1) - n^2\theta^2(n-2)}{(n-1)^2(n-2)}\\
+&=\frac{n^2\theta^2}{(n-1)^2(n-2)}\\
+\end{aligned}
+\]
+  
+(d) Using $\hat{\theta}_{MLE}$, create an unbiased estimator $\hat{\theta}_{U}$.
+  
+---
+  
+We can scale $\hat\theta_{MLE}$ by $\frac{n-1}{n}$ to obtain $\hat\theta_U$, giving us
+\[
+E[\hat\theta_U] = E\left[\frac{n-1}{n}\hat\theta_{MLE}\right] = \frac{n-1}{n}E[\hat\theta_{MLE}] = \frac{n-1}{n}\frac{n}{n-1}\theta = \theta
+\]
+  
+and showing that $\hat\theta_U=\frac{n-1}{n}\hat\theta_{MLE}$ is an unbiased estimator for $\theta$.
+  
+(e) Find the variance of $\hat{\theta}_{U}$.
+\[
+V[\hat\theta_U] = V\left[\frac{n-1}{n}\hat\theta_{MLE}\right] = \frac{(n-1)^2}{n^2}V[\hat\theta_{MLE}] = \frac{(n-1)^2}{n^2}\left(\frac{n^2\theta^2}{(n-1)^2(n-2)}\right) = \frac{\theta^2}{n-2}
+\]
+  
+\hrulefill
+  
+## Problem 6
+Refer to problem 5.
+  
+(a) Find $\hat{\theta}_{MOM}$, the method of moments estimator of $\theta$.
+  
+---
+  
+First we need to find the first moment, $E[X]$:
+\[
+E[X] = \int_1^{\infty}x\theta x^{-\theta - 1}dx = \int_1^{\infty}\theta x^{-\theta}dx = \left[\frac{\theta x^{1-\theta}}{1-\theta}\right]_1^{\infty} = \frac{\theta}{\theta - 1}
+\]
+  
+Now set $\bar x$ equal to the first moment and solve for $\hat\theta_{MOM}$:
+\[
+\bar{x} = \frac{\theta}{\theta - 1} \implies \bar{x}\theta - \bar{x} = \theta \implies \hat\theta_{MOM} = \frac{\bar{x}}{\bar{x} - 1}
+\]
+  
+(b) Use the delta method to approximate the expected value of $\hat{\theta}_{MOM}$.
+  
+---
+  
+The second order Taylor series is
+\[
+g(x) = g(x_0) + g'(x_0)(x - x_0) + g''(x_0)\frac{(x-x_0)^2}{2} + R
+\]
+  
+Consider
+\[
+\begin{aligned}
+g(x) = \frac{x}{x - 1},&&g'(x) = -\frac{1}{(x-1)^2},&&g''(x) = \frac{2}{(x-1)^3}
+\end{aligned}
+\]
+  
+such that
+\[
+g(x) = \frac{x}{x - 1} \approx \frac{x_0}{x_0 - 1} - \frac{1}{(x_0-1)^2}(x-x_0) + \frac{2}{(x_0-1)^3}\frac{(x-x_0)^2}{2}
+\]
+  
+Choose $x_0=E[X] = \mu$ so that
+\[
+\hat\theta_{MOM} = \frac{\bar{x}}{\bar{x} - 1}\approx \frac{\mu}{\mu - 1} - \frac{1}{(\mu-1)^2}(\bar{x}-\mu) + \frac{(\bar{x}-\mu)^2}{(\mu-1)^3}
+\]
+  
+Taking the expectation of both sides, we get
+\[
+\begin{aligned}
+E[\hat\theta_{MOM}] &\approx E\left[\frac{\mu}{\mu - 1} - \frac{1}{(\mu-1)^2}(\bar{x}-\mu) + \frac{(\bar{x}-\mu)^2}{(\mu-1)^3}\right]\\
+&= E\left[\frac{\mu}{\mu - 1}\right] - E\left[\frac{1}{(\mu-1)^2}(\bar{x}-\mu)\right] + E\left[\frac{(\bar{x}-\mu)^2}{(\mu-1)^3}\right]\\
+&= \frac{\mu}{\mu - 1} + \frac{1}{(\mu-1)^3}V[\bar x]\\
+&= \frac{\mu}{\mu - 1} + \frac{\sigma^2/n}{(\mu-1)^3}\\
+\end{aligned}
+\]
+  
+But we know that $\mu = \frac{\theta}{\theta - 1}$, so
+\[
+\begin{aligned}
+E[\hat\theta_{MOM}]&=\frac{\frac{\theta}{\theta - 1}}{\frac{\theta}{\theta-1} - 1} + \frac{\sigma^2/n}{\left(\frac{\theta}{\theta - 1}-1\right)^3}\\
+&=\frac{\frac{\theta}{\theta - 1}}{\frac{\theta - (\theta - 1)}{\theta-1}} + \frac{\sigma^2/n}{\left(\frac{\theta - (\theta - 1)}{\theta - 1}\right)^3}\\
+&=\theta + (\theta - 1)^3\frac{\sigma^2}{n}\\
+\end{aligned}
+\]
+  
+To find $\sigma^2$, we need to calculate $V(X) = E[X^2] - (E[X])^2$. First,
+\[
+E[X^2] = \int_{1}^{\infty}x^2\theta x^{-\theta - 1}dx = \int_{1}^{\infty}\theta x^{-\theta + 1}dx = \frac{\theta}{\theta - 2}
+\]
+  
+and then
+\[
+\begin{aligned}
+V(X) &= \frac{\theta}{\theta - 2} - \left(\frac{\theta}{\theta - 1}\right)^2 = \frac{\theta}{\theta - 2} - \frac{\theta^2}{(\theta - 1)^2}\\
+&=\frac{\theta(\theta-1)^2 - \theta^2(\theta - 2)}{(\theta - 2)(\theta - 1)^2}\\
+&= \frac{\theta^3 + \theta - 2\theta^2 - \theta^3 + 2\theta^2}{(\theta - 2)(\theta - 1)^2}\\
+&= \frac{\theta}{(\theta - 2)(\theta - 1)^2}\\
+\end{aligned}
+\]
+  
+Now we can plug in $V(X)$ for $\sigma^2$ and finish solving for the expected value of the method of moments estimator for $\theta$:
+\[
+\begin{aligned}
+E[\hat\theta_{MOM}] &\approx \theta + (\theta - 1)^3\frac{\sigma^2}{n}\\
+&= \theta + (\theta - 1)^3\frac{\frac{\theta}{(\theta - 2)(\theta - 1)^2}}{n}\\
+&= \theta + \frac{(\theta - 1)^3\theta}{n(\theta - 2)(\theta - 1)^2}\\
+&= \theta + \frac{\theta(\theta - 1)}{n(\theta - 2)}\\
+\end{aligned}
+\]
+  
+(c) Use the delta method to approximate the variance of $\hat{\theta}_{MOM}$.
+  
+To approximate the variance, we just use the first order Taylor series:
+\[
+\begin{aligned}
+V[\hat\theta] &\approx V\left[\frac{\mu}{\mu - 1} - \frac{1}{(\mu-1)^2}(\bar{x}-\mu)\right]\\
+&= \frac{1}{(\mu-1)^4}V[\bar{x}]=\frac{1}{(\mu-1)^4}\frac{\sigma^2}{n}\\
+&= \frac{1}{(\frac{\theta}{\theta - 1}-1)^4}\frac{\theta}{n(\theta - 2)(\theta - 1)^2}\\
+&= \frac{\theta(\theta - 1)^4}{n(\theta - 2)(\theta - 1)^2}\\
+&= \frac{\theta(\theta - 1)^2}{n(\theta - 2)}\\
+\end{aligned}
+\]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

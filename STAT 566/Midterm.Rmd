@@ -1,0 +1,209 @@
+---
+title: "STAT 563 - Midterm"
+author: "Maggie Buffum"
+date: "May 14, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Assume that $X_1,X_2,\dots,X_{10}$ is a random sample from a distribution having pdf of the form
+\[
+f(x) = 
+\begin{cases}
+\lambda x^{\lambda-1},&0<x<1\\
+0,&\text{elsewhere}
+\end{cases}
+\]
+  
+\hrulefill
+  
+1. Find the best critical region of level 0.05 for testing $H_0:\lambda=\frac{1}{2}$ against $H_1:\lambda = 1$.
+  
+---
+  
+Since both the null and alternative hypotheses are simple hypotheses, we can use the Neyman-Pearson Lemma to determine the best critcal region of size $\alpha = 0.05$. The likelihood function for $\lambda$ is
+\[
+L(\lambda) = \prod^{10}_{i=1}\lambda x_i^{\lambda-1}=\lambda^n\left(\prod_{i=1}^{10}x_i\right)^{\lambda-1}
+\]
+  
+and the ratio of likelihoods under the null and alternative is
+\[
+\frac{L(\lambda_0)}{L(\lambda_1)} = \frac{\left(\frac{1}{2}\right)^n\left(\prod_{i=1}^{10}x_i\right)^{\frac{1}{2}-1}}{(1)^n\left(\prod_{i=1}^{10}x_i\right)^{1-1}}=\left(\frac{1}{2}\right)^n\left(\prod_{i=1}^{10}x_i\right)^{-\frac{1}{2}} < k
+\]
+
+But this doesn't have a known distribution. Instead, consider that the inequality is equivalent to
+\[
+\begin{aligned}
+&-\sum_{i=1}^n\ln(x_i) < k'
+\end{aligned}
+\]
+  
+Note that the $X_i$'s follow a Beta($\lambda,1$) distribution:
+\[
+\frac{\Gamma(\lambda+1)}{\Gamma(\lambda)\Gamma(1)}x^{\lambda-1}(1-x)^{1-1}=\frac{\lambda\Gamma(\lambda)}{\Gamma(\lambda)}x^{\lambda-1}=\lambda x^{\lambda - 1}
+\]
+  
+for $0 < x < 1$, assuming $\lambda > 0$. We already know that if $X\sim \text{Beta}(\lambda,1)$, then $-\ln(X)=Y\sim \text{Exponential}(\lambda)$. Furthermore, $\sum_{i=1}^n Y_i \sim \text{Gamma}(n,\frac{1}{\lambda})$. Under the null hypothesis, $\lambda = \frac{1}{2}$ such that the test statistic is the special case of the gamma random variable where $\alpha = p/2 \implies n=p/2 \implies p = 2n$ and $\beta = 2$, that is, a chi-squared random variable with degrees of freedom $p$. Now, substituting $n=10$ as given, we have that
+\[
+-\sum_{i=1}^{10}\ln(x_i) \sim \chi^2_{20} < k'
+\]
+  
+If the test statistic is less than $k'$ then there is sufficient evidence to reject the null hypothesis. At the 5% significance level, $k'$=`r qchisq(0.05,20)`.
+  
+\hrulefill
+  
+2. Find the power of the test in (1)
+  
+---
+  
+The power of a test is $1-P(\text{Fail to Reject }H_0|H_1 \text{ is true})=P(\text{Reject }H_0|H_1\text{ is true})$. From part (1) we will reject $H_0$ when $-\sum_{i=1}^{10}\ln x_i$<`r qchisq(0.05,20)`. Let $t = -\sum_{i=1}^{10}\ln(x_i)$. We are looking for
+\[
+P(\text{Reject }H_0|H_1\text{ is true}) = P(t < 10.85081|\lambda = 1)
+\]
+  
+Under the alternative hypothesis, $-\sum_{i=1}^{10}\ln(x_i) \sim \text{Gamma}(10,1)$. Therefore,
+\[
+\text{Power} = P(t < 10.85081|\lambda = 1) = \int_0^{10.85081}\frac{1}{\Gamma(10)1^{10}}t^{10-1}e^{-t/1}dt=\frac{1}{(10-1)!}\int_0^{10.85081}t^{9}e^{-t}dt
+\]
+  
+```{r}
+integrand <- function(t) 1/(factorial(9)) * t^9 * exp(-t)
+power <- integrate(integrand,lower = 0,upper = qchisq(0.05,20))
+```
+  
+which integrates numerically as `r power$value`.
+  
+\hrulefill
+  
+3. Is your answer from (1) uniformly most powerful for testing $H_0:\lambda = \frac{1}{2}$ against $H_1:\lambda > \frac{1}{2}$?
+  
+---
+  
+Note that the ratio of likelihoods under the null and under the alternative is a monotone-increasing function of x under the range of x given ($0 < x < 1$). Therefore, by the Karlin-Rubin theorem, $T = -\sum_{i=1}^{10}\ln(x_i)$ is a UMP level $\alpha$ test.
+  
+\hrulefill
+  
+4. Find the Cramer-Rao lower bound for the variance of an unbiased estimator of $\lambda$.
+  
+---
+  
+The Cramer-Rao lower bound is defined as
+\[
+CRLB = \frac{1}{nI(\lambda)},\text{ where }I(\lambda) = -E\left[\frac{d^2\ln(f(x|\lambda))}{d\lambda^2}\right]
+\]
+  
+First let's find the information criterion:
+\[
+\begin{aligned}
+\ln(f(x|\lambda)) &= \ln(\lambda) + (\lambda-1)\ln(x)\\
+\frac{d\ln(f(x|\lambda))}{d\lambda} &= \frac{1}{\lambda} + \ln(x)\\
+\frac{d^2\ln(f(x|\lambda))}{d\lambda^2} &= \frac{-1}{\lambda^2}\\
+I(\lambda) &= -E\left[\frac{-1}{\lambda^2}\right] = E[\lambda^{-2}] = \lambda^{-2}
+\end{aligned}
+\]
+  
+Now, the Cramer-Rao Lower Bound is:
+\[
+CRLB = \frac{1}{nI(\lambda)} = \frac{1}{n\lambda^{-2}} = \frac{\lambda^2}{n}
+\]
+  
+\hrulefill
+  
+5. Find the MVUE of $\lambda$.
+  
+---
+  
+Consider that the likelihood function can be written as
+\[
+\lambda^n e^{(\lambda-1)\sum_{i=1}^{10}\ln(x_i)}=\lambda^ne^{\lambda\sum_{i=1}^{10}\ln(x_i)}e^{-\sum_{i=1}^{10}\ln(x_i)}
+\]
+  
+so that clearly, $T(X)=-\sum_{i=1}^{10}\ln(X_i)$ is a complete and sufficient statistic for $\lambda$. If we can find some function of $T(X)$ that is also an unbiased estimator for $\lambda$, then we know it is MVUE. Let's take the expected value of $T(X)$. We've already shown that $T(X)\sim \text{Gamma}(10,\frac{1}{\lambda})$, so consider the following function of $T(X)$:
+\[
+E[T(X)^{-1}] = \frac{\lambda\Gamma(n-1)}{\Gamma(n)} = \frac{\lambda\Gamma(n-1)}{(n-1)\Gamma(n-1)} = \frac{\lambda}{n-1}
+\]
+  
+which is biased. But $(n-1)[T(X)^{-1}] = (9)[T(X)^{-1}]$ is an unbiased estimator for $\lambda$, so it is MVUE.
+  
+\hrulefill
+  
+6. Show that the MVUE of $\lambda$ is asymptotically efficient.
+  
+---
+  
+From part (5) we know that $\hat\lambda_{MVUE}=(n-1)T(X)^{-1}$ is an unbiased estimator for $\lambda$:
+\[
+E[(n-1)T(X)^{-1}] = (n-1)E[T(X)^{-1}] = (n-1)\frac{\lambda\Gamma(n-1)}{\Gamma(n-1)} = (n-1)\frac{\lambda\Gamma(n-1)}{(n-1)\Gamma(n-1)} = \lambda
+\]
+  
+We need to find its variance in order to test for asymptotic efficiency.
+\[
+Var(\hat\lambda_{MVUE}) = Var((n-1)T(X)^{-1}) = (n-1)^2Var(T(X)^{-1})
+\]
+  
+where $Var(T(X)^{-1}) = E[T(X)^{-2}] - (E[T(X)^{-1}])^2$:
+\[
+E[T(X)^{-2}] = \frac{\lambda^2\Gamma(n-2)}{\Gamma(n)} = \frac{\lambda^2\Gamma(n-2)}{(n-1)(n-2)\Gamma(n-2)} = \frac{\lambda^2}{(n-1)(n-2)}
+\]
+  
+and
+\[
+(E[T(X)^{-1}])^2 = \left(\frac{\lambda}{n-1}\right)^2 = \frac{\lambda^2}{(n-1)^2}
+\]
+  
+such that
+\[
+\begin{aligned}
+Var(T(X)^{-1}) &= \frac{\lambda^2}{(n-1)(n-2)} - \frac{\lambda^2}{(n-1)^2}\\
+&=\frac{(n-1)\lambda^2 - (n-2)\lambda^2}{(n-1)^2(n-2)}\\
+&=\frac{n\lambda^2 - \lambda^2 - n\lambda^2 + 2\lambda^2}{(n-1)^2(n-2)}\\
+&=\frac{\lambda^2}{(n-1)^2(n-2)}
+\end{aligned}
+\]
+  
+and finally,
+\[
+Var(\hat\lambda_{MVUE}) = (n-1)^2Var(T(X)^{-1}) = (n-1)^2\frac{\lambda^2}{(n-1)^2(n-2)} = \frac{\lambda^2}{n-2}
+\]
+  
+Now we can find the asymptotic efficiency of $\hat\lambda_{MVUE}$:
+\[
+\lim_{n \rightarrow \infty} \frac{CRLB}{Var(\hat\lambda_{MVUE})} = \lim_{n \rightarrow \infty} \frac{\frac{\lambda^2}{n}}{\frac{\lambda^2}{n-2}} = \lim_{n \rightarrow \infty} \frac{n-2}{n} = 1
+\]
+  
+Therefore, $\hat\lambda_{MVUE}$ is asymptotically efficient.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
