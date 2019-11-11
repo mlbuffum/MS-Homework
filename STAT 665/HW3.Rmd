@@ -1,7 +1,7 @@
 ---
 title: "STAT 665 HW #3"
 author: "Maggie Buffum"
-date: "March 5, 2019"
+date: "March 7, 2019"
 output: pdf_document
 ---
 
@@ -16,28 +16,61 @@ Prove the identities (6.1.4):
 \[
 \begin{aligned}
 \bar{\mathbf{x}}_{m+1} &&=&&\frac{1}{m+1}(m\bar{\mathbf{x}}_m + \mathbf{x}_{m+1}),\ \ \ \ \ \ \ \ \ \ \ &\text{ and}&\\
-\mathbf{S}_{m+1} &&=&&\mathbf{S}_m + \frac{m}{m+1}(\mathbf{x}_1 - \bar{\mathbf{x}})(\mathbf{x}_2 - \bar{\mathbf{x}})'
+\mathbf{S}_{m+1} &&=&&\mathbf{S}_m + \frac{m}{m+1}(\mathbf{x}_{m+1} - \bar{\mathbf{x}}_m)(\mathbf{x}_{m+1} - \bar{\mathbf{x}}_m)'
 \end{aligned}
 \]
   
 ---
+  
+To show that $\bar x_m = \frac{1}{m+1}(m\bar{\mathbf{x}}_m + \mathbf{x}_{m+1})$, we first recall that $\bar x_m = \frac{1}{m}\sum_{i=1}^mx_i$. Consider $\bar x_{m+1}$:
+\[
+\begin{aligned}
+\bar x_{m+1} &= \frac{1}{m+1}\sum_{i=1}^{m+1}x_i\\
+&=\frac{1}{m+1}\left(\sum_{i=1}^{m}x_i + x_{m+1}\right)\\
+&=\frac{1}{m+1}\left(m\bar x_m + x_{m+1}\right)\\
+\end{aligned}
+\]
+  
+Now let's show that $\mathbf{S}_{m+1} =\mathbf{S}_m + \frac{m}{m+1}(\mathbf{x}_{m+1} - \bar{\mathbf{x}}_m)(\mathbf{x}_{m+1} - \bar{\mathbf{x}}_m)'$:
+\[
+\begin{aligned}
+\mathbf{S}_{m+1} &= \sum_{i=1}^{m+1}(x_i - \bar x_{m+1})(x_i - \bar x_{m+1})'\\
+&=\sum_{i=1}^m(x_i - \bar x_{m+1})(x_i - \bar x_{m+1})' + (x_{m+1} - \bar x_{m+1})(x_{m+1} - \bar x_{m+1})'\\
+&=\sum_{i=1}^m(x_i - \bar x_m + \bar x_m - \bar x_{m+1})(x_i - \bar x_m + \bar x_m - \bar x_{m+1})' + (x_{m+1} - \bar x_{m+1})(x_{m+1} - \bar x_{m+1})'\\
+&=\sum_{i=1}^m\left[(x_i - \bar x_m) + (\bar x_m - \bar x_{m+1})\right]\left[(x_i - \bar x_m) + (\bar x_m - \bar x_{m+1})\right]' + (x_{m+1} - \bar x_{m+1})(x_{m+1} - \bar x_{m+1})'\\
+&=\sum_{i=1}^m\left[(x_i - \bar x_m) + (\bar x_m - \bar x_{m+1})\right]\left[(x_i - \bar x_m)' + (\bar x_m - \bar x_{m+1})'\right] + (x_{m+1} - \bar x_{m+1})(x_{m+1} - \bar x_{m+1})'\\
+&=\sum_{i=1}^m(x_i - \bar x_m)(x_i - \bar x_m)' + \sum_{i=1}^m(x_i - \bar x_m)(\bar x_m - \bar x_{m+1})' + \sum_{i=1}^m(\bar x_m - \bar x_{m+1})\left[(x_i - \bar x_m)' + (\bar x_m - \bar x_{m+1})'\right]\\&\ \ \ \ \  + (x_{m+1} - \bar x_{m+1})(x_{m+1} - \bar x_{m+1})'\\
+&= \mathbf{S}_m + \left[\sum_{i=1}^m(x_i - \bar x_m)\right](\bar x_m - \bar x_{m+1})' + \sum_{i=1}^m(\bar x_m - \bar x_{m+1})(x_i - \bar x_{m+1})' + (x_{m+1} - \bar x_{m+1})(x_{m+1} - \bar x_{m+1})'\\
+&= \mathbf{S}_m + (m\bar x_m - m\bar x_m)(\bar x_m - \bar x_{m+1})' + (\bar x_m - \bar x_{m+1})\sum_{i=1}^m(x_i - \bar x_{m+1})' + (x_{m+1} - \bar x_{m+1})(x_{m+1} - \bar x_{m+1})'\\
+&= \mathbf{S}_m + (\bar x_m - \bar x_{m+1})(m\bar x_m - m\bar x_{m+1})' + (x_{m+1} - \bar x_{m+1})(x_{m+1} - \bar x_{m+1})'\\
+&= \mathbf{S}_m + m(\bar x_m - \frac{1}{m+1}(m\bar x_m + x_{m+1}))(\bar x_m - \frac{1}{m+1}(m\bar x_m + x_{m+1}))' \\&\ \ \ \ \ + (x_{m+1} - \frac{1}{m+1}(m\bar x_m + x_{m+1}))(x_{m+1} - \frac{1}{m+1}(m\bar x_m + x_{m+1}))'\\
+&= \mathbf{S}_m + \frac{m}{(m+1)^2}(\bar x_m - x_{m+1})(\bar x_m - x_{m+1})' + \frac{m^2}{(m+1)^2}(x_{m+1} - \bar x_m)(x_{m+1} - \bar x_m)'\\
+&= \mathbf{S}_m + \frac{m}{(m+1)^2}(-1)^2(x_{m+1}-\bar x_m)(x_{m+1}-\bar x_m)' + \frac{m^2}{(m+1)^2}(x_{m+1} - \bar x_m)(x_{m+1} - \bar x_m)'\\
+&= \mathbf{S}_m + \frac{m + m^2}{(m+1)^2}(x_{m+1}-\bar x_m)(x_{m+1}-\bar x_m)'\\
+&= \mathbf{S}_m + \frac{m}{m+1}(x_{m+1}-\bar x_m)(x_{m+1}-\bar x_m)'\\
+\end{aligned}
+\]
   
 ## Problem 6.4
 Suppose $\mathbf{S}_{N_1} \sim W_k(\Sigma,N_1-1)$ and is independent of $\mathbf{S}_{N_2} \sim W_k(\Sigma,N_2 - 1)$. For any $\mathbf{a} = (a_1,a_2,\dots,a_k)'$, find the distribution of $\mathbf{a}'\mathbf{S}_{N_1}\mathbf{a}/\mathbf{a}'\mathbf{S}_{N_2}\mathbf{a}$.
   
 ---
   
+From Example 6.1.1 we have that $\mathbf{a}'\mathbf{S}_{N}\mathbf{a}/\mathbf{a}'\Sigma \mathbf{a} \sim \chi^2_{N-1}$. Note that since the first parameter in each wishart random variable, we have that
+\[
+\frac{\mathbf{a}'\mathbf{S}_{N_1}\mathbf{a}}{\mathbf{a}'\mathbf{S}_{N_2}\mathbf{a}} = \frac{\mathbf{a}'\mathbf{S}_{N_1}\mathbf{a}/\mathbf{a}'\Sigma \mathbf{a}}{\mathbf{a}'\mathbf{S}_{N_2}\mathbf{a}/\mathbf{a}'\Sigma \mathbf{a}}
+\]
+  
+is now a ratio of two chi-squared random variables. Consider multiplying and dividing each chi-squared random variable by its degrees of freedom. Then we have a scaled F-distribution:
+  
 \[
 \begin{aligned}
-&\frac{\frac{a'S_{N_1}a}{a'\Sigma a}}{\frac{a'S_{N_2}a}{a'\Sigma a}}\\
-&=\frac{a'S_{N_1}aa'\Sigma a}{a'\Sigma aa'S_{N_2}a}\\
-&=\frac{a'S_{N_1}a}{a'S_{N_2}a}\\
-&=\frac{(N_1 - 1)}{(N_2 - 1)}\frac{a'S_{N_1}a/(N_1 - 1)}{a'S_{N_2}a/(N_2 - 1)} \sim \frac{(N_1 - 1)}{(N_2 - 1)}F_{(N_1 - 1,N_2-1)}\\
+&=\frac{(N_1 - 1)}{(N_2 - 1)}\frac{\mathbf{a}'\mathbf{S}_{N_1}\mathbf{a}/(N_1 - 1)}{\mathbf{a}'\mathbf{S}_{N_2}\mathbf{a}/(N_2 - 1)} \sim \frac{(N_1 - 1)}{(N_2 - 1)}F_{(N_1 - 1,N_2-1)}\\
 \end{aligned}
 \]
   
 ## Problem 6.6
-The following table gives the means and the variance-covariance matri of four variables $X_0$, $X_1$, $X_2$, and $X_3$:
+The following table gives the means and the variance-covariance matrix of four variables $X_0$, $X_1$, $X_2$, and $X_3$:
   
 ```{r,echo = F}
 cov_mat <- matrix(c(
@@ -59,13 +92,94 @@ kable(cbind(cov_mat,means),align = "c")
   
 ---
   
+Given that in part (b) we want to find the partial correlation between $X_0$ and $X_3$, I'm going to rearrange the variance-covariance matrix as
+  
+```{r,echo = F}
+cov_mat <- matrix(c(
+  60.516,21.122,3.511 ,0.998 ,
+  21.122,18.225,3.633 ,1.793 ,
+  3.511 ,3.633 ,54.756,23.860,
+  0.998 ,1.793 ,23.860,15.129
+),nrow = 4,dimnames = list(c("X_0","X_3","X_2","X_1"),
+                           c("X_0","X_3","X_2","X_1")))
+
+kable(cov_mat,align = "c")
+```
+  
+Let's partition the matrix such that
+  
+```{r}
+S_00 <- as.matrix(cov_mat[1,1])
+s_01 <- t(as.matrix(cov_mat[1,2:4]))
+s_10 <- as.matrix(cov_mat[2:4,1])
+S_1  <- as.matrix(cov_mat[2:4,2:4])
+
+S_00
+s_01
+s_10
+S_1
+```
+  
+Using Result 6.2.5, we can calculate the $\hat\rho_{0(1,\dots,k)}$ as
+  
+```{r}
+rho_hat <- (1/(S_00)^(1/2)) %*% (s_01 %*% solve(S_1) %*% s_10)^(1/2)
+rho_hat
+```
+  
 (b) Compute the partial correlation coefficient between $X_0$ and $X_3$, eliminating the effects of $X_1$ and $X_2$.
   
 ---
   
+Consider now that we partition the variance-covariance matrix as
+\[
+\left[
+\begin{array}{cc|cc}
+60.516&21.122&3.511 &0.998 \\
+21.122&18.225&3.633 &1.793 \\
+\hline
+3.511 &3.633 &54.756&23.860\\
+0.998 &1.793 &23.860&15.129
+\end{array}
+\right]
+\]
+  
+Using Result 6.2.4 we can calculate $\hat\rho_{jl}|(q+1,\dots,k)$ as
+\[
+\frac{|\mathbf{S}_{11.2}|_{j,l}}{|\mathbf{S}_{11.2}|_{j,j}^{1/2}|\mathbf{S}_{11.2}|_{l,l}^{1/2}}
+\]
+  
+where
+  
+```{r}
+S_11 <- as.matrix(cov_mat[1:2,1:2])
+S_12 <- as.matrix(cov_mat[1:2,3:4])
+S_21 <- as.matrix(cov_mat[3:4,1:2])
+S_22 <- as.matrix(cov_mat[3:4,3:4])
+
+S_11
+S_12
+S_21
+S_22
+```
+  
+such that
+  
+```{r}
+S_11.2 <- S_11 - S_12 %*% solve(S_22) %*% S_21  
+S_11.2
+```
+  
+and
+   
+```{r}
+rho_hat <- S_11.2[1,2] %*% 1/(S_11.2[1,1]^(1/2) %*% S_11.2[2,2]^(1/2))
+rho_hat
+```
+  
 ## Problem 6.7
 Suppose $\mathbf{S}$ is partitioned as in (6.2.9). Evaluate $\hat\rho_{0(1,\dots,k)}^2$ in terms of $|\mathbf{S}|$, $|\mathbf{S}^{(1)}|$ and $S_{00}$.
-    
+  
 ---
   
 From (6.2.9), we have that $\mathbf{S}$ is partitioned as
@@ -81,18 +195,28 @@ S_{00} & \mathbf{s}_{01}\\
   
 By Result 6.2.4, we can estimate the multiple correlation coefficient $\hat\rho_{0(1,\dots,k)}$ as
 \[
-\frac{\left(\mathbf{s}_{01}|\mathbf{S}^{(1)}|^{-1}\mathbf{s}_{10}\right)^{1/2}}{S_{00}^{1/2}}
+\frac{\left(\mathbf{s}_{01}[\mathbf{S}^{(1)}]^{-1}\mathbf{s}_{10}\right)^{1/2}}{S_{00}^{1/2}}
 \]
   
-Let's solve for $\hat\rho_{0(1,\dots,k)}^2$. Note that the determinant of $\mathbf{S}$ is $|\mathbf{S}| = S_{00}S^{(1)} - s_{01}s_{10}$.
+Let's solve for $\hat\rho_{0(1,\dots,k)}^2$.
 \[
 \begin{aligned}
-\hat\rho_{0(1,\dots,k)}^2 &=\left[ \frac{\left(\mathbf{s}_{01}|\mathbf{S}^{(1)}|^{-1}\mathbf{s}_{10}\right)^{1/2}}{S_{00}^{1/2}}\right]^2\\
-&= \frac{\mathbf{s}_{01}|\mathbf{S}^{(1)}|^{-1}\mathbf{s}_{10}}{S_{00}}\\
-&= \frac{\mathbf{s}_{01}\mathbf{s}_{10}}{|\mathbf{S}^{(1)}|S_{00}}\\
-&= \frac{S_{00}\mathbf{S}^{(1)} - |\mathbf{S}|}{|\mathbf{S}^{(1)}|S_{00}}\\
-&= \frac{S_{00}|\mathbf{S}^{(1)}|}{|\mathbf{S}^{(1)}|S_{00}} - \frac{|\mathbf{S}|}{|\mathbf{S}^{(1)}|S_{00}}\\
-&= 1 - \frac{|\mathbf{S}|}{|\mathbf{S}^{(1)}|S_{00}}\\
+\hat\rho_{0(1,\dots,k)}^2 &=\left[ \frac{\left(\mathbf{s}_{01}[\mathbf{S}^{(1)}]^{-1}\mathbf{s}_{10}\right)^{1/2}}{S_{00}^{1/2}}\right]^2\\
+&= \frac{\mathbf{s}_{01}[\mathbf{S}^{(1)}]^{-1}\mathbf{s}_{10}}{S_{00}}\\
+&= \frac{S_{00} - S_{00} + \mathbf{s}_{01}[\mathbf{S}^{(1)}]^{-1}\mathbf{s}_{10}}{S_{00}}\\
+&= \frac{S_{00} - \left[S_{00} - \mathbf{s}_{01}[\mathbf{S}^{(1)}]^{-1}\mathbf{s}_{10}\right]}{S_{00}}\\
+&= \frac{S_{00} - |\mathbf{S}^{(1)}|^{-1}|\mathbf{S}^{(1)}|\left[S_{00} - \mathbf{s}_{01}[\mathbf{S}^{(1)}]^{-1}\mathbf{s}_{10}\right]}{S_{00}}\\
+\end{aligned}
+\]
+  
+Since $S_{00} - \mathbf{s}_{01}[\mathbf{S}^{(1)}]^{-1}\mathbf{s}_{10}$ is a $1\times 1$ matrix, it is its determinant, i.e., $(S_{00} - \mathbf{s}_{01}[\mathbf{S}^{(1)}]^{-1}\mathbf{s}_{10}) = |S_{00} - \mathbf{s}_{01}[\mathbf{S}^{(1)}]^{-1}\mathbf{s}_{10}|$ such that we have
+\[
+\begin{aligned}
+\hat\rho_{0(1,\dots,k)}^2 &= \frac{S_{00} - |\mathbf{S}^{(1)}|^{-1}|\mathbf{S}^{(1)}|\left[S_{00} - \mathbf{s}_{01}[\mathbf{S}^{(1)}]^{-1}\mathbf{s}_{10}\right]}{S_{00}}\\
+&= \frac{S_{00} - |\mathbf{S}^{(1)}|^{-1}|\mathbf{S}^{(1)}|\left|S_{00} - \mathbf{s}_{01}[\mathbf{S}^{(1)}]^{-1}\mathbf{s}_{10}\right|}{S_{00}}\\
+&= \frac{S_{00} - |\mathbf{S}^{(1)}|^{-1}|\mathbf{S}|}{S_{00}}\\
+&= 1 - \frac{|\mathbf{S}^{(1)}|^{-1}|\mathbf{S}|}{S_{00}}\\
+&= 1 - \frac{|\mathbf{S}|}{S_{00}|\mathbf{S}^{(1)}|}\\
 \end{aligned}
 \]
   
@@ -105,9 +229,29 @@ Let $\rho_{0(1,\dots,k)}=0$. Then, from Result 6.2.5 we have that
 \[
 \frac{(N-k-1)\hat\rho_{0(1,\dots,k)}^2}{k(1 - \hat\rho_{0(1,\dots,k)}^2)} \sim F_{(k,N-k-1)}
 \]
-
-
-
+  
+From Appendix 14, we know that if $V\sim F_{p,q}$ then
+\[
+X = \frac{(p/q)V}{1 + (p/q)V}\sim Beta(\frac{p}{2},\frac{q}{2})
+\]
+  
+so let's consider $\frac{p}{q}V$, where $V = \hat\rho_{0(1,\dots,k)}^2$, $p = k$, and $q=N-k-1$, such that we have
+\[
+\frac{p}{q}V = \frac{k}{N-k-1}\left(\frac{(N-k-1)\hat\rho_{0(1,\dots,k)}^2}{k(1-\hat\rho_{0(1,\dots,k)}^2)}\right) = \frac{\hat\rho_{0(1,\dots,k)}^2)}{1-\hat\rho_{0(1,\dots,k)}^2)}
+\]
+  
+Using Appendix 14, we can calculate $X$ as
+\[
+\begin{aligned}
+X &= \frac{\frac{\hat\rho_{0(1,\dots,k)}^2}{1-\hat\rho_{0(1,\dots,k)}^2}}{1 + \frac{\hat\rho_{0(1,\dots,k)}^2}{1-\hat\rho_{0(1,\dots,k)}^2}}\\
+&=\frac{\frac{\hat\rho_{0(1,\dots,k)}^2}{1-\hat\rho_{0(1,\dots,k)}^2}}{\frac{1-\hat\rho_{0(1,\dots,k)}^2 +\hat\rho_{0(1,\dots,k)}^2}{1-\hat\rho_{0(1,\dots,k)}^2}}\\
+&=\frac{\frac{\hat\rho_{0(1,\dots,k)}^2}{1-\hat\rho_{0(1,\dots,k)}^2}}{\frac{1}{1-\hat\rho_{0(1,\dots,k)}^2}}\\
+&=\frac{\hat\rho_{0(1,\dots,k)}^2(1-\hat\rho_{0(1,\dots,k)}^2)}{1-\hat\rho_{0(1,\dots,k)}^2}\\
+&=\hat\rho_{0(1,\dots,k)}^2
+\end{aligned}
+\]
+  
+giving us that $X = \hat\rho_{0(1,\dots,k)}^2 \sim Beta(\frac{p}{2},\frac{q}{2}) = Beta(\frac{k}{2},\frac{N-k-1}{2})$.
 
 
 
