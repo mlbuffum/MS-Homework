@@ -1,0 +1,249 @@
+---
+title: "Untitled"
+author: "Maggie Buffum"
+date: "November 5, 2019"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Problem 1
+Suppose that a training set contains only a single example repeated 100 times. In 80 of the 100 cases, the single output value is 1; in the other 20, it is 0. What will a neural network predict for this example, assuming that is has been trained on all training examples and reaches a global optimum? (Hint: to find the global optimum, differentiate the error function and set the resulting expression to zero.)
+  
+---
+  
+ Let's consider the error:
+\[
+\text{Error}(E) = \frac{1}{2}\sum_i(y_i - t_i)^2 = \frac{1}{2}\left[80(1 - t)^2 + 20(0 - t)^2\right] = 40 + 40t^2 - 80t + 10t^2 = 50t^2 - 80t + 40
+\]
+  
+Taking its derivative with respect to the target and setting equal to 0 will optimize the error function:
+\[
+\frac{dE}{dt} = 100t - 80 = 0 \implies 100t = 80 \implies t = 0.8
+\]
+  
+That is, an output of 0.8 should minimize the error function, and so we should expect this prediction.
+  
+### Problem 2
+If we train a neural network for 1,000 epochs (one training example at a time), does it make a difference whether we present all training examples in turn for 1,000 times or whether we first present the first example 1,000 times, then the second training example for 1,000 times, and so one? Why?
+  
+---
+  
+Intuitively, yes: because there is gradient descent in backpropogation, we know that the order in which items are presented matter. Focusing on one example at a time could get us stuck in local minima/maxima.
+  
+### Problem 3
+Explain exactly why networks of perceptrons with linear activation functions are uninteresting (that is, networks of perceptrons where, for each perceptrons, the output is some constant times the weighted sum of the inputs). Use equations if necessary.
+  
+---
+  
+Linear activation functions are constant as a function of the inputs, meaning that the gradient descent isn't actually related to any changes in input values -- no matter what kind of error you get, the gradient will be the same. This clearly isn't ideal. 
+  
+### Problem 4
+Is overfitting more or less likey when the training set is small or large? Is overfitting more or less likely when the number of parameters to learn (such as the number of weights in a neural network) is small or large?
+  
+---
+  
+Overfitting is more likely if the training set is small -- there are fewer examples to learn from, and less variety in inputs and corresponding targets, resulting in less error in fit.
+  
+Overfitting is more likely when there are lots of parameters to learn from, for a similar reason as why you're more likely to overfit small training sets. Overall there are fewer distinct or similar examples, leaving you with potentially few examples compared to future/test data.
+  
+### Problem 5
+(Marsland Problem 4.1) Work through the MLP shown in Figure 4.2 to ensure that it does solve the XOR problem.
+  
+---
+  
+```{r}
+# Define XOR matrix (first column is bias)
+x <- matrix(c(
+  1,0,0,
+  1,0,1,
+  1,1,0,
+  1,1,1
+),nrow = 4,byrow = T)
+
+# Define weights to hidden layer
+w_ij <- t(matrix(c(
+  -0.5,1,1,
+  -1,1,1
+),nrow = 2,byrow = T))
+
+# Define weights to output layer
+w_jk <- t(matrix(c(
+  -0.5,1,-1
+),nrow = 1))
+
+# Calculate output
+h_j <- (x %*% w_ij > 0)*1 # if element > 1, 1, otherwise 0
+h_j <- cbind(1,h_j)
+o_k <- (h_j %*% w_jk > 0)*1 # if element > 1, 1, otherwise 0
+
+print(o_k)
+
+```
+  
+### Problem 6
+(Marsland Problem 4.2) Suppose that the local power company wants to predict electricity demand for the next 5 days. They have the data about daily demand for the last 5 years. Typically, the demand will be a number between 80 and 400.
+  
+---
+  
+1. Describe how you could use an MLP to make the prediction. What parameters would you have to choose, and what do you think would be sensible values for them?
+  
+I would include parameters such as indicators for weekend/weekday (or day of the week), day of the year (1-365), and month-year of daily demand. I would include the daily demand from the year previous and the average or peak demand from the previous week as inputs as well. Most of these variables can be include as 0-1 indicators. Daily demand from the same day the previous year and average/peak from the previous week would be between 80 and 40.
+  
+2. If the weather forecast for the next day, being estimated temperatures for daytime and nighttime, was available, how would you add that into your system?
+  
+Include the weather forecasted for the next day for each of the daily demand values as another parameter (x-input).
+  
+3. Do you think that this system would work well for predicting power consumption? Are there demands that it would not be able to predict?
+  
+It should predict fairly well, but it would not be able to (or shouldn't be used to) predict demands when the combination of inputs on the days we wish to predict are beyond the range of examples used to develop parameter weights.
+  
+### Problem 7
+(Marsland Problem 4.9) A hospital manager wants to predict how many beds will be needed in the geriatric ward. He asks you to design a neural network method for making this prediction. He has data for the last 5 years that cover:
+  
+* The number of people in the geriatric ward each week.
+  
+* The weather (average day and night temperatures).
+  
+* The season of the year (spring, summer, autumn, winter).
+  
+* Whether or not there was an epidemic on (use a binary variable: yes or no).
+  
+Design a suitable MLP for this problem, considering how you would choose the number of hidden neurons, the inputs (and whether there are any other inputs you need) and the preprocessing, and whether or not you would expect the system to work.
+  
+---
+  
+### Problem 8
+Recall that in backpropogation, for each network weight, weights are updated by
+\[
+\Delta w_{ji} = \eta\delta_j x_{ji} + \text{momentum-term}
+\]
+  
+where $w_{ji}$ is the weight from unit $i$ to unit $j$, $x_{ji}$ is the input coming from unit $i$ to unit $j$, and $\delta_j$ is the error term at unit $j$.
+  
+---
+  
+(a) Supose you are training a multilayer neural network. You are about to update weight $w_{ji}$. Suppose you have the following values:
+\[
+\begin{aligned}
+&\text{Current value for weight }w_{ji} &=& 0.1\\
+&x_{ji} &=& 1\\
+&\delta_j &=& 0.1\\
+&\text{Previous value of }\Delta w_{ji} &=& 0.2\\
+&\text{Learning rate }\eta &=&0.1\\
+&\text{Momemtum parameter }\alpha &=& 0.2\\
+\end{aligned}
+\]
+  
+What is the new value of $w_{ji}$?
+  
+```{r}
+w_curr       <- 0.1
+x_curr       <- 1
+err_output   <- 0.1
+delta_w_prev <- 0.2
+eta          <- 0.1
+alpha        <- 0.2
+
+delta_w_curr <- eta*err_output*x_curr + alpha*delta_w_prev
+w_new <- w_curr + delta_w_curr
+
+print(w_new)
+```
+  
+(b) In one sentence, what is the purpose of the momentum term?
+  
+If the momentum term is large, the gradient descent incorporates a lot of the previous descent, i.e., assumes that we want to keep moving in the direction that we previously found we should be moving. Small momentum values allow for quicker shifts in direction between batches.
+  
+So, in one sentence, the purpose of the momentum term is to keep us moving in the same general direction.
+  
+### Problem 9
+Let the following be suport vectors and corresponding coefficients defining a separating line:
+\[
+\begin{aligned}
+v_1 =& ( 0,2) & &\alpha_1 =& 0.2\\
+v_2 =& (-2,0) & &\alpha_2 =& 0.1\\
+v_3 =& ( 2,2) & &\alpha_1 =& -0.1\\
+v_4 =& ( 0,0) & &\alpha_4 =& 0.2\\
+\end{aligned}
+\]
+  
+with *bias* = -0.6.
+  
+---
+  
+(a) Give the class that the support vector machine would assign to $x=(1,1)$. (Show your work.)
+  
+(b) Letting $x=(x_1,x_2)$, give the equation of the separating line of this SVM in the form $x_2 = mx_1 + b$, where $m$ is the slope of the line and $b$ is the vertical-axis intercept (**not** the bias).
+  
+### Problem 10
+Suppose you have a training set i which each instance is represented by four integer features: $\vec{x} = (x_1,x_2,x_3,x_4)$. Define a "kernal" function as follows:
+\[
+k(x,y) = \sum_i OR(x_i,y_i)
+\]
+  
+where $OR$ is the logical "OR" function. For the following set, give the kernal ("Gram") matrix for this kernal function.
+\[
+\begin{aligned}
+\vec{x}_1 &= (0,0,0,0)\\
+\vec{x}_2 &= (1,1,1,1)\\
+\vec{x}_2 &= (1,0,0,1)\\
+\end{aligned}
+\]
+  
+---
+  
+### Problem 11
+COnsider the three linearly separable two-dimensional input vectors in the following figure. Find the linear SVM that optimally separates the classes by maximizing the margin.
+  
+---
+  
+### Problem 12
+Show for the polynomial kernal function:
+\[
+K(x,z)
+\]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
